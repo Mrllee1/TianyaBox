@@ -2,6 +2,7 @@
 // excluded from the app target. qa-layout-only records exercise layout/error
 // states only; they must never be reported as live chat or entitlement tests.
 import SwiftUI
+import Security
 @main struct QingqingPreview: App {
   var body: some Scene { WindowGroup { PreviewScreen() } }
 }
@@ -13,6 +14,9 @@ struct PreviewScreen: View {
     Group {
       if !ready { ProgressView() }
       else { switch mode {
+      case "local-diagnostics": QQPreviewLocalDiagnostics()
+      case "memory-capacity-fixture", "memory-unlock-fixture", "memory-owned-fixture": NavigationStack { QQMemoryOfferPreview(mode: mode) }
+      case "agent-picker": NavigationStack { QQAgentPickerView(excludedIDs: [], select: { _ in }) }.environmentObject(store)
       case "tag-picker": QQTagPreview().environmentObject(store)
       case "ranking": NavigationStack { QQLibraryView(initialRanking: true) }.environmentObject(store)
       case "search": NavigationStack { QQSearchView() }.environmentObject(store)
@@ -47,7 +51,52 @@ struct PreviewScreen: View {
       case "member": NavigationStack { QQMemberView() }.environmentObject(store)
       default: QingqingRootView()
       } }
-    }.task { if !["home", "library", "mine", "messages", "group", "simulator", "theater"].contains(mode) { await store.start() }; ready = true }
+    }.task { if !mode.hasSuffix("-fixture") && !["local-diagnostics", "home", "library", "mine", "messages", "group", "simulator", "theater"].contains(mode) { await store.start() }; ready = true }
+  }
+}
+
+private struct QQPreviewLocalDiagnostics: View {
+  @State private var result = "正在检查本地测试容器…"
+  var body: some View { Text(result).padding(30).task {
+    let account = "disposable-qa-probe"
+    let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "com.tianyabox.qingqing.preview.probe", kSecAttrAccount as String: account]
+    var add = query; add[kSecValueData as String] = Data("synthetic-test-only".utf8)
+    let added = SecItemAdd(add as CFDictionary, nil)
+    var read = query; read[kSecReturnData as String] = true
+    var output: CFTypeRef?
+    let readStatus = SecItemCopyMatching(read as CFDictionary, &output)
+    let removed = SecItemDelete(query as CFDictionary)
+    let configurationPresent = Bundle.main.url(forResource: "QingqingService", withExtension: "plist") != nil
+    let diagnostic: [String: Any] = ["keychain_add_status": added, "keychain_read_status": readStatus, "keychain_delete_status": removed, "configuration_present": configurationPresent, "bundle_id": Bundle.main.bundleIdentifier ?? "", "os": ProcessInfo.processInfo.operatingSystemVersionString, "network_requests": 0]
+    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("preview-local-diagnostics.json")
+    try? JSONSerialization.data(withJSONObject: diagnostic, options: [.prettyPrinted]).write(to: url)
+    result = "本地 Keychain 写入：\(added)\n读取：\(readStatus)\n配置存在：\(configurationPresent)\n未发起网络请求"
+  } }
+}
+
+private struct QQMemoryOfferPreview: View {
+  let mode: String
+  @State private var selected: QQRecord?
+  @State private var way: QQRecord?
+  private var kind: QQMemoryOfferKind { mode == "memory-unlock-fixture" ? .unlock : .capacity }
+  private var offers: QQMemoryOffers {
+    // Deliberately synthetic identifiers and text, confined to the QA target.
+    let packages: QQValue = .array([
+      .object(["package_id": .string("qa-only-single"), "title": .string("单角色布局测试"), "price": .string("测试"), "desc": .string("只核对布局，不是线上权益"), "tips": .array([.string("测试较长的规则文字换行和对齐"), .string("不会提交订单")]), "is_all": .number(0)]),
+      .object(["package_id": .string("qa-only-all"), "title": .string("全部角色布局测试"), "price": .string("测试"), "desc": .string("只核对布局，不是线上权益"), "tag": .string("测试"), "tips": .array([.string("测试第二张卡片的样式"), .string("不会提交订单")]), "is_all": .number(1)])
+    ])
+    let payWays: QQValue = .array([.object(["code": .string("qa-only-way"), "name": .string("测试支付方式"), "checked": .bool(true)])])
+    let info: QQValue = .object(["what_title": .string("什么是记忆条数"), "desc_list": .array([.string("合成文字仅用于检查字体、间距与换行"), .string("不代表真实套餐或账户权益")]), "role_status": .number(mode == "memory-owned-fixture" ? 1 : 0), "pay_types": payWays, "features": .array([.object(["title": .string("已购状态布局测试"), "desc": .string("不代表真实权益")])])])
+    let payload: QQValue = kind == .capacity ? packages : .object(["plans": packages, "pay_types": payWays])
+    return QQMemoryOffers(kind: kind, payload: payload, information: info)
+  }
+  var body: some View {
+    QQPage(title: "", color: Color(red: 0.98, green: 0.96, blue: 1), backgroundArtwork: kind == .capacity ? "amount_pic_background" : "memory_pic_background2", artworkHeight: 600, closeOnRight: kind == .unlock) {
+      ScrollView {
+        Text("合成布局验收 · 未请求业务接口").font(.system(size: 11)).foregroundStyle(.red)
+        QQMemoryOffersContent(offers: offers, selected: $selected, selectedWay: $way, loading: false, canPurchase: false, buy: {})
+      }
+    }.task { selected = offers.packages.first; way = offers.initialWay }
   }
 }
 

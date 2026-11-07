@@ -74,6 +74,28 @@ struct QQRecord: Identifiable, Hashable, Sendable {
   func hash(into hasher: inout Hasher) { hasher.combine(id); hasher.combine(name) }
 }
 
+enum QQMemoryOfferKind: String { case capacity, unlock }
+
+/// The two original screens use different endpoints and payloads. Package IDs
+/// are order identifiers; a display title must never substitute for one.
+struct QQMemoryOffers {
+  let kind: QQMemoryOfferKind
+  let payload: QQValue
+  let information: QQValue
+  var owned: Bool { kind == .capacity && (information["global_status"].text == "1" || information["role_status"].text == "1") }
+  var packages: [QQRecord] {
+    (kind == .capacity ? payload.records : payload["plans"].records).compactMap { record in
+      guard case .object(var fields) = record.value, !record["package_id"].isEmpty else { return nil }
+      fields["id"] = .string(record["package_id"])
+      return QQRecord(.object(fields))
+    }
+  }
+  var payWays: [QQRecord] {
+    (kind == .capacity ? information : payload)["pay_types"].records.filter { !$0["code"].isEmpty }
+  }
+  var initialWay: QQRecord? { payWays.first(where: { $0["checked"] == "1" }) ?? payWays.first }
+}
+
 struct QQMessage: Identifiable, Sendable {
   let id: String
   var text: String

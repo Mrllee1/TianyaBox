@@ -15,6 +15,7 @@ final class QingqingAPI {
   private let installID: String
   private let serviceConfiguration: [String: String]
   private let usesKeychain: Bool
+  private var deviceSessionTask: Task<Void, Error>?
 
   init(session: URLSession = .shared, baseURL: URL? = nil, serviceConfiguration: [String: String]? = nil, useKeychain: Bool = true) {
     self.session = session
@@ -48,11 +49,26 @@ final class QingqingAPI {
   func setToken(_ token: String) { self.token = token; if usesKeychain { QQKeychain.write(token, key: "session") } }
   var isLoggedIn: Bool { !token.isEmpty }
 
+  static let agentSearchPageSize = 18
+  func searchAgents(keyword: String, page: Int) async throws -> [QQRecord] {
+    try await request("home/searchRole2", method: "POST", parameters: ["keyword": keyword, "page": String(page), "pageSize": String(Self.agentSearchPageSize)]).records
+  }
+
   func ensureDeviceSession() async throws {
     guard token.isEmpty else { return }
-    let data = try await request("device/login", method: "POST")
-    guard !data["token"].text.isEmpty else { throw QQAPIError.invalidResponse }
-    setToken(data["token"].text)
+    let pending: Task<Void, Error>
+    if let deviceSessionTask { pending = deviceSessionTask }
+    else {
+      let task = Task { @MainActor in
+        defer { self.deviceSessionTask = nil }
+        let data = try await self.request("device/login", method: "POST")
+        guard !data["token"].text.isEmpty else { throw QQAPIError.invalidResponse }
+        // A bound-account login may finish while the guest request is in flight.
+        if self.token.isEmpty { self.setToken(data["token"].text) }
+      }
+      deviceSessionTask = task; pending = task
+    }
+    try await pending.value
   }
 
   func request(_ path: String, method: String = "GET", parameters: [String: String] = [:], json: Bool = false, body: QQValue? = nil) async throws -> QQValue {

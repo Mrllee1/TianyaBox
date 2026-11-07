@@ -1,0 +1,80 @@
+[
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-agent-picker-reference.png",
+    "bytes": 2341829,
+    "sha256": "a53fddc4b64349792d2fadfda6b6d4aa30bd03262ae0c618bde5ce0ba2d10cfc",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-agent-picker-empty.png",
+    "bytes": 136608,
+    "sha256": "b2b4f46468bd7855b33fec6fbab7e8eef67aa75776bd833f23d1680a7f319e18",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-picker-r2.png",
+    "bytes": 4084699,
+    "sha256": "7df3e512c7cd5c6a2dc2441d7568c8c8999b8892f1111bc702032af6ebff1c39",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-empty-r2.png",
+    "bytes": 173217,
+    "sha256": "a0945b8e7425d8290f42935c7b145cecf2c770a8cdc662c81f796c507e2b7418",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-restored-r2.png",
+    "bytes": 4084958,
+    "sha256": "1afbb17a12cc9e652b678832b28e15a0ae87d06ff760ae2856a4386f265ca653",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-capacity-fixture-r2.png",
+    "bytes": 901199,
+    "sha256": "3a2d6655b9ee5123a029df59f150ba3277ef515d20fef877f012082a58830d19",
+    "classification": "synthetic layout only"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-unlock-fixture-r2.png",
+    "bytes": 618742,
+    "sha256": "02fcfd502e88054a1504a4bb02a1e0c7d83e6c5c0b2c209e5f46ff5572c7108d",
+    "classification": "synthetic layout only"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-owned-fixture-r2.png",
+    "bytes": 769971,
+    "sha256": "213410ea8333e8159156f4e260a6e4f9337742e5fd72d135cb97470adb774acb",
+    "classification": "synthetic layout only"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/device-b-catalog-r2.png",
+    "bytes": 2656881,
+    "sha256": "9fa6d68961def97444826802f0e133ffe786bed2246af8857ecd0f3b89cc7bfb",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/contract-check-next.log",
+    "bytes": 1007,
+    "sha256": "5404a04a5aac1393169cb315315ad8a81eea3a9a464b79493bd760b2c4ddcb77",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/native-preview/build.log",
+    "bytes": 95664,
+    "sha256": "9278caf410a6aeda81ad282e34cb9d6edf4864d194727662c5a2814459e6e30e",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/continuation-device-build.log",
+    "bytes": 46802,
+    "sha256": "37506f0d571354300a2f8894fba57b66a2933f7a27be51592e8aec61453404dd",
+    "classification": "evidence; presence does not mean full parity pass"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/continuation-device-sign.log",
+    "bytes": 8539,
+    "sha256": "f45243b244a3bcb2a72677252047d57117b9328946ed1f92a9ccccd13879183e",
+    "classification": "evidence; presence does not mean full parity pass"
+  }
+]

@@ -1,0 +1,149 @@
+[
+  {
+    "name": "list_ico_role_search",
+    "source": "res/mipmap-xxhdpi/list_ico_role_search.webp",
+    "source_sha256": "ff83798a2a2fa489c8583461e339091eda1b1b6f7eed881d722f7b4a983ce067",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_list_ico_role_search.imageset/list_ico_role_search.png",
+    "output_sha256": "afdf0b6e2cc56b37d0027baf31ce243e36821db9479d2bc5ebd6c1451afb8275"
+  },
+  {
+    "name": "memory_pic_background2",
+    "source": "res/mipmap-xxhdpi/memory_pic_background2.webp",
+    "source_sha256": "d26773aaebfa191ad6174edcb491cf822994f2cb48bcb7e117855a2092cd7a49",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_memory_pic_background2.imageset/memory_pic_background2.png",
+    "output_sha256": "ad9111f0fa1c9b814cddfe1ccc6b1db55dd810190a51ee004ef2bccc253435cb"
+  },
+  {
+    "name": "memory_pic_title",
+    "source": "res/mipmap-xxhdpi/memory_pic_title.webp",
+    "source_sha256": "9667264f6b92125c4474a33caf744cd5da568f32df9ea7be46cf0238e15b1516",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_memory_pic_title.imageset/memory_pic_title.png",
+    "output_sha256": "57aba36fe1951b8f0ba5c083083ecca68b10cb2b51717dde54abb63a4a62003e"
+  },
+  {
+    "name": "amount_ico_advantage01",
+    "source": "res/mipmap-xxhdpi/amount_ico_advantage01.webp",
+    "source_sha256": "9f3640c29152dcc88c3eb0484b61fecb5c7359d30db81e73b3f0e103376605df",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_advantage01.imageset/amount_ico_advantage01.png",
+    "output_sha256": "eda701e5a68434fb4504435f1a5ef9b5430d9ed45991bdc9e56bcd13782aaf35"
+  },
+  {
+    "name": "amount_ico_advantage02",
+    "source": "res/mipmap-xxhdpi/amount_ico_advantage02.webp",
+    "source_sha256": "3e3ddcf59498d3d509a5bb7ffb570aa363ac46bd93c2837bf3986d624edd99ea",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_advantage02.imageset/amount_ico_advantage02.png",
+    "output_sha256": "18d3989a46988f1d8e293c95a1eed2cffc07fe8ec4db096394f4ebde754248a1"
+  },
+  {
+    "name": "amount_ico_advantage03",
+    "source": "res/mipmap-xxhdpi/amount_ico_advantage03.webp",
+    "source_sha256": "3baf0749cc207f2cccf500570d4f58cdbb0cc1296b3fad88b416480cc5fb3850",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_advantage03.imageset/amount_ico_advantage03.png",
+    "output_sha256": "c2bb7a730f25ad47c408be6dcbbc9c36953b872baea1682333f339f6bf436e31"
+  },
+  {
+    "name": "amount_ico_advantage04",
+    "source": "res/mipmap-xxhdpi/amount_ico_advantage04.webp",
+    "source_sha256": "924c19b72b7697cd8a3f0b4e58c9c6fbf9f99f5e45a4209a4eb09d19f0ccfcb6",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_advantage04.imageset/amount_ico_advantage04.png",
+    "output_sha256": "3a66db7874ad883590335d7374306ae359aa4a76158c0bd278e5ccfe71cc7fb0"
+  },
+  {
+    "name": "amount_ico_heart",
+    "source": "res/mipmap-xxhdpi/amount_ico_heart.webp",
+    "source_sha256": "0ed5b770b5dd5c602aab5cf156942aa797bdf82c50ab8f659766a165a632dde7",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_heart.imageset/amount_ico_heart.png",
+    "output_sha256": "44a1dc1651c6d9b5e3d4a4edd19dbd5992b6a34f18e13f4b3b4e0db6a66db1c4"
+  },
+  {
+    "name": "amount_ico_left",
+    "source": "res/mipmap-xxhdpi/amount_ico_left.webp",
+    "source_sha256": "022701c0ad1137cce13fd9030bf9738934b9079358be9435953cb8412572d501",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_left.imageset/amount_ico_left.png",
+    "output_sha256": "36bf98094d44b0bd7993ff7e5896a7b924b650bbc9222c9a9b0f3d06b38cd695"
+  },
+  {
+    "name": "amount_ico_right",
+    "source": "res/mipmap-xxhdpi/amount_ico_right.webp",
+    "source_sha256": "0a4f1738d93a6b4e664fb6914cc97dc06e9e3ad3736a180fd8ca85097858319c",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_right.imageset/amount_ico_right.png",
+    "output_sha256": "5790f592d79ab3f4d564534df4cc8ffd00d96298fd62fbce7f51313ee5ee92dd"
+  },
+  {
+    "name": "amount_ico_selected",
+    "source": "res/mipmap-xxhdpi/amount_ico_selected.webp",
+    "source_sha256": "2931f75f319ab04892b3db57ddddecec1168fb14182803e452ad40640ef044f1",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_ico_selected.imageset/amount_ico_selected.png",
+    "output_sha256": "b9a9d2e1a9eb80190a920d0c5e0c41220365b351ba94389e46ed6e4343202b21"
+  },
+  {
+    "name": "amount_pic_background",
+    "source": "res/mipmap-xxhdpi/amount_pic_background.webp",
+    "source_sha256": "793cdeae501cc3a96e4d1e43a9296643db26577f69d24c055edd9714f800b69d",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_background.imageset/amount_pic_background.png",
+    "output_sha256": "40187befd97db82340a9170a3ab7c0e89bcd0a95a37a2b1bb8e5c355d74b77aa"
+  },
+  {
+    "name": "amount_pic_heart02",
+    "source": "res/mipmap-xxhdpi/amount_pic_heart02.webp",
+    "source_sha256": "135bbe9ec647f4935e3894f73a722c3ebc7d60b48268fbf7199690a3640bdd60",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_heart02.imageset/amount_pic_heart02.png",
+    "output_sha256": "95f31cfbbd6271c09cce1a322442de8f0ea8bd528b5cf8c609c2eb3d71f5da5d"
+  },
+  {
+    "name": "amount_pic_heart03",
+    "source": "res/mipmap-xxhdpi/amount_pic_heart03.webp",
+    "source_sha256": "99c4155bddf09368ba196613daf298efb6cd211110e28fe71aee0f5ce068c2ce",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_heart03.imageset/amount_pic_heart03.png",
+    "output_sha256": "6a435b7a464b289aa6e8024a64f439dcad5a693ee27e6a5c06a763b1436ef6eb"
+  },
+  {
+    "name": "amount_pic_list",
+    "source": "res/mipmap-xxhdpi/amount_pic_list.webp",
+    "source_sha256": "ee1163cd275d27a2739f3db7241914f84117309f1cd7d789acde01197b03081e",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_list.imageset/amount_pic_list.png",
+    "output_sha256": "8d59d177581c217cf5854eeb9e69b0e550b96d4dab371f24efb0d7b7d8ab2410"
+  },
+  {
+    "name": "amount_pic_orange",
+    "source": "res/mipmap-xxhdpi/amount_pic_orange.webp",
+    "source_sha256": "6f2f2a55b659b7acdcc75d93295a4fddd5fa773921f4897ef718ef684c93238e",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_orange.imageset/amount_pic_orange.png",
+    "output_sha256": "910c174eab4ad4ff3572e151f97e36b04f0ef6a5be94d1e248338fbcd119577d"
+  },
+  {
+    "name": "amount_pic_pink",
+    "source": "res/mipmap-xxhdpi/amount_pic_pink.webp",
+    "source_sha256": "ac54771d2133247891c0b45520944620064c29fc3f1815c767c1e5317e84d139",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_pink.imageset/amount_pic_pink.png",
+    "output_sha256": "e92dcb4335591a8b2659b609caba188fb128ffccdd600f2de1cee69b5fb9bc70"
+  },
+  {
+    "name": "amount_pic_recommend",
+    "source": "res/mipmap-xxhdpi/amount_pic_recommend.webp",
+    "source_sha256": "37c1e07454a9cb3981a222d9d3a675752186bff534e2865cb1b038bee8570630",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_recommend.imageset/amount_pic_recommend.png",
+    "output_sha256": "7918d77cb12f257b34a67680ceefe1483b2cb001af2561dccfed9ca9e768fad0"
+  },
+  {
+    "name": "amount_pic_title",
+    "source": "res/mipmap-xxhdpi/amount_pic_title.webp",
+    "source_sha256": "1c2f809946bd14af40b6db6adb19b5dea72160852c4a090ef444f0a1790685fc",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_amount_pic_title.imageset/amount_pic_title.png",
+    "output_sha256": "0a259344338fe306a860f49e7e110c8cf811546fa1c43ae605a1a63c892df8ef"
+  },
+  {
+    "name": "memory_ico_total",
+    "source": "res/mipmap-xxhdpi/memory_ico_total.webp",
+    "source_sha256": "af1d3357a3dc9ec878a7a1770bdfed67b8bf2c5f3a99d22edeb295dee7037638",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_memory_ico_total.imageset/memory_ico_total.png",
+    "output_sha256": "7a332dd03c3d4d0a5158af84af038ba6047efca2c4d2b7786bf3500d6da95c0d"
+  },
+  {
+    "name": "memory_ico_single",
+    "source": "res/mipmap-xxhdpi/memory_ico_single.webp",
+    "source_sha256": "aa2e184afdad70fef1bd7bda88b3f6852b4aabe9598839a4eb8c35a4f496b679",
+    "output": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_memory_ico_single.imageset/memory_ico_single.png",
+    "output_sha256": "19e81c22d22d918fef5e1da15cb9b4c394b215d077c561e1d5ede6269a8d7c6e"
+  }
+]

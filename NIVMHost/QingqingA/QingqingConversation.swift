@@ -159,6 +159,7 @@ struct QQChatView: View {
   @State private var input = ""
   @State private var modelCode = "L1"
   @State private var memoryPresented = false
+  @State private var memoryCapacityPresented = false
   @State private var giftPresented = false
   @State private var memoryHome: QQValue = .null
   @State private var intimacy: QQValue = .null
@@ -231,6 +232,7 @@ struct QQChatView: View {
       .sheet(isPresented: $showBackground, onDismiss: { backgroundChoice = QQChatBackground.selection(roleID) }) { QQBackgroundSettingView(role: current).presentationDetents([.height(420)]).presentationCornerRadius(30) }
       .sheet(isPresented: $showModels) { NavigationStack { QQModelSelectionView(selection: $modelCode) }.presentationDetents([.large]) }
       .sheet(isPresented: $memoryPresented) { NavigationStack { QQMemoryView(role: current) }.environmentObject(store) }
+      .sheet(isPresented: $memoryCapacityPresented) { NavigationStack { QQMemberView(memoryRoleID: roleID) }.environmentObject(store) }
       .sheet(isPresented: $giftPresented) { NavigationStack { QQGiftView(role: current) }.environmentObject(store) }
       .confirmationDialog("重启会话后，将重新开始当前角色的剧情。", isPresented: $restart, titleVisibility: .visible) {
         Button("重启会话", role: .destructive) {
@@ -270,6 +272,7 @@ struct QQChatView: View {
           quickAction("对话模式", icon: "chat_ico_func02") { showModels = true }
           if memoryHome["home_is_show"].text == "1" {
             quickAction("记忆簿（\(memoryHome["home_used_memory_count"].text)/\(memoryHome["max_size"].text)）", icon: "chat_ico_func03") { memoryPresented = true }
+            quickAction("记忆条数", icon: "chat_ico_func04") { memoryCapacityPresented = true }
             quickAction("送礼物", icon: "chat_ico_func05") { giftPresented = true }
           }
         }

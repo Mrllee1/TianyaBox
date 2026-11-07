@@ -107,8 +107,8 @@ struct QQRoleTile: View {
   var body: some View {
     Color.clear.aspectRatio(compact ? 108.0/169 : 170.0/264, contentMode: .fit).overlay {
       ZStack(alignment: .bottomLeading) {
-        QQRemoteImage(address: role.image)
-        LinearGradient(colors: [.clear, .black.opacity(0.88)], startPoint: .top, endPoint: .bottom).frame(height: compact ? 50 : 150)
+        QQRemoteImage(address: compact ? role.first("img_url", "img_url_webp") : role.image)
+        LinearGradient(colors: compact ? [.black.opacity(0.6), .clear] : [.clear, .black.opacity(0.88)], startPoint: .top, endPoint: .bottom).frame(height: compact ? 50 : 150)
         VStack(alignment: .leading, spacing: compact ? 2 : 12) {
           HStack(spacing: 4) {
             Text(role.name).font(.system(size: 14, weight: .bold)).lineLimit(1)
@@ -118,7 +118,7 @@ struct QQRoleTile: View {
               Text(role.first("msg_num", "chat_num", "hot", "heat")).font(.system(size: 12)).lineLimit(1)
             }
           }
-          Text(compact ? role.tags.joined(separator: " ") : role.intro).font(.system(size: compact ? 10 : 12)).foregroundStyle(Color(white: 211.0/255)).lineSpacing(2).lineLimit(compact ? 1 : 4).frame(maxWidth: .infinity, alignment: .leading)
+          Text(compact ? (role["tag"].isEmpty ? "" : "#" + role["tag"]) : role.intro).font(.system(size: compact ? 10 : 12)).foregroundStyle(Color(white: 211.0/255)).lineSpacing(2).lineLimit(compact ? 1 : 4).frame(maxWidth: .infinity, alignment: .leading)
         }.padding(10).foregroundStyle(.white)
       }.overlay(alignment: .topTrailing) {
         if ["男", "女"].contains(role["gender"]) { QQArtwork(name: role["gender"] == "男" ? "home_ico_male" : "home_ico_female").frame(width: 20, height: 20).padding(8) }

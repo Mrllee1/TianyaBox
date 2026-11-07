@@ -125,7 +125,7 @@ struct QQSimulatorCastView: View {
   }
 }
 
-private struct QQAgentPickerView: View {
+struct QQAgentPickerView: View {
   @EnvironmentObject private var store: QingqingStore
   @Environment(\.dismiss) private var dismiss
   let excludedIDs: Set<String>
@@ -133,12 +133,66 @@ private struct QQAgentPickerView: View {
   @State private var query = ""
   @State private var records: [QQRecord] = []
   @State private var error: String?
+  @State private var toast: String?
+  @State private var page = 1
+  @State private var hasMore = true
+  @State private var loading = false
+  @State private var generation = UUID()
+  @State private var firstPageCache: [String: [QQRecord]] = [:]
+  @State private var loadedQuery = ""
+  @FocusState private var searchFocused: Bool
   var body: some View {
-    QQPage(title: "搜索角色", color: .white) {
-      TextField("搜索角色", text: $query).font(.system(size: 14)).padding(12).background(Color(white: 0.95), in: Capsule()).padding(.horizontal, 15)
-      ScrollView { LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) { ForEach(records.filter { !excludedIDs.contains($0.id) }) { role in Button { select(role); dismiss() } label: { QQRoleTile(role: role, compact: true) }.buttonStyle(.plain) } }.padding(14); if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) } }
-    }.task(id: query) {
-      do { try await Task.sleep(for: .milliseconds(350)); let result = query.isEmpty ? try await store.api.request("home/getRole", parameters: ["page": "1", "pageSize": "30", "category": "all"]) : try await store.api.request("home/searchRole", method: "POST", parameters: ["keyword": query, "page": "1", "pageSize": "30"]); guard !Task.isCancelled else { return }; records = result.records; error = nil } catch is CancellationError {} catch { if !Task.isCancelled { self.error = error.localizedDescription } }
+    VStack(spacing: 17) {
+      HStack(spacing: 0) {
+        Button { dismiss() } label: { QQArtwork(name: "ico_back").frame(width: 18, height: 18).frame(width: 45, height: 42) }.accessibilityLabel("返回")
+        HStack(spacing: 8) {
+          QQArtwork(name: "list_ico_role_search").frame(width: 18, height: 18)
+          TextField("搜索角色", text: $query).font(.system(size: 14)).focused($searchFocused).submitLabel(.search).autocorrectionDisabled().onSubmit { searchFocused = false }
+          if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark").foregroundStyle(.gray) }.accessibilityLabel("清除搜索") }
+        }.padding(.horizontal, 10).frame(height: 42).background(Color(white: 242.0/255), in: Capsule()).padding(.trailing, 15)
+      }.padding(.top, 7)
+      ScrollView {
+        VStack(spacing: 0) {
+        if !records.isEmpty {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+          ForEach(records) { role in
+            Button {
+              guard !excludedIDs.contains(role.id) else { toast = "该角色已参与身份扮演"; return }
+              select(role); dismiss()
+            } label: { QQRoleTile(role: role, compact: true) }.buttonStyle(.plain).accessibilityIdentifier("qingqing.agent." + role.id)
+              .onAppear { if records.last?.id == role.id && hasMore && !loading { Task { await load(reset: false) } } }
+          }
+        }.padding(.horizontal, 14).padding(.bottom, 15)
+        }
+        if loading { ProgressView().padding(15) }
+        if let error { QQEmptyState(text: error) { Task { await load(reset: true) } } }
+        else if records.isEmpty && !loading { VStack(spacing: 10) { QQArtwork(name: "invite_pic_null").frame(width: 162, height: 133); Text("暂无角色～").font(.system(size: 14)) }.padding(.top, 168).frame(maxWidth: .infinity) }
+        }
+      }.refreshable { firstPageCache.removeValue(forKey: query); await load(reset: true) }
+    }.background(Color(white: 249.0/255)).foregroundStyle(QQStyle.ink).toolbar(.hidden, for: .navigationBar)
+      .overlay(alignment: .bottom) { if let toast { Text(toast).font(.system(size: 14)).foregroundStyle(.white).padding(12).background(.black.opacity(0.7), in: RoundedRectangle(cornerRadius: 8)).padding(.bottom, 80) } }
+      .task(id: toast) { guard toast != nil else { return }; try? await Task.sleep(for: .seconds(2)); guard !Task.isCancelled else { return }; toast = nil }
+      .task(id: query) { do { try await Task.sleep(for: .milliseconds(350)); await load(reset: true) } catch {} }
+  }
+  private func load(reset: Bool) async {
+    // Do not append page N of a newly typed query to the preceding query's
+    // results during the debounce interval.
+    if !reset && (loading || !hasMore || query != loadedQuery) { return }
+    let key = query
+    if reset {
+      generation = UUID(); page = 1; error = nil; loadedQuery = key
+      if let cached = firstPageCache[key] { records = cached; hasMore = cached.count == QingqingAPI.agentSearchPageSize; loading = false; return }
+      records = []
     }
+    let ticket = generation
+    let requestedPage = reset ? 1 : page + 1
+    loading = true
+    defer { if ticket == generation { loading = false } }
+    do {
+      let fetched = try await store.api.searchAgents(keyword: key, page: requestedPage)
+      guard ticket == generation, key == query, !Task.isCancelled else { return }
+      if reset { records = fetched; firstPageCache[key] = fetched } else { records += fetched.filter { record in !records.contains(where: { $0.id == record.id }) } }
+      page = requestedPage; hasMore = fetched.count == QingqingAPI.agentSearchPageSize; error = nil
+    } catch is CancellationError {} catch { if ticket == generation && key == query { self.error = error.localizedDescription } }
   }
 }

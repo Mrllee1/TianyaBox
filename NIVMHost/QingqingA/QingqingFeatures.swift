@@ -125,13 +125,14 @@ struct QQMemoryView: View {
   @State private var editing: QQRecord?
   @State private var content = ""
   @State private var editor = false
+  @State private var unlockPresented = false
   @State private var error: String?
   @State private var busy = false
   var body: some View {
     QQPage(title: "记忆簿") {
       ScrollView {
         VStack(spacing: 16) {
-          HStack { Text("\(home["home_used_memory_count"].text)/\(home["max_size"].text)").font(.system(size: 13)); Spacer(); NavigationLink { QQMemberView(memoryRoleID: role.id) } label: { Text("扩展记忆容量 ›").font(.system(size: 13)) } }.padding(.horizontal, 20).padding(.top, 10)
+          HStack { Text("\(home["home_used_memory_count"].text)/\(home["max_size"].text)").font(.system(size: 13)); Spacer(); Button { unlockPresented = true } label: { Text("扩展记忆容量 ›").font(.system(size: 13)) } }.padding(.horizontal, 20).padding(.top, 10)
           if memories.isEmpty {
             QQArtwork(name: "memory_ico_null").frame(width: 150, height: 150).padding(.top, 130)
             Text("暂无记忆").font(.system(size: 18, weight: .bold)).padding(.top, 6)
@@ -152,6 +153,7 @@ struct QQMemoryView: View {
         }.padding(.bottom, 30)
       }.background(alignment: .top) { QQArtwork(name: "memory_pic_background").frame(height: 300) }
     }.task { await load() }
+      .sheet(isPresented: $unlockPresented, onDismiss: { Task { await load() } }) { NavigationStack { QQMemberView(memoryRoleID: role.id, memoryKind: .unlock) }.environmentObject(store).presentationDetents([.height(630), .large]).presentationDragIndicator(.hidden).presentationCornerRadius(20) }
       .sheet(isPresented: $editor) {
         VStack(spacing: 15) {
           ZStack {
@@ -183,6 +185,8 @@ struct QQMemoryView: View {
 struct QQMemberView: View {
   @EnvironmentObject private var store: QingqingStore
   var memoryRoleID: String? = nil
+  var memoryKind: QQMemoryOfferKind = .capacity
+  @State private var memoryInformation: QQValue = .null
   @State private var tab: Int
   @State private var data: QQValue = .null
   @State private var totals: QQValue = .null
@@ -198,15 +202,25 @@ struct QQMemberView: View {
   @State private var orderOutcomeUnknown = false
   @State private var statusText: String?
   @Environment(\.scenePhase) private var scenePhase
-  init(memoryRoleID: String? = nil, initialTab: Int = 0) {
+  init(memoryRoleID: String? = nil, memoryKind: QQMemoryOfferKind = .capacity, initialTab: Int = 0) {
     self.memoryRoleID = memoryRoleID
+    self.memoryKind = memoryKind
     _tab = State(initialValue: initialTab)
   }
   private var coinMode: Bool { memoryRoleID == nil && tab == 1 }
   private var coinBackground: Color { Color(red: 209.0/255, green: 248.0/255, blue: 254.0/255) }
   private var purchaseGradient: LinearGradient { LinearGradient(colors: coinMode ? [Color(red: 119.0/255, green: 148.0/255, blue: 1), Color(red: 200.0/255, green: 102.0/255, blue: 1), Color(red: 231.0/255, green: 74.0/255, blue: 1)] : [Color(red: 1, green: 101.0/255, blue: 117.0/255), Color(red: 1, green: 15.0/255, blue: 190.0/255), Color(red: 1, green: 74.0/255, blue: 1)], startPoint: .leading, endPoint: .trailing) }
   var body: some View {
-    QQPage(title: memoryRoleID == nil ? "" : "记忆扩容", color: coinMode ? Color(red: 241.0/255, green: 253.0/255, blue: 1) : Color(red: 1, green: 0.94, blue: 0.98)) {
+    QQPage(title: "", color: memoryRoleID != nil ? Color(red: 250.0/255, green: 246.0/255, blue: 1) : coinMode ? Color(red: 241.0/255, green: 253.0/255, blue: 1) : Color(red: 1, green: 0.94, blue: 0.98), backgroundArtwork: memoryRoleID == nil ? nil : memoryKind == .capacity ? "amount_pic_background" : "memory_pic_background2", artworkHeight: 600, closeOnRight: memoryRoleID != nil && memoryKind == .unlock) {
+      if memoryRoleID != nil {
+        ScrollView {
+          QQMemoryOffersContent(offers: memoryOffers, selected: $selected, selectedWay: $selectedWay, loading: loading, canPurchase: selected != nil && selectedWay != nil && !busy && orderID == nil && !orderOutcomeUnknown) { paying = selectedWay }
+          if !store.loggedIn { QQPrimaryButton(title: "登录查看套餐") { store.loginPresented = true }.padding(20) }
+          if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red).padding(20) }
+          if let statusText { Text(statusText).font(.system(size: 13)).foregroundStyle(.secondary).padding(15) }
+          if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy).padding(15) }
+        }
+      } else {
       GeometryReader { geometry in
         ScrollView {
           VStack(spacing: 0) {
@@ -227,6 +241,7 @@ struct QQMemberView: View {
             }.padding(coinMode ? 10 : 15).padding(.bottom, 10).background(coinMode ? coinBackground : .white, in: UnevenRoundedRectangle(topLeadingRadius: 22, bottomLeadingRadius: coinMode ? 22 : 0, bottomTrailingRadius: coinMode ? 22 : 0, topTrailingRadius: 22)).padding(.horizontal, coinMode ? 15 : 0).padding(.bottom, coinMode ? 10 : 0)
           }.frame(minHeight: geometry.size.height, alignment: .top)
         }
+      }
       }
     }.overlay(alignment: .top) {
       if memoryRoleID == nil {
@@ -290,9 +305,10 @@ struct QQMemberView: View {
       Button { selectedWay = way } label: { HStack(spacing: 10) { Image(systemName: way["code"].contains("wechat") ? "message.fill" : "a.circle.fill").font(.system(size: 26)).foregroundStyle(way["code"].contains("wechat") ? .green : .cyan); Text(way.name.components(separatedBy: "（").first ?? way.name).font(.system(size: 16)); Text(way["desc"]).font(.system(size: 14)).foregroundStyle(.gray); Spacer(minLength: 0); Image(systemName: selectedWay?.id == way.id ? "checkmark.circle.fill" : "circle").foregroundStyle(selectedWay?.id == way.id ? .cyan : Color(white: 0.85)) }.frame(height: 32) }.buttonStyle(.plain)
     } }
   }
+  private var memoryOffers: QQMemoryOffers { QQMemoryOffers(kind: memoryKind, payload: data, information: memoryInformation) }
   private var packages: [QQRecord] {
     let records: [QQRecord]
-    if memoryRoleID != nil { records = data.records.isEmpty ? ["package", "list", "role", "global"].flatMap { data[$0].records } : data.records }
+    if memoryRoleID != nil { records = memoryOffers.owned ? [] : memoryOffers.packages }
     else { records = data[coinMode ? "coin" : "package"].records }
     return records.filter { !$0.id.isEmpty }
   }
@@ -303,10 +319,23 @@ struct QQMemberView: View {
     do {
       if store.user == nil { await store.refreshUser() }
       guard let user = store.user, !user.id.isEmpty else { throw QQAPIError.authentication }
-      data = try await store.api.request(memoryRoleID == nil ? "order/packageV2" : "ai/getMemoryPackage", parameters: memoryRoleID.map { ["role_id": $0] } ?? [:])
-      totals = try await store.api.request("member/getCoinTotal")
-      payWays = try await store.api.request("order/payWay").records
-      selected = packages.first; selectedWay = payWays.first
+      if let memoryRoleID {
+        if memoryKind == .capacity {
+          async let catalog = store.api.request("ai/msgListPackage")
+          async let information = store.api.request("ai/getMsgListInfo", parameters: ["role_id": memoryRoleID])
+          (data, memoryInformation) = try await (catalog, information)
+        } else {
+          data = try await store.api.request("ai/getMemoryPackage", parameters: ["role_id": memoryRoleID])
+        }
+        payWays = memoryOffers.payWays
+        selectedWay = memoryOffers.initialWay
+      } else {
+        data = try await store.api.request("order/packageV2")
+        totals = try await store.api.request("member/getCoinTotal")
+        payWays = try await store.api.request("order/payWay").records
+        selectedWay = payWays.first
+      }
+      selected = packages.first
     } catch { self.error = error.localizedDescription }
   }
   private func createOrder(package: QQRecord, way: QQRecord) async {

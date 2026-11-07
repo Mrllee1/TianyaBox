@@ -79,7 +79,7 @@ struct QQSimulatorDetailView: View {
         outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey); castPresented = false
         await store.refreshUser(); continueGame(result["id"].text)
       } catch {
-        if case QQAPIError.service = error { outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey) }
+        if case QQAPIError.service(let code, _) = error, code > 0 { outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey) }
         self.error = error.localizedDescription
       }
     }

@@ -15,6 +15,7 @@ final class QingqingStore: ObservableObject {
   @Published var user: QQRecord?
   @Published var loading = false
   @Published var error: String?
+  @Published var sessionError: String?
   @Published var loginPresented = false
   @Published var creatorPresented = false
   private var started = false
@@ -27,9 +28,9 @@ final class QingqingStore: ObservableObject {
     guard !started else { return }
     started = true
     await reload()
-    if ProcessInfo.processInfo.arguments.contains("--qingqing-test-device-session") {
-      do { try await api.ensureDeviceSession(); await refreshUser() }
-      catch { self.error = error.localizedDescription }
+    if !loggedIn {
+      do { try await api.ensureDeviceSession(); sessionError = nil; await refreshUser() }
+      catch { sessionError = error.localizedDescription }
     }
   }
 

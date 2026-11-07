@@ -44,6 +44,62 @@ struct QingqingContractCheck {
     let list = try await api.request("home/getRole", parameters: ["page": "1"])
     precondition(list.records.first?.id == "42")
     print("PASS fresh installation identity and mixed identifier decoding")
+    FixtureProtocol.handler = { request in
+      precondition(request.url?.path == "/home/searchRole2" && request.httpMethod == "POST")
+      var body = request.httpBody ?? Data()
+      if let stream = request.httpBodyStream {
+        stream.open(); defer { stream.close() }
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        while stream.hasBytesAvailable { let count = stream.read(&buffer, maxLength: buffer.count); if count <= 0 { break }; body.append(contentsOf: buffer.prefix(count)) }
+      }
+      let form = String(data: body, encoding: .utf8) ?? ""
+      var components = URLComponents(); components.percentEncodedQuery = form
+      let fields = Dictionary(uniqueKeysWithValues: (components.queryItems ?? []).map { ($0.name, $0.value ?? "") })
+      precondition(fields == ["keyword": "角色 A+B", "page": "2", "pageSize": "18"])
+      return Data(#"{"code":200,"data":[{"id":"agent-42","name":"fixture"}]}"#.utf8)
+    }
+    let agents = try await api.searchAgents(keyword: "角色 A+B", page: 2)
+    precondition(agents.first?.id == "agent-42")
+    print("PASS agent picker searchRole2 form contract and original 18-item pagination")
+    var deviceLoginCalls = 0
+    FixtureProtocol.handler = { request in
+      precondition(request.url?.path == "/device/login")
+      deviceLoginCalls += 1
+      return Data(#"{"code":200,"data":{"token":"synthetic-guest-session"}}"#.utf8)
+    }
+    async let bootstrapOne: Void = api.ensureDeviceSession()
+    async let bootstrapTwo: Void = api.ensureDeviceSession()
+    async let bootstrapThree: Void = api.ensureDeviceSession()
+    _ = try await (bootstrapOne, bootstrapTwo, bootstrapThree)
+    precondition(deviceLoginCalls == 1 && api.isLoggedIn)
+    try await api.ensureDeviceSession()
+    precondition(deviceLoginCalls == 1)
+    print("PASS concurrent guest bootstrap shares one request and preserves the issued session")
+
+    let retryAPI = QingqingAPI(session: session, baseURL: URL(string: "https://fixture.invalid/")!, serviceConfiguration: [:], useKeychain: false)
+    FixtureProtocol.handler = { _ in Data(#"{"code":500,"msg":"fixture failure","data":null}"#.utf8) }
+    do { try await retryAPI.ensureDeviceSession(); preconditionFailure("Failed bootstrap accepted") }
+    catch QQAPIError.service(500, _) {}
+    precondition(!retryAPI.isLoggedIn)
+    FixtureProtocol.handler = { _ in Data(#"{"code":200,"data":{"token":"synthetic-recovered-session"}}"#.utf8) }
+    try await retryAPI.ensureDeviceSession()
+    precondition(retryAPI.isLoggedIn)
+    print("PASS failed guest bootstrap clears its task and allows an explicit later retry")
+
+    let capacityPayload = try JSONDecoder().decode(QQValue.self, from: Data(#"[{"package_id":71,"title":"same title","price":"fixture"},{"package_id":"72","title":"same title","price":"fixture"},{"title":"no order id"}]"#.utf8))
+    let memoryInfo = try JSONDecoder().decode(QQValue.self, from: Data(#"{"global_status":0,"role_status":0,"pay_types":[{"code":"first"},{"code":"checked","checked":true},{"name":"missing code"}]}"#.utf8))
+    let capacity = QQMemoryOffers(kind: .capacity, payload: capacityPayload, information: memoryInfo)
+    precondition(capacity.packages.map(\.id) == ["71", "72"] && !capacity.owned)
+    precondition(capacity.initialWay?.id == "checked" && capacity.payWays.count == 2)
+    let unlocked = QQMemoryOffers(kind: .capacity, payload: capacityPayload, information: .object(["role_status": .number(1)]))
+    precondition(unlocked.owned)
+    let globalUnlocked = QQMemoryOffers(kind: .capacity, payload: capacityPayload, information: .object(["global_status": .number(1)]))
+    precondition(globalUnlocked.owned)
+    let unlockPayload = try JSONDecoder().decode(QQValue.self, from: Data(#"{"plans":[{"package_id":"unlock-9","title":"fixture","is_all":1}],"pay_types":[{"code":"unlock-way","checked":1}]}"#.utf8))
+    let unlock = QQMemoryOffers(kind: .unlock, payload: unlockPayload, information: memoryInfo)
+    precondition(unlock.packages.first?.id == "unlock-9" && unlock.initialWay?.id == "unlock-way")
+    precondition(QQMemoryOffers(kind: .unlock, payload: .null, information: .null).packages.isEmpty)
+    print("PASS memory capacity/unlock schemas, real package IDs, checked payment method and owned-state gates")
 
     FixtureProtocol.handler = { _ in Data(#"{"code":3003,"msg":"login required","data":null}"#.utf8) }
     do { _ = try await api.request("member/info"); preconditionFailure("Login gate was ignored") }
