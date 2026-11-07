@@ -43,6 +43,50 @@ final class QingqingPreviewUITests: XCTestCase {
     }
   }
 
+  func testBackgroundSelectionPersistsInPreviewContainer() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=background-sheet-fixture"]
+    app.launch()
+    let solid = app.buttons["纯色背景"]
+    XCTAssertTrue(solid.waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["自定义上传\n仅本地保存"].exists)
+    solid.tap()
+    XCTAssertEqual(solid.value as? String, "已选择")
+    let save = app.buttons["设为聊天背景"]
+    XCTAssertTrue(save.isHittable)
+    capture(app, "background-selected-fixture")
+    save.tap()
+    let open = app.buttons["打开背景设置"]
+    XCTAssertTrue(open.waitForExistence(timeout: 10))
+    open.tap()
+    XCTAssertTrue(solid.waitForExistence(timeout: 10))
+    XCTAssertEqual(solid.value as? String, "已选择")
+    app.buttons["默认背景"].tap()
+    save.tap()
+  }
+
+  func testCustomBackgroundImagePreviewZoomAndReturn() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=background-custom-fixture"]
+    app.launch()
+    let open = app.buttons["查看自定义背景大图"]
+    XCTAssertTrue(open.waitForExistence(timeout: 10))
+    open.tap()
+    let image = app.images["图片预览"]
+    XCTAssertTrue(image.waitForExistence(timeout: 10))
+    XCTAssertEqual(image.value as? String, "100%")
+    image.doubleTap()
+    let zoomed = NSPredicate(format: "value != %@", "100%")
+    expectation(for: zoomed, evaluatedWith: image)
+    waitForExpectations(timeout: 5)
+    let doubleTapScale = image.value as? String
+    image.pinch(withScale: 1.2, velocity: 1)
+    XCTAssertNotEqual(image.value as? String, doubleTapScale)
+    capture(app, "custom-image-zoom-fixture")
+    image.tap()
+    XCTAssertTrue(open.waitForExistence(timeout: 10))
+  }
+
   private func capture(_ app: XCUIApplication, _ name: String) {
     let attachment = XCTAttachment(screenshot: app.screenshot())
     attachment.name = name; attachment.lifetime = .keepAlways

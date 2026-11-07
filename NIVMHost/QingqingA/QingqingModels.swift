@@ -76,6 +76,13 @@ struct QQRecord: Identifiable, Hashable, Sendable {
 
 enum QQMemoryOfferKind: String { case capacity, unlock }
 
+struct QQIdentityInput {
+  let name: String
+  let gender: String
+  var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
+  var canSubmit: Bool { !trimmedName.isEmpty && ["男", "女", "其他"].contains(gender) }
+}
+
 /// The two original screens use different endpoints and payloads. Package IDs
 /// are order identifiers; a display title must never substitute for one.
 struct QQMemoryOffers {

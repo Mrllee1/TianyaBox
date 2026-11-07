@@ -1,0 +1,14 @@
+{
+  "artifact": "dist/TianyaBox-AI-20261108-parity-r3.ipa",
+  "bytes": 134995073,
+  "sha256": "18982939b1707b9be8b63f15cb3e3a0490e2aa929839610942c351f8a022ce94",
+  "zip_integrity": "pass",
+  "bundle_identifier": "com.tianya.tempmail",
+  "display_name": "TianyaBox",
+  "contract_checks": 17,
+  "native_ui_tests": 4,
+  "native_ui_failures": 0,
+  "preview_result_bundle": "NIVMHost/Build/QA/qingqing-parity/native-preview/UI-20261108-053331.xcresult",
+  "private_configuration_in_git": false,
+  "b_surface_modified": false
+}

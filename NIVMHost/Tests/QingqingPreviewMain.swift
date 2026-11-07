@@ -15,6 +15,8 @@ struct PreviewScreen: View {
       if !ready { ProgressView() }
       else { switch mode {
       case "local-diagnostics": QQPreviewLocalDiagnostics()
+      case "background-sheet-fixture": QQBackgroundSheetPreview(custom: false)
+      case "background-custom-fixture": QQBackgroundSheetPreview(custom: true)
       case "memory-capacity-fixture", "memory-unlock-fixture", "memory-owned-fixture": NavigationStack { QQMemoryOfferPreview(mode: mode) }
       case "agent-picker": NavigationStack { QQAgentPickerView(excludedIDs: [], select: { _ in }) }.environmentObject(store)
       case "tag-picker": QQTagPreview().environmentObject(store)
@@ -52,6 +54,29 @@ struct PreviewScreen: View {
       default: QingqingRootView()
       } }
     }.task { if !mode.hasSuffix("-fixture") && !["local-diagnostics", "home", "library", "mine", "messages", "group", "simulator", "theater"].contains(mode) { await store.start() }; ready = true }
+  }
+}
+
+private struct QQBackgroundSheetPreview: View {
+  let custom: Bool
+  @State private var presented = false
+  private var role: QQRecord { QQRecord(.object(["id": .string(custom ? "qa-custom-background-only" : "qa-background-only"), "name": .string("背景验收")])) }
+  var body: some View {
+    VStack(spacing: 20) {
+      Text("合成背景验收 · 仅测试容器本地设置").font(.system(size: 13))
+      Button("打开背景设置") { presented = true }
+    }.sheet(isPresented: $presented) {
+      QQBackgroundSettingView(role: role).presentationDetents([.height(450)]).presentationCornerRadius(30).presentationDragIndicator(.hidden)
+    }.task {
+      if custom, let data = UIImage(named: "qq_res_logo")?.pngData(), let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+        let folder = directory.appendingPathComponent("QingqingChatBackgrounds", isDirectory: true)
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let file = folder.appendingPathComponent("qa-synthetic-background.image")
+        try? data.write(to: file, options: .atomic)
+        UserDefaults.standard.set(file.path, forKey: QQChatBackground.key(role.id))
+      }
+      presented = true
+    }
   }
 }
 

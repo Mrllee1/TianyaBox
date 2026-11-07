@@ -229,7 +229,7 @@ struct QQChatView: View {
         await chat.history(store: store, roleID: roleID, kind: kind)
       }
       .sheet(isPresented: $showIdentity) { NavigationStack { QQIdentityView(role: current) } }
-      .sheet(isPresented: $showBackground, onDismiss: { backgroundChoice = QQChatBackground.selection(roleID) }) { QQBackgroundSettingView(role: current).presentationDetents([.height(420)]).presentationCornerRadius(30) }
+      .sheet(isPresented: $showBackground, onDismiss: { backgroundChoice = QQChatBackground.selection(roleID) }) { QQBackgroundSettingView(role: current).presentationDetents([.height(450)]).presentationCornerRadius(30).presentationDragIndicator(.hidden) }
       .sheet(isPresented: $showModels) { NavigationStack { QQModelSelectionView(selection: $modelCode) }.presentationDetents([.large]) }
       .sheet(isPresented: $memoryPresented) { NavigationStack { QQMemoryView(role: current) }.environmentObject(store) }
       .sheet(isPresented: $memoryCapacityPresented) { NavigationStack { QQMemberView(memoryRoleID: roleID) }.environmentObject(store) }

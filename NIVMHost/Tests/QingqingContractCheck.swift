@@ -100,6 +100,13 @@ struct QingqingContractCheck {
     precondition(unlock.packages.first?.id == "unlock-9" && unlock.initialWay?.id == "unlock-way")
     precondition(QQMemoryOffers(kind: .unlock, payload: .null, information: .null).packages.isEmpty)
     print("PASS memory capacity/unlock schemas, real package IDs, checked payment method and owned-state gates")
+    precondition(!QQIdentityInput(name: "", gender: "男").canSubmit)
+    precondition(!QQIdentityInput(name: " \n ", gender: "女").canSubmit)
+    precondition(!QQIdentityInput(name: "fixture", gender: "").canSubmit)
+    precondition(!QQIdentityInput(name: "fixture", gender: "invalid").canSubmit)
+    let identityInput = QQIdentityInput(name: " \nfixture \n", gender: "其他")
+    precondition(identityInput.canSubmit && identityInput.trimmedName == "fixture")
+    print("PASS identity requires an explicit gender and a trimmed nonempty name")
 
     FixtureProtocol.handler = { _ in Data(#"{"code":3003,"msg":"login required","data":null}"#.utf8) }
     do { _ = try await api.request("member/info"); preconditionFailure("Login gate was ignored") }

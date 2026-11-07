@@ -1,0 +1,82 @@
+[
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-background-custom-r3.png",
+    "bytes": 384558,
+    "sha256": "606f3c09fd9d11435bf1c146c753e1459ab6ab741c0a08a43de143302f84b18b"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-background-setting-r2.png",
+    "bytes": 307971,
+    "sha256": "7778d2070dd42535de3574098dedf0c8ee4383948c75afd6c69bb2651a9f14c3"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-identity-setting-r2.png",
+    "bytes": 206940,
+    "sha256": "bc0dc8b2b1bac376ed09559e51246196748bb23981d3762607c3d75de916942f"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/android-image-preview-r3.png",
+    "bytes": 342886,
+    "sha256": "8100c295c3142202e973f2ac881d2b5fe778a445996f38f3f79b1de9c1682c76"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/continuation-device-build.log",
+    "bytes": 55575,
+    "sha256": "a79b322c02bff155bf479eddd7c0c58b9cb0b341c046240c581376bbdc720311"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/continuation-device-sign.log",
+    "bytes": 8539,
+    "sha256": "f45243b244a3bcb2a72677252047d57117b9328946ed1f92a9ccccd13879183e"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/contract-check-next.log",
+    "bytes": 1077,
+    "sha256": "3e1636ee379f323bc3902a4ce39bb2cdb84ff4814dd648b7956e53add11f6771"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-empty-r3.png",
+    "bytes": 173250,
+    "sha256": "c4135d2c92eaf9d6553ebb05bcdcfa780fa64ef9d9d63bf1dd575fac3b52587b"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-picker-r3.png",
+    "bytes": 4084754,
+    "sha256": "05ac528ef8d4b338ea0488f3f6f4e544a38d71df6ea8cf411902ba37ed91cb3a"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-agent-restored-r3.png",
+    "bytes": 4085009,
+    "sha256": "9750bbaef38465634cc1a582ad2db80c4db5d7aba2bfbbb49002d0c13ec71b5d"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-background-selected-fixture-r3.png",
+    "bytes": 380868,
+    "sha256": "6705ef64f49e98132d839734cc2459fc6a427b1664fed1c7a8233db07fc27154"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-image-zoom-fixture-r3.png",
+    "bytes": 1115662,
+    "sha256": "279f20f4a1e54b3a14eedf8a75cbe2a8c91564f23f5e919a882eca30528e16e7"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-capacity-fixture-r3.png",
+    "bytes": 900885,
+    "sha256": "664f752ecc9014bb0cb99533980b701447053c643c7e7857c6229766b4c123af"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-owned-fixture-r3.png",
+    "bytes": 768726,
+    "sha256": "6aa25017bb886c2b29cf105a5ef972af24ec2a2194b756f0669e1b595342c07f"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/ios-memory-unlock-fixture-r3.png",
+    "bytes": 618049,
+    "sha256": "bfb3ee9c27ace3e3c74e5e6ecf8def4c520476c2f998c2e6635ed102f70c6f75"
+  },
+  {
+    "file": "NIVMHost/Build/QA/qingqing-parity/native-preview/build.log",
+    "bytes": 95797,
+    "sha256": "2ba1e57b05ea3913b1ce062fc42dc8c05abc927534ed0f0e041d8cd94f90b294"
+  }
+]

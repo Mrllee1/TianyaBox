@@ -368,9 +368,11 @@ struct QQIdentityView: View {
   @Environment(\.dismiss) private var dismiss
   let role: QQRecord
   @State private var name = ""
-  @State private var gender = "女"
+  @State private var gender = ""
   @State private var setting = ""
   @State private var identity: QQValue = .null
+  @State private var identityLoaded = false
+  private var input: QQIdentityInput { QQIdentityInput(name: name, gender: gender) }
   @State private var busy = false
   @State private var error: String?
   var body: some View {
@@ -392,16 +394,27 @@ struct QQIdentityView: View {
                 if setting.isEmpty { Text("可添加任何你希望角色永久记住的信息，如经历、关系、背景等…记得用'我'指代自己。").font(.system(size: 14)).foregroundStyle(.gray.opacity(0.5)).lineSpacing(3).padding(14).allowsHitTesting(false) }
               }.background(Color(white: 242.0/255), in: RoundedRectangle(cornerRadius: 15))
             }.padding(16).background(.white, in: RoundedRectangle(cornerRadius: 22)).padding(.top, 10)
-            if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red).padding(10) }
+            if let error { VStack(spacing: 8) { Text(error).font(.system(size: 13)).foregroundStyle(.red); Button("重新加载") { Task { await loadIdentity() } }.font(.system(size: 13)) }.padding(10) }
           }.padding(.horizontal, 20).padding(.bottom, 20)
         }
         QQPrimaryButton(title: "提交", busy: busy) {
+          guard identityLoaded, input.canSubmit else { return }
           busy = true
-          Task { defer { busy = false }; do { _ = try await store.api.request("member/setRole", method: "POST", parameters: ["role_id": role.id, "id": identity["id"].text, "name": name, "gender": gender, "setting": setting, "background": identity["background"].text], json: true); dismiss() } catch { self.error = error.localizedDescription } }
-        }.disabled(name.trimmingCharacters(in: .whitespaces).isEmpty).padding(.horizontal, 20).padding(.bottom, 20)
+          Task { defer { busy = false }; do { _ = try await store.api.request("member/setRole", method: "POST", parameters: ["role_id": role.id, "id": identity["id"].text, "name": input.trimmedName, "gender": gender, "setting": setting, "background": identity["background"].text], json: true); dismiss() } catch { self.error = error.localizedDescription } }
+        }.disabled(!identityLoaded || !input.canSubmit).padding(.horizontal, 20).padding(.bottom, 20)
       }
-    }.task { do { identity = try await store.api.request("member/getRoleSetting", method: "POST", parameters: ["role_id": role.id]); name = identity["name"].text; gender = identity["gender"].text; setting = identity["setting"].text } catch { self.error = error.localizedDescription } }
+    }.task { await loadIdentity() }
       .onChange(of: setting) { _, value in setting = String(value.prefix(1000)) }
+  }
+  private func loadIdentity() async {
+    identityLoaded = false; error = nil
+    do {
+      identity = try await store.api.request("member/getRoleSetting", method: "POST", parameters: ["role_id": role.id])
+      name = identity["name"].text
+      let savedGender = identity["gender"].text
+      gender = savedGender.isEmpty ? "" : ["男", "女"].contains(savedGender) ? savedGender : "其他"
+      setting = identity["setting"].text; identityLoaded = true
+    } catch { self.error = error.localizedDescription }
   }
   private func genderColor(_ value: String) -> Color { value == "男" ? .cyan : value == "女" ? Color(red: 1, green: 131.0/255, blue: 249.0/255) : Color(red: 1, green: 184.0/255, blue: 107.0/255) }
 }

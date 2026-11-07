@@ -65,6 +65,7 @@ struct QQBackgroundSettingView: View {
   @State private var choice = ""
   @State private var photo: PhotosPickerItem?
   @State private var photoData: Data?
+  @State private var imagePreview = false
   @State private var error: String?
   var body: some View {
     VStack(spacing: 20) {
@@ -73,20 +74,38 @@ struct QQBackgroundSettingView: View {
         option("默认背景", value: "") { QQRemoteImage(address: role.image) }
         option("纯色背景", value: "solid_color") { QQArtwork(name: "chat_set_bg") }
         VStack(spacing: 9) {
-          PhotosPicker(selection: $photo, matching: .images) {
-            Color(white: 0.92).aspectRatio(102.0/190, contentMode: .fit).overlay { if let photoData, let image = UIImage(data: photoData) { Image(uiImage: image).resizable().scaledToFill() } else { Image(systemName: "plus").font(.system(size: 25)).foregroundStyle(.gray) } }.clipShape(RoundedRectangle(cornerRadius: 12)).overlay { RoundedRectangle(cornerRadius: 10).stroke(choice == "custom" ? .cyan : .clear, lineWidth: 3) }
-          }
+          customCard
           Text("自定义背景").font(.system(size: 12)).foregroundStyle(.gray)
         }.frame(maxWidth: .infinity)
       }.padding(.horizontal, 20)
       if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-      QQPrimaryButton(title: "确认") { save() }.padding(.horizontal, 20).padding(.bottom, 20)
+      QQPrimaryButton(title: "设为聊天背景") { save() }.padding(.horizontal, 20).padding(.bottom, 30)
     }.background(QQStyle.background).overlay(alignment: .topTrailing) { Button { dismiss() } label: { Image(systemName: "xmark").font(.system(size: 16, weight: .bold)).foregroundStyle(.gray).frame(width: 32, height: 32).background(.white, in: Circle()) }.padding(20) }
+      .fullScreenCover(isPresented: $imagePreview) { if let photoData, let image = UIImage(data: photoData) { QQImagePreview(image: image) } }
       .task { let current = QQChatBackground.selection(role.id); choice = current; if !current.isEmpty && current != "solid_color", let data = try? Data(contentsOf: URL(fileURLWithPath: current)) { photoData = data; choice = "custom" } }
       .task(id: photo) { guard let photo else { return }; do { guard let data = try await photo.loadTransferable(type: Data.self), data.count <= 8_000_000, UIImage(data: data) != nil else { error = "请选择小于 8MB 的图片"; return }; photoData = data; choice = "custom" } catch { self.error = error.localizedDescription } }
   }
+  private var customCard: some View {
+    Color(white: 0.92).aspectRatio(102.0/190, contentMode: .fit).overlay {
+      if let photoData, let image = UIImage(data: photoData) {
+        GeometryReader { geometry in
+          Button { choice = "custom" } label: { Image(uiImage: image).resizable().scaledToFill().frame(width: geometry.size.width, height: geometry.size.height).clipped() }.buttonStyle(.plain).accessibilityLabel("选择自定义背景")
+        }.overlay(alignment: .top) {
+          HStack {
+            PhotosPicker(selection: $photo, matching: .images) { QQArtwork(name: "bj_ico_gh").frame(width: 26, height: 26).padding(10) }.accessibilityLabel("更换自定义背景")
+            Spacer(minLength: 0)
+            Button { imagePreview = true } label: { QQArtwork(name: "bj_ico_dt").frame(width: 26, height: 26).padding(10) }.accessibilityLabel("查看自定义背景大图")
+          }
+        }
+      } else {
+        PhotosPicker(selection: $photo, matching: .images) {
+          VStack(spacing: 4) { QQArtwork(name: "script_ico_upload").frame(width: 24, height: 24); Text("自定义上传\n仅本地保存").font(.system(size: 14)).lineSpacing(2).multilineTextAlignment(.center).foregroundStyle(Color(white: 195.0/255)) }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+      }
+    }.clipShape(RoundedRectangle(cornerRadius: 12)).overlay { RoundedRectangle(cornerRadius: 10).stroke(choice == "custom" ? .cyan : .clear, lineWidth: 3).allowsHitTesting(false) }
+  }
   private func option<Content: View>(_ title: String, value: String, @ViewBuilder content: () -> Content) -> some View {
-    Button { choice = value } label: { VStack(spacing: 9) { Color.clear.aspectRatio(102.0/190, contentMode: .fit).overlay { content() }.clipShape(RoundedRectangle(cornerRadius: 12)).overlay { RoundedRectangle(cornerRadius: 10).stroke(choice == value ? .cyan : .clear, lineWidth: 3) }; Text(title).font(.system(size: 12)).foregroundStyle(.gray) }.frame(maxWidth: .infinity) }.buttonStyle(.plain)
+    Button { choice = value } label: { VStack(spacing: 9) { Color.clear.aspectRatio(102.0/190, contentMode: .fit).overlay { content() }.clipShape(RoundedRectangle(cornerRadius: 12)).overlay { RoundedRectangle(cornerRadius: 10).stroke(choice == value ? .cyan : .clear, lineWidth: 3) }; Text(title).font(.system(size: 12)).foregroundStyle(.gray) }.frame(maxWidth: .infinity) }.buttonStyle(.plain).accessibilityLabel(title).accessibilityValue(choice == value ? "已选择" : "未选择")
   }
   private func save() {
     do {
