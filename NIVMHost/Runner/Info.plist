@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>zh-Hans</string>
 	<key>CFBundleDisplayName</key>
-	<string>临时邮箱</string>
+	<string>TianyaBox</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>zh-Hans</string>
@@ -81,9 +81,9 @@
 		</dict>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>临时邮箱仅在您主动选择图片或视频时访问相册。</string>
+	<string>TianyaBox 仅在您主动选择角色形象、图片或视频时访问相册。</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>临时邮箱仅在您主动保存图片或视频时写入相册。</string>
+	<string>TianyaBox 仅在您主动保存图片或视频时写入相册。</string>
 	<key>NSCameraUsageDescription</key>
 	<string>临时邮箱仅在您主动扫描二维码或拍摄内容时使用相机。</string>
 	<key>NSMicrophoneUsageDescription</key>

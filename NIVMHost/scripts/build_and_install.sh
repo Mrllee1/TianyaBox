@@ -36,6 +36,7 @@ xcodebuild -project "$PROJECT_ROOT/Runner.xcodeproj" -scheme Runner \
   SWIFT_ENABLE_EXPLICIT_MODULES=NO CODE_SIGNING_ALLOWED=NO build
 HOST_APP="$DERIVED_DATA/Build/Products/Release-iphoneos/TempMail.app"
 ditto "$RUNTIME_FRAMEWORKS" "$HOST_APP/Frameworks"
+python3 "$SCRIPT_DIR/stage_qingqing_configuration.py" "$PROJECT_ROOT/../.private/qingqing-service.json" "$HOST_APP"
 python3 "$SCRIPT_DIR/sign_device_build.py" "$HOST_APP" "$TEMPMAIL_DEVICE_PROFILE" "$TEMPMAIL_SIGNING_IDENTITY"
 xcrun devicectl device install app --device "$DEVICE_ID" "$HOST_APP"
 xcrun devicectl device process launch --device "$DEVICE_ID" --terminate-existing com.tianya.tempmail

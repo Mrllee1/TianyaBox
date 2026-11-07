@@ -2,7 +2,7 @@ import XCTest
 @testable import TempMail
 
 final class RunnerTests: XCTestCase {
-  func testFreshLaunchUsesMailboxSurface() {
+  func testFreshLaunchUsesAISurface() {
     let suiteName = "TempMailSurfaceTests.fresh.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }

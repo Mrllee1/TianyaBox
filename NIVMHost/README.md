@@ -1,26 +1,43 @@
-# TianyaBox · 临时邮箱（TempMail）
+# TianyaBox · AI A + application-space B
 
-`临时邮箱` 是用户可见名称，工程产品名为 `TempMail`，Bundle ID 为
-`com.tianya.tempmail`。A 面提供完整的临时邮箱体验，B 面继续承载现有应用空间流程。
+The visible application name is `TianyaBox`. The host product and Bundle ID remain
+`TempMail` / `com.tianya.tempmail` to preserve installed B guest data and callbacks.
 
 ## A/B surfaces
 
-TempMail 由两个既有表面组成：
+- A is the native SwiftUI AI character product in `QingqingA`: discovery, role
+  details, email/device login, model selection, chat, creation, memories, gifts,
+  membership, simulator scenes, and the verified H5 theater adapter.
+- The previous mailbox sources in `TempMailA` are inactive historical sources.
+- B retains its encrypted application catalog, downloads, verified installation,
+  NIVM/QEMU runtime and floating guest return.
+- Existing routing remains compatible: `tempmail://privacy` selects AI A;
+  `tempmail://box`, `open`, `install`, and `native` select B. The selected surface
+  persists across launch; guest relaunch callbacks preserve it.
 
-- A 面（`临时邮箱`）提供邮箱创建、地址复制、更换地址、收件箱、邮件详情、附件下载、
-  邮箱管理以及深色/浅色主题。
-- B face (`TempMail 应用空间`) is the existing encrypted catalog, download,
-  installation, NIVM/QEMU runtime, and guest-return flow described below.
-- A fresh install starts on A. Opening `tempmail://box` (or the existing
-  `tempmail://open`, `tempmail://install`, and `tempmail://native` entry commands)
-  activates B and persists it across normal launches.
-- Opening `tempmail://privacy` returns to A and persists that choice. The guest-return
-  `tempmail://sandbox.relaunch` callback deliberately preserves B so the
-  guest floating menu continues to return to the box instead of exposing A.
+## AI service configuration
 
-The A surface boots directly into the current mailbox and keeps existing content
-visible while refreshing. Empty, loading, error, read/unread, attachment, delete,
-copy, and mailbox-switch states are handled by the first-party SwiftUI module.
+The public service base is configurable through `QingqingAPIBaseURL` or the private
+configuration staged into the app before signing. Full protocol configuration is
+local-only at `../.private/qingqing-service.json`; the build script stages it with
+`stage_qingqing_configuration.py`. Signing and response-cipher values must not be
+committed. A clone without private configuration supports public browsing only.
+
+The adapter uses a new per-installation 32-hex identifier, a Keychain session, the
+service request-signing protocol and its optional AES response envelope. Email
+verification starts by establishing this installation's device session. No Android
+hardware identifiers or captured user sessions are reused. HTTPS certificate
+validation remains enabled. No real payment is part of the verification procedure.
+
+Protocol contract checks:
+
+```sh
+xcrun swiftc -parse-as-library QingqingA/QingqingModels.swift QingqingA/QingqingAPI.swift Tests/QingqingContractCheck.swift -o Build/QA/qingqing/contract-check
+Build/QA/qingqing/contract-check
+```
+
+Live test outcomes and remaining acceptance limits are recorded in
+`../docs/audits/qingqing-a-20261108/REPORT.md`.
 
 ## User flow
 

@@ -103,7 +103,7 @@ final class TempMailSurfaceCoordinatorViewController: UIViewController {
     let nextController: UIViewController
     switch surface {
     case .privacy:
-      nextController = UIHostingController(rootView: TempMailMailboxSurfaceView())
+      nextController = UIHostingController(rootView: QingqingRootView())
     case .box:
       nextController = TempMailLauncherViewController()
     }

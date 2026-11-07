@@ -96,6 +96,15 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		AB0A00422F00000000000042 /* QingqingA */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = ();
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = QingqingA;
+			sourceTree = "<group>";
+		};
+
 		AB0A00412F00000000000041 /* TempMailA */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -199,6 +208,7 @@
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				AB0A00412F00000000000041 /* TempMailA */,
+				AB0A00422F00000000000042 /* QingqingA */,
 				F584CB7C2E796FBE00E25C34 /* VPNExtension */,
 				97C146EF1CF9000F007C117D /* Products */,
 				331C8082294A63A400263BE5 /* RunnerTests */,
@@ -284,6 +294,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AB0A00412F00000000000041 /* TempMailA */,
+				AB0A00422F00000000000042 /* QingqingA */,
 			);
 			name = Runner;
 			productName = Runner;
