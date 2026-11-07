@@ -346,6 +346,7 @@ final class GuestRuntimeCoordinator: NSObject, URLSessionDownloadDelegate {
 
     let installedMetadata: [String: Any] = [
       "CFBundleIdentifier": ipa.bundleIdentifier,
+      "CFBundleDisplayName": (NSDictionary(contentsOf: ipa.appBundleURL.appendingPathComponent("Info.plist"))?["CFBundleDisplayName"] as? String) ?? ipa.bundleIdentifier,
       "CFBundleShortVersionString": ipa.version,
       "CFBundleVersion": ipa.build,
       "IPA_SHA256": ipa.ipaSHA256,

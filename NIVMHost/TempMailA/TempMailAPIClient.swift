@@ -47,10 +47,9 @@ final class TempMailAPIClient {
   private var sessionBootstrapTask: Task<TempMailAuthSession, Error>?
 
   private let baseURLs: [URL] = [
-    URL(string: "https://api.dannia.asia")!,
-    URL(string: "https://api.haoche.asia")!,
     URL(string: "https://api.xn--49sy1df7a0y6c.cn")!,
     URL(string: "https://api.xn--tqqy4c53cd3f3xbly3b1jaw3hsuod4tv70e6fq.tech")!,
+    URL(string: "https://api.zhengdemei.asia")!,
   ]
 
   private let apiAESKey = Data(hex: "84d76a52788a6c3c9bff5f9a4084f84d")

@@ -27,6 +27,11 @@ struct PlayBoxGuestDescriptor: Codable, Hashable {
     nivmURL?.lastPathComponent.lowercased().hasSuffix(".nivm.zip") == true
   }
 
+  /// HBuilder guests require their original main / UIApplicationMain bootstrap.
+  var requiresFullProcessBootstrap: Bool {
+    ["com.amk2ns2n9j.alan2is71", "com.igvideo.jingdong"].contains(expectedBundleIdentifier)
+  }
+
   init(
     id: String,
     storageIdentifier: String,

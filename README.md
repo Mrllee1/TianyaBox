@@ -1,4 +1,6 @@
-# AppBox
+# TianyaBox
+
+唯一维护工程：`TianyaBox`。iOS 宿主位于 `NIVMHost`，保留临时邮箱 A 面和动态应用空间 B 面。AppBox2026 的运行器修复在此合并，后续不再维护独立 AppBox2026 工作目录。
 
 AppBox is an iPhone application catalog and controlled NIVM/QEMU guest host.
 It downloads only server-listed, pre-converted packages, verifies both the IPA

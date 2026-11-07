@@ -18,3 +18,15 @@ Resources/AppBox-JITLess-*.plist
 /screenshots
 /NIVMHost/Build
 /NIVMHost/dist
+
+# Local device artifacts and signing material
+/NIVMHost/Artifacts/
+/NIVMHost/Pods/
+/NIVMHost/build/
+/NIVMHost/.symlinks/
+/NIVMHost/Flutter/Generated.xcconfig
+
+__pycache__/
+*.pyc
+
+/.private/

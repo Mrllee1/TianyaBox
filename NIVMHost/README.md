@@ -1,4 +1,4 @@
-# 临时邮箱（TempMail）
+# TianyaBox · 临时邮箱（TempMail）
 
 `临时邮箱` 是用户可见名称，工程产品名为 `TempMail`，Bundle ID 为
 `com.tianya.tempmail`。A 面提供完整的临时邮箱体验，B 面继续承载现有应用空间流程。
@@ -96,10 +96,8 @@ surfaces.
 
 - Xcode and CocoaPods
 - a connected, trusted iPhone included in the development profile
-- `pornhub_client` at `../pornhub/pornhub_client`, or set
-  `TEMPMAIL_CLIENT_IOS_ROOT`
-- the local converted artifacts under `/Users/king/Documents/AppBox`, or set
-  `TEMPMAIL_ARTIFACT_ROOT`
+- `pornhub_client` at `../../pornhub/pornhub_client` for CocoaPods generation
+- the verified converted artifacts under `NIVMHost/Artifacts/Guests`
 - an installed `/Applications/PlayBox.app`; the build stages the required
   private runtime frameworks from that local application
 
@@ -108,12 +106,21 @@ The runtime frameworks are intentionally not committed to this repository.
 ## Build, install, and launch
 
 ```bash
-cd /Users/king/Documents/GitHub/AppBox/NIVMHost
+cd /Users/king/Documents/GitHub/TianyaBox/NIVMHost
 pod install
+export TEMPMAIL_SIGNING_IDENTITY="<local-development-certificate-SHA1>"
+export TEMPMAIL_DEVICE_PROFILE="/absolute/path/to/development.mobileprovision"
 ./scripts/build_and_install.sh 003F06EE-CAF3-553A-8035-CDD0276F9ED1
 ```
 
-Successful completion prints `TEMPMAIL_HOST_OK`, installs
+The device script uses the verified frameworks in `Build/Runtime/Frameworks`
+(or `TEMPMAIL_RUNTIME_FRAMEWORKS`), signs with the supplied development profile,
+and never changes the mailbox bundle ID or existing installed mailbox data.
+The script prepares the exact SHA-256 verified Flutter debug interpreter from the local SDK
+and stages the eight startup plugins from the verified Tianya 357 IPA.
+`TEMPMAIL_FLUTTER_FRAMEWORK_SOURCE` can select that exact SDK framework location.
+
+Successful completion prints `TIANYABOX_HOST_OK`, installs
 `com.tianya.tempmail`, and launches it on the selected device.
 
 ## App Store IPA
@@ -122,7 +129,7 @@ Use the App Store build script instead of wrapping a device-specific build by
 hand:
 
 ```bash
-cd /Users/king/Documents/GitHub/AppBox/NIVMHost
+cd /Users/king/Documents/GitHub/TianyaBox/NIVMHost
 ./scripts/build_appstore_ipa.sh
 ```
 

@@ -1192,7 +1192,7 @@ final class TempMailLauncherViewController: UIViewController {
     descriptor: PlayBoxGuestDescriptor?
   ) {
     let defaults = UserDefaults.standard
-    if runtimeKind == "playbox" {
+    if runtimeKind == "playbox" && descriptor?.requiresFullProcessBootstrap != true {
       let launchResult = TempMailLaunchSelectedPlayBoxGuestInProcess()
       print("TEMPMAIL_RUNTIME in_process_guest_result=\(launchResult)")
       defaults.removeObject(forKey: "TempMailGuestLaunchToken")
@@ -1217,6 +1217,7 @@ final class TempMailLauncherViewController: UIViewController {
       if accepted, !self.relaunchExitScheduled {
         self.markInstalledAppLaunched(descriptor)
         self.relaunchExitScheduled = true
+        UIApplication.shared.perform(NSSelectorFromString("suspend"))
         exit(0)
       } else if completionCount >= 2, !self.relaunchExitScheduled {
         self.showFailure("无法自动进入应用，请重试")

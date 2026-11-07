@@ -1,6 +1,9 @@
 # iOS 最低版本：NetworkExtension + Libbox(sing-box) 要求 iOS 15+
 platform :ios, '15.0'
 
+# Guest plugins are staged and loaded by the runtime, never embedded by CocoaPods.
+install! 'cocoapods', :integrate_targets => false
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 singbox_simulator_stub = ENV['FLUTTER_SINGBOX_SIMULATOR_STUB'] == '1'

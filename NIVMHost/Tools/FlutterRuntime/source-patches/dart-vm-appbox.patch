@@ -1,0 +1,56 @@
+diff --git a/runtime/vm/virtual_memory_posix.cc b/runtime/vm/virtual_memory_posix.cc
+index f93abed0..fe766085 100644
+--- a/runtime/vm/virtual_memory_posix.cc
++++ b/runtime/vm/virtual_memory_posix.cc
+@@ -464,7 +464,7 @@ class ScopedExcBadAccessHandler {
+ //
+ // Note: we use Syslog::PrintErr below instead of OS::PrintErr to send
+ // output to the same location where FATAL message would be reported to if any.
+-bool CheckIfRXWorks() {
++[[maybe_unused]] bool CheckIfRXWorks() {
+   // Try creating executable VirtualMemory.
+   std::unique_ptr<VirtualMemory> mem{
+       VirtualMemory::Allocate(VirtualMemory::PageSize(), /*is_executable=*/true,
+@@ -544,16 +544,20 @@ void VirtualMemory::Init() {
+   page_size_ = CalculatePageSize();
+ 
+ #if defined(DART_ENABLE_RX_WORKAROUNDS)
++#if defined(DART_INCLUDE_SIMULATOR)
++  // AppBox executes downloaded, target-specific Flutter kernels through the
++  // ARM64 simulator. Do not probe anonymous RX pages on iOS 26: the code
++  // signing monitor terminates the process while the probe itself executes,
++  // before the VM can observe the failure and select the simulator.
++  should_dual_map_executable_pages_ = false;
++  FLAG_use_simulator = true;
++  Syslog::PrintErr("Dart execution mode: simulator (forced)\n");
++#else
+   bool can_jit = true;
+   if (IsAtLeastIOS26_0()) {
+     should_dual_map_executable_pages_ = true;
+     can_jit = CheckIfRXWorks();
+   }
+-#if defined(DART_INCLUDE_SIMULATOR)
+-  FLAG_use_simulator = !can_jit;
+-  Syslog::PrintErr("Dart execution mode: %s\n",
+-                   FLAG_use_simulator ? "simulator" : "JIT");
+-#else
+   if (!can_jit) {
+     FATAL(
+         "Unable to JIT: failed to create executable machine code dynamically "
+@@ -821,10 +825,14 @@ void VirtualMemory::Protect(void* address, intptr_t size, Protection mode) {
+       prot = PROT_READ | PROT_WRITE;
+       break;
+     case kReadExecute:
+-      prot = PROT_READ | PROT_EXEC;
++      // Generated ARM64 code is data to the Dart simulator. iOS 26 rejects
++      // adding PROT_EXEC to anonymous pages in an App Store-style process, and
++      // the simulator never branches to those pages on the host CPU.
++      prot = FLAG_use_simulator ? PROT_READ : PROT_READ | PROT_EXEC;
+       break;
+     case kReadWriteExecute:
+-      prot = PROT_READ | PROT_WRITE | PROT_EXEC;
++      prot = FLAG_use_simulator ? PROT_READ | PROT_WRITE
++                                : PROT_READ | PROT_WRITE | PROT_EXEC;
+       break;
+   }
+   if (mprotect(reinterpret_cast<void*>(page_address),

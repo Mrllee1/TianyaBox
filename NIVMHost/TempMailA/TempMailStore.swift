@@ -69,8 +69,10 @@ final class TempMailStore: ObservableObject {
       }
       try await loadMessages(showRefreshState: false)
       phase = .ready
+      print("TEMPMAIL_MAILBOX ready domains=\(domains.count) mailboxes=\(mailboxes.count) messages=\(messages.count)")
       startAutoRefresh()
     } catch {
+      print("TEMPMAIL_MAILBOX failed error=\(error.localizedDescription)")
       phase = .failed(error.localizedDescription)
     }
   }

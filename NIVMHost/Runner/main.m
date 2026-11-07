@@ -12,6 +12,7 @@
 #include <mach-o/nlist.h>
 #include <libgen.h>
 #include <signal.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
@@ -47,6 +48,7 @@ static TempMailAdversarysAbortFunction TempMailAdversarysAbort;
 static TempMailAdversarysHandlerFunction TempMailAdversarysHandler;
 static uintptr_t TempMailDiagnosticAdversarysBase;
 static int TempMailDiagnosticSignalFile = -1;
+static BOOL TempMailDiagnosticSignalHandlerInstalled;
 static BOOL TempMailDiagnosticDispatchOnceArmed;
 static volatile sig_atomic_t TempMailDiagnosticWatchArmed;
 static uintptr_t TempMailDiagnosticWatchAddress;
@@ -67,13 +69,42 @@ static char TempMailNativeYunCengPluginAssociationKey;
 static char TempMailNativeYunCengTokenAssociationKey;
 static char TempMailNativeYunCengChannelAssociationKey;
 static char TempMailNativeYunCengHandlerAssociationKey;
+static void TempMailInstallGuestFloatingControl(UIWindow *window);
 static BOOL TempMailInProcessGuestBootstrap;
 static id TempMailInProcessGuestDelegate;
 static UIWindow *TempMailInProcessGuestWindow;
 static UIViewController *TempMailInProcessGuestRootController;
+typedef NS_ENUM(NSInteger, TempMailGuestLifecycleState) {
+  TempMailGuestLifecycleStateUnavailable = 0,
+  TempMailGuestLifecycleStateActive,
+  TempMailGuestLifecycleStateInactive,
+  TempMailGuestLifecycleStateBackground,
+};
+static BOOL TempMailInProcessGuestLifecycleReady;
+static TempMailGuestLifecycleState TempMailInProcessGuestLifecycleState;
+static NSBundle *TempMailHostBundle;
 static NSBundle *TempMailGuestMainBundle;
 static CFBundleRef TempMailGuestMainCFBundle;
-static NSBundle *TempMailHostBundle;
+static NSMutableArray *TempMailGuestIdentityKeepAliveObjects;
+static NSBundle *TempMailPreviousMainBundle;
+static CFBundleRef TempMailPreviousMainCFBundle;
+static void **TempMailMainNSBundleStorage;
+static void **TempMailMainCFBundleStorage;
+static NSString *TempMailPreviousArgumentZero;
+static NSString *TempMailPreviousProcessName;
+static vm_prot_t TempMailMainNSBundleProtection = VM_PROT_NONE;
+static vm_prot_t TempMailMainCFBundleProtection = VM_PROT_NONE;
+static BOOL TempMailMainNSBundleMappingTainted;
+static BOOL TempMailMainCFBundleMappingTainted;
+static id TempMailHostApplicationDelegate;
+static UIWindow *TempMailHostApplicationWindow;
+static UIViewController *TempMailHostRootViewController;
+static BOOL TempMailHostWindowWasHidden;
+static BOOL TempMailHostWindowWasKey;
+static BOOL TempMailHostApplicationSurfaceCaptured;
+static NSUInteger TempMailGuestLaunchGeneration;
+static BOOL TempMailGuestRuntimeIrreversible;
+static volatile int TempMailGuestRuntimeLaunchClaim;
 static NSMutableArray<NSValue *> *TempMailLooseGuestImages;
 static uintptr_t TempMailChungongKingfisherBase;
 
@@ -1422,6 +1453,397 @@ static UIWindow *TempMailCurrentForegroundWindow(UIApplication *application) {
   return visibleWindow ?: application.windows.firstObject;
 }
 
+static void TempMailSendGuestLifecycle(id guestDelegate, SEL selector,
+                                     NSString *source) {
+  if (guestDelegate == nil ||
+      ![guestDelegate respondsToSelector:selector]) {
+    return;
+  }
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME lifecycle_forward source=%@ delegate=%@ "
+         "selector=%@",
+        source, NSStringFromClass([guestDelegate class]),
+        NSStringFromSelector(selector));
+  ((void (*)(id, SEL, id))objc_msgSend)(
+      guestDelegate, selector, UIApplication.sharedApplication);
+}
+
+static void TempMailResetInProcessGuestLifecycle(void) {
+  TempMailInProcessGuestLifecycleReady = NO;
+  TempMailInProcessGuestLifecycleState =
+      TempMailGuestLifecycleStateUnavailable;
+}
+
+static void TempMailMarkInProcessGuestLifecycleActive(void) {
+  TempMailInProcessGuestLifecycleState = TempMailGuestLifecycleStateActive;
+  TempMailInProcessGuestLifecycleReady =
+      TempMailInProcessGuestDelegate != nil &&
+      __atomic_load_n(&TempMailGuestRuntimeLaunchClaim,
+                      __ATOMIC_SEQ_CST) != 0;
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME lifecycle_ready ready=%d delegate=%@",
+        TempMailInProcessGuestLifecycleReady,
+        NSStringFromClass([TempMailInProcessGuestDelegate class]));
+}
+
+// Called synchronously by TempMailSceneDelegate. Values are intentionally a
+// small C ABI so the Swift scene delegate does not need Objective-C runtime
+// knowledge about the selected guest.
+void TempMailForwardInProcessGuestLifecycle(int32_t event) {
+  if (!TempMailInProcessGuestLifecycleReady ||
+      TempMailInProcessGuestDelegate == nil ||
+      __atomic_load_n(&TempMailGuestRuntimeLaunchClaim,
+                      __ATOMIC_SEQ_CST) == 0) {
+    return;
+  }
+
+  switch (event) {
+    case 1:  // sceneWillResignActive
+      if (TempMailInProcessGuestLifecycleState !=
+          TempMailGuestLifecycleStateActive) {
+        return;
+      }
+      TempMailInProcessGuestLifecycleState =
+          TempMailGuestLifecycleStateInactive;
+      TempMailSendGuestLifecycle(
+          TempMailInProcessGuestDelegate,
+          @selector(applicationWillResignActive:), @"host_scene");
+      break;
+    case 2:  // sceneDidEnterBackground
+      if (TempMailInProcessGuestLifecycleState ==
+          TempMailGuestLifecycleStateBackground) {
+        return;
+      }
+      TempMailInProcessGuestLifecycleState =
+          TempMailGuestLifecycleStateBackground;
+      TempMailSendGuestLifecycle(
+          TempMailInProcessGuestDelegate,
+          @selector(applicationDidEnterBackground:), @"host_scene");
+      break;
+    case 3:  // sceneWillEnterForeground
+      if (TempMailInProcessGuestLifecycleState !=
+          TempMailGuestLifecycleStateBackground) {
+        return;
+      }
+      TempMailInProcessGuestLifecycleState =
+          TempMailGuestLifecycleStateInactive;
+      TempMailSendGuestLifecycle(
+          TempMailInProcessGuestDelegate,
+          @selector(applicationWillEnterForeground:), @"host_scene");
+      break;
+    case 4:  // sceneDidBecomeActive
+      if (TempMailInProcessGuestLifecycleState ==
+          TempMailGuestLifecycleStateActive) {
+        return;
+      }
+      TempMailInProcessGuestLifecycleState = TempMailGuestLifecycleStateActive;
+      TempMailSendGuestLifecycle(
+          TempMailInProcessGuestDelegate,
+          @selector(applicationDidBecomeActive:), @"host_scene");
+      break;
+    default:
+      break;
+  }
+}
+
+// HBuilder guests were built before scene adoption became mandatory.  When
+// their real `main` enters UIApplicationMain on iOS 27, UIKit now terminates
+// the process unless the active main bundle declares a scene delegate.  This
+// Objective-C class is deliberately module-independent so it can be resolved
+// while NSBundle.mainBundle is redirected to the extracted guest bundle.
+@interface TempMailGuestSceneDelegate : UIResponder <UIWindowSceneDelegate>
+@property(nonatomic, strong) UIWindow *window;
+@property(nonatomic, assign) TempMailGuestLifecycleState lifecycleState;
+@end
+
+@implementation TempMailGuestSceneDelegate
+- (void)scene:(UIScene *)scene
+    willConnectToSession:(UISceneSession *)session
+               options:(UISceneConnectionOptions *)connectionOptions {
+  (void)session;
+  (void)connectionOptions;
+  if (![scene isKindOfClass:UIWindowScene.class]) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_failed reason=not_window_scene");
+    return;
+  }
+
+  id guestDelegate = UIApplication.sharedApplication.delegate;
+  UIWindow *guestWindow = nil;
+  if ([guestDelegate respondsToSelector:@selector(window)]) {
+    guestWindow = ((id (*)(id, SEL))objc_msgSend)(guestDelegate,
+                                                  @selector(window));
+  }
+  if (guestWindow == nil) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_failed reason=window_missing "
+           "delegate=%@",
+          NSStringFromClass([guestDelegate class]));
+    return;
+  }
+
+  UIWindowScene *windowScene = (UIWindowScene *)scene;
+  if (guestWindow.windowScene != windowScene) {
+    guestWindow.windowScene = windowScene;
+  }
+  self.window = guestWindow;
+  TempMailInstallGuestFloatingControl(guestWindow);
+  // DCloud completes its initial activation as part of the legacy app
+  // bootstrap. Re-sending applicationDidBecomeActive here can trigger its
+  // one-time restart path, so treat the connected foreground scene as active
+  // and only bridge subsequent background/foreground transitions.
+  self.lifecycleState = TempMailGuestLifecycleStateActive;
+  [guestWindow makeKeyAndVisible];
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_connected delegate=%@ window=%@ "
+         "root=%@ scene=%@",
+        NSStringFromClass([guestDelegate class]),
+        NSStringFromClass(guestWindow.class),
+        NSStringFromClass(guestWindow.rootViewController.class),
+        windowScene.session.persistentIdentifier);
+}
+
+- (void)sceneDidBecomeActive:(UIScene *)scene {
+  (void)scene;
+  if (self.lifecycleState == TempMailGuestLifecycleStateActive) {
+    return;
+  }
+  self.lifecycleState = TempMailGuestLifecycleStateActive;
+  TempMailSendGuestLifecycle(
+      UIApplication.sharedApplication.delegate,
+      @selector(applicationDidBecomeActive:), @"guest_scene");
+}
+
+- (void)sceneWillResignActive:(UIScene *)scene {
+  (void)scene;
+  if (self.lifecycleState != TempMailGuestLifecycleStateActive) {
+    return;
+  }
+  self.lifecycleState = TempMailGuestLifecycleStateInactive;
+  TempMailSendGuestLifecycle(
+      UIApplication.sharedApplication.delegate,
+      @selector(applicationWillResignActive:), @"guest_scene");
+}
+
+- (void)sceneDidEnterBackground:(UIScene *)scene {
+  (void)scene;
+  if (self.lifecycleState == TempMailGuestLifecycleStateBackground) {
+    return;
+  }
+  self.lifecycleState = TempMailGuestLifecycleStateBackground;
+  TempMailSendGuestLifecycle(
+      UIApplication.sharedApplication.delegate,
+      @selector(applicationDidEnterBackground:), @"guest_scene");
+}
+
+- (void)sceneWillEnterForeground:(UIScene *)scene {
+  (void)scene;
+  if (self.lifecycleState != TempMailGuestLifecycleStateBackground) {
+    return;
+  }
+  self.lifecycleState = TempMailGuestLifecycleStateInactive;
+  TempMailSendGuestLifecycle(
+      UIApplication.sharedApplication.delegate,
+      @selector(applicationWillEnterForeground:), @"guest_scene");
+}
+@end
+
+#if defined(TEMPMAIL_HBUILDER_DIAGNOSTICS)
+static void TempMailLogGuestControllerTree(UIViewController *controller,
+                                         NSUInteger depth) {
+  if (controller == nil || depth > 8) {
+    return;
+  }
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC controller depth=%lu class=%@ view=%@ "
+         "children=%lu presented=%@",
+        (unsigned long)depth, NSStringFromClass(controller.class),
+        NSStringFromClass(controller.view.class),
+        (unsigned long)controller.childViewControllers.count,
+        NSStringFromClass(controller.presentedViewController.class));
+  for (UIViewController *child in controller.childViewControllers) {
+    TempMailLogGuestControllerTree(child, depth + 1);
+  }
+  if (controller.presentedViewController != nil) {
+    TempMailLogGuestControllerTree(controller.presentedViewController,
+                                 depth + 1);
+  }
+}
+
+static void TempMailLogGuestViewTree(UIView *view, NSUInteger depth,
+                                   NSUInteger *visited) {
+  if (view == nil || depth > 12 || *visited >= 240) {
+    return;
+  }
+  *visited += 1;
+  NSString *className = NSStringFromClass(view.class);
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC view depth=%lu class=%@ frame=%@ "
+         "hidden=%d alpha=%.3f subviews=%lu",
+        (unsigned long)depth, className, NSStringFromCGRect(view.frame),
+        view.hidden, view.alpha, (unsigned long)view.subviews.count);
+
+  if ([className containsString:@"WKWebView"]) {
+    id URL = nil;
+    BOOL loading = NO;
+    double progress = 0;
+    SEL URLSelector = NSSelectorFromString(@"URL");
+    SEL loadingSelector = NSSelectorFromString(@"isLoading");
+    SEL progressSelector = NSSelectorFromString(@"estimatedProgress");
+    if ([view respondsToSelector:URLSelector]) {
+      URL = ((id (*)(id, SEL))objc_msgSend)(view, URLSelector);
+    }
+    if ([view respondsToSelector:loadingSelector]) {
+      loading = ((BOOL (*)(id, SEL))objc_msgSend)(view, loadingSelector);
+    }
+    if ([view respondsToSelector:progressSelector]) {
+      progress = ((double (*)(id, SEL))objc_msgSend)(view,
+                                                     progressSelector);
+    }
+    NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC webview url=%@ loading=%d "
+           "progress=%.3f",
+          URL, loading, progress);
+    SEL evaluateSelector =
+        NSSelectorFromString(@"evaluateJavaScript:completionHandler:");
+    if ([view respondsToSelector:evaluateSelector]) {
+      void (^completion)(id, NSError *) = ^(id result, NSError *error) {
+        NSString *text = result == nil ? @"" : [result description];
+        if (text.length > 3000) {
+          text = [text substringToIndex:3000];
+        }
+        NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC document error=%@ text=%@",
+              error.localizedDescription ?: @"none", text);
+      };
+      ((void (*)(id, SEL, id, id))objc_msgSend)(
+          view, evaluateSelector,
+          @"JSON.stringify({title:document.title,body:document.body&&"
+           "document.body.innerText,html:document.documentElement&&"
+           "document.documentElement.outerHTML})",
+          completion);
+    }
+  }
+  for (UIView *subview in view.subviews) {
+    TempMailLogGuestViewTree(subview, depth + 1, visited);
+  }
+}
+
+static void TempMailLogHBuilderSurface(NSString *stage) {
+  UIApplication *application = UIApplication.sharedApplication;
+  UIWindow *window = TempMailCurrentForegroundWindow(application);
+  NSUInteger visited = 0;
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC surface stage=%@ delegate=%@ window=%@ "
+         "root=%@ scene=%@",
+        stage, NSStringFromClass(application.delegate.class),
+        NSStringFromClass(window.class),
+        NSStringFromClass(window.rootViewController.class),
+        window.windowScene.session.persistentIdentifier);
+  TempMailLogGuestControllerTree(window.rootViewController, 0);
+  TempMailLogGuestViewTree(window, 0, &visited);
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC surface_end stage=%@ views=%lu",
+        stage, (unsigned long)visited);
+}
+
+static void TempMailLogObjectiveCClassMethods(NSString *className) {
+  Class runtimeClass = NSClassFromString(className);
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC class name=%@ pointer=%p image=%s",
+        className, runtimeClass,
+        runtimeClass == Nil ? "missing" : (class_getImageName(runtimeClass) ?: "unknown"));
+  if (runtimeClass == Nil) {
+    return;
+  }
+  unsigned int methodCount = 0;
+  Method *methods = class_copyMethodList(runtimeClass, &methodCount);
+  for (unsigned int index = 0; index < methodCount; index += 1) {
+    NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC method class=%@ selector=%@ types=%s",
+          className, NSStringFromSelector(method_getName(methods[index])),
+          method_getTypeEncoding(methods[index]) ?: "unknown");
+  }
+  free(methods);
+}
+
+static IMP TempMailOriginalWKLoadRequest = NULL;
+static IMP TempMailOriginalWKLoadFileURL = NULL;
+static IMP TempMailOriginalWKLoadHTMLString = NULL;
+
+static id TempMailDiagnosticWKLoadRequest(id webView, SEL selector,
+                                        NSURLRequest *request) {
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC wk_load_request url=%@ main=%@",
+        request.URL, request.mainDocumentURL);
+  return TempMailOriginalWKLoadRequest == NULL
+      ? nil
+      : ((id (*)(id, SEL, id))TempMailOriginalWKLoadRequest)(webView, selector,
+                                                            request);
+}
+
+static id TempMailDiagnosticWKLoadFileURL(id webView, SEL selector,
+                                        NSURL *URL, NSURL *readAccessURL) {
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC wk_load_file url=%@ read_access=%@",
+        URL, readAccessURL);
+  return TempMailOriginalWKLoadFileURL == NULL
+      ? nil
+      : ((id (*)(id, SEL, id, id))TempMailOriginalWKLoadFileURL)(
+            webView, selector, URL, readAccessURL);
+}
+
+static id TempMailDiagnosticWKLoadHTMLString(id webView, SEL selector,
+                                           NSString *string,
+                                           NSURL *baseURL) {
+  NSString *preview = string ?: @"";
+  if (preview.length > 240) {
+    preview = [preview substringToIndex:240];
+  }
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC wk_load_html base=%@ html=%@",
+        baseURL, preview);
+  return TempMailOriginalWKLoadHTMLString == NULL
+      ? nil
+      : ((id (*)(id, SEL, id, id))TempMailOriginalWKLoadHTMLString)(
+            webView, selector, string, baseURL);
+}
+
+static void TempMailInstallWKWebViewLoadDiagnostics(void) {
+  Class webViewClass = NSClassFromString(@"WKWebView");
+  if (webViewClass == Nil) {
+    NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC wk_hook_failed reason=class_missing");
+    return;
+  }
+  Method requestMethod = class_getInstanceMethod(
+      webViewClass, NSSelectorFromString(@"loadRequest:"));
+  Method fileMethod = class_getInstanceMethod(
+      webViewClass,
+      NSSelectorFromString(@"loadFileURL:allowingReadAccessToURL:"));
+  Method htmlMethod = class_getInstanceMethod(
+      webViewClass, NSSelectorFromString(@"loadHTMLString:baseURL:"));
+  if (requestMethod != NULL && TempMailOriginalWKLoadRequest == NULL) {
+    TempMailOriginalWKLoadRequest = method_setImplementation(
+        requestMethod, (IMP)TempMailDiagnosticWKLoadRequest);
+  }
+  if (fileMethod != NULL && TempMailOriginalWKLoadFileURL == NULL) {
+    TempMailOriginalWKLoadFileURL = method_setImplementation(
+        fileMethod, (IMP)TempMailDiagnosticWKLoadFileURL);
+  }
+  if (htmlMethod != NULL && TempMailOriginalWKLoadHTMLString == NULL) {
+    TempMailOriginalWKLoadHTMLString = method_setImplementation(
+        htmlMethod, (IMP)TempMailDiagnosticWKLoadHTMLString);
+  }
+  NSLog(@"TEMPMAIL_HBUILDER_DIAGNOSTIC wk_hook_ready request=%d file=%d html=%d",
+        TempMailOriginalWKLoadRequest != NULL,
+        TempMailOriginalWKLoadFileURL != NULL,
+        TempMailOriginalWKLoadHTMLString != NULL);
+}
+
+static void TempMailInstallHBuilderDiagnostics(void) {
+  TempMailInstallWKWebViewLoadDiagnostics();
+  for (NSString *className in @[
+         @"AppDelegate", @"PDRCore", @"SnKiwiModule", @"SnYxdModule",
+         @"SnChengziModule", @"SnChengziProxy", @"Kiwi",
+         @"WRSHttpServerPlugins"
+       ]) {
+    TempMailLogObjectiveCClassMethods(className);
+  }
+  for (NSNumber *delay in @[@5, @15, @30]) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+                                 delay.integerValue * NSEC_PER_SEC),
+                   dispatch_get_main_queue(), ^{
+      TempMailLogHBuilderSurface(
+          [NSString stringWithFormat:@"%lds", (long)delay.integerValue]);
+    });
+  }
+}
+#endif
+
 static void TempMailGuestAwareMakeKeyAndVisible(UIWindow *window, SEL selector) {
   if (TempMailDeferGuestWindowVisibility) {
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME window_visibility_deferred class=%@",
@@ -1530,6 +1952,12 @@ static UIViewController *TempMailTakeDeferredGuestRootController(
     *guestWindowOut = guestWindow;
   }
   return controller;
+}
+
+static void TempMailCancelGuestWindowVisibilityDeferral(void) {
+  TempMailDeferGuestWindowVisibility = NO;
+  TempMailDeferredGuestRootWindow = nil;
+  TempMailDeferredGuestRootController = nil;
 }
 
 typedef void (*TempMailTerminateHandlerFunction)(void);
@@ -2872,6 +3300,9 @@ static void TempMailDiagnosticSignalHandler(int signalNumber,
 }
 
 static void TempMailInstallDiagnosticSignalHandler(void) {
+  if (TempMailDiagnosticSignalHandlerInstalled) {
+    return;
+  }
   Dl_info imageInfo = {0};
   if (TempMailAdversarysOpen != NULL &&
       dladdr((void *)TempMailAdversarysOpen, &imageInfo) != 0) {
@@ -2885,11 +3316,9 @@ static void TempMailInstallDiagnosticSignalHandler(void) {
       inDomains:NSUserDomainMask].lastObject;
   NSURL *signalURL =
       [documentsURL URLByAppendingPathComponent:@"tempmail-runtime-signal.log"];
-  if (TempMailDiagnosticSignalFile >= 0) {
-    close(TempMailDiagnosticSignalFile);
-  }
   TempMailDiagnosticSignalFile = open(signalURL.fileSystemRepresentation,
-                                    O_CREAT | O_WRONLY | O_TRUNC, 0600);
+                                    O_CREAT | O_WRONLY | O_TRUNC | O_APPEND,
+                                    0600);
   struct sigaction action = {0};
   action.sa_sigaction = TempMailDiagnosticSignalHandler;
   action.sa_flags = SA_SIGINFO;
@@ -2898,6 +3327,14 @@ static void TempMailInstallDiagnosticSignalHandler(void) {
   sigaction(SIGTRAP, &action, NULL);
   sigaction(SIGSEGV, &action, NULL);
   sigaction(SIGBUS, &action, NULL);
+  TempMailDiagnosticSignalHandlerInstalled = YES;
+}
+
+static void TempMailWriteDiagnosticStage(const char *stage) {
+  if (TempMailDiagnosticSignalFile >= 0 && stage != NULL) {
+    dprintf(TempMailDiagnosticSignalFile, "TEMPMAIL_DIAGNOSTIC_STAGE %s\n", stage);
+    fsync(TempMailDiagnosticSignalFile);
+  }
 }
 
 static void TempMailLogDiagnosticMemory(NSString *stage) {
@@ -3359,7 +3796,9 @@ static void TempMailReturnToSandbox(void) {
       TempMailFloatingReturnInFlight = NO;
       return;
     }
-    exit(0);
+    [UIApplication.sharedApplication performSelector:NSSelectorFromString(@"suspend")];
+    // Guest atexit hooks can point into translated pages; skip destructors.
+    _exit(0);
   };
   [UIApplication.sharedApplication openURL:relaunchURL
                                    options:@{}
@@ -3685,10 +4124,17 @@ static void TempMailInstallGuestFloatingControl(UIWindow *window) {
   TempMailGuestFloatingView = control;
   NSLog(@"TEMPMAIL_FLOATING_RETURN installed window=%@ asset=%d",
         NSStringFromClass(window.class), control.iconView.image != nil);
-  if ([NSProcessInfo.processInfo.arguments
-          containsObject:@"--tempmail-test-floating-return"]) {
+  NSURL *qaReturnMarker = [TempMailPlayBoxContinuationMarkerURL().URLByDeletingLastPathComponent
+      URLByAppendingPathComponent:@"qa-floating-return"];
+  NSUserDefaults *qaDefaults = NSUserDefaults.standardUserDefaults;
+  if ([NSProcessInfo.processInfo.arguments containsObject:@"--tempmail-test-floating-return"] ||
+      [qaDefaults boolForKey:@"TempMailQAFloatingReturn"] ||
+      [NSFileManager.defaultManager fileExistsAtPath:qaReturnMarker.path]) {
+    [NSFileManager.defaultManager removeItemAtURL:qaReturnMarker error:nil];
+    [qaDefaults removeObjectForKey:@"TempMailQAFloatingReturn"];
+    [qaDefaults synchronize];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
-                                 (int64_t)(2.5 * NSEC_PER_SEC)),
+                                 (int64_t)(15.0 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(), ^{
       [control showMenuAnimated:NO];
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
@@ -3891,11 +4337,17 @@ static void TempMailRegisterFlutterPlugin(id engine, NSString *framework,
 static void TempMailScheduleGuestScreenshot(NSTimeInterval delay,
                                           NSString *fileName);
 
-static uint64_t TempMailAArch64TBNZTarget(uint32_t instruction, uint64_t pc) {
-  if ((instruction & 0xFF000000) != 0x37000000) {
+static uint64_t TempMailAArch64TestBitBranchTarget(uint32_t instruction,
+                                                 uint64_t pc) {
+  // TBZ and TBNZ both use a signed 14-bit, four-byte-aligned immediate.
+  if ((instruction & 0x7E000000) != 0x36000000) {
     return 0;
   }
-  return (((instruction >> 5) & 0xFFFF) * 4) + pc;
+  int64_t immediate = (instruction >> 5) & 0x3FFF;
+  if ((immediate & 0x2000) != 0) {
+    immediate |= ~0x3FFFLL;
+  }
+  return pc + (uint64_t)(immediate * 4);
 }
 
 static uint64_t TempMailAArch64ADRP(uint32_t instruction, uint64_t pc) {
@@ -3908,7 +4360,7 @@ static uint64_t TempMailAArch64ADRP(uint32_t instruction, uint64_t pc) {
   if (instruction & 0x800000) {
     immediate |= 0xFFE00000;
   }
-  return (pc & ~(0xFFFULL)) + ((int64_t)immediate << 12);
+  return (pc & ~(0xFFFULL)) + ((int64_t)immediate * 4096LL);
 }
 
 static uint64_t TempMailAArch64ADRPAdd(uint32_t adrpInstruction,
@@ -3946,112 +4398,656 @@ static uint64_t TempMailAArch64ADRPLoad(uint32_t adrpInstruction,
   return page + (((loadInstruction >> 10) & 0xFFF) << 3);
 }
 
-static BOOL TempMailOverwriteMainNSBundle(NSBundle *newBundle) {
-#if defined(__arm64__)
-  NSBundle *oldBundle = NSBundle.mainBundle;
-  uint32_t *implementation = (uint32_t *)method_getImplementation(
-      class_getClassMethod(NSBundle.class, @selector(mainBundle)));
-  BOOL replaced = NO;
+static BOOL TempMailAddressRangeInfo(const void *address, size_t length,
+                                   vm_prot_t *protectionOut) {
+  if (address == NULL || length == 0) {
+    return NO;
+  }
+  uintptr_t start = (uintptr_t)address;
+  if (start < 0x4000 || UINTPTR_MAX - start < length - 1) {
+    return NO;
+  }
 
-  for (int instructionIndex = 0; instructionIndex < 20; instructionIndex++) {
-    void **mergedGlobals = (void **)TempMailAArch64ADRPAdd(
-        implementation[instructionIndex], implementation[instructionIndex + 1],
-        (uint64_t)&implementation[instructionIndex]);
-    if (mergedGlobals == NULL) {
+  vm_address_t region = (vm_address_t)start;
+  vm_size_t regionLength = 0;
+  struct vm_region_submap_short_info_64 info = {0};
+  mach_msg_type_number_t infoCount = VM_REGION_SUBMAP_SHORT_INFO_COUNT_64;
+  natural_t depth = 99999;
+  kern_return_t result = vm_region_recurse_64(
+      mach_task_self(), &region, &regionLength, &depth,
+      (vm_region_recurse_info_t)&info, &infoCount);
+  if (result != KERN_SUCCESS || (info.protection & VM_PROT_READ) == 0) {
+    return NO;
+  }
+
+  uintptr_t end = start + length;
+  uintptr_t regionEnd = (uintptr_t)region + (uintptr_t)regionLength;
+  if (start < (uintptr_t)region || end > regionEnd) {
+    return NO;
+  }
+  if (protectionOut != NULL) {
+    *protectionOut = info.protection;
+  }
+  return YES;
+}
+
+static BOOL TempMailReadPointer(const void *address, void **valueOut) {
+  if (valueOut == NULL ||
+      !TempMailAddressRangeInfo(address, sizeof(void *), NULL)) {
+    return NO;
+  }
+  memcpy(valueOut, address, sizeof(void *));
+  return YES;
+}
+
+static void TempMailKeepGuestIdentityObjectsAlive(
+    NSBundle *oldNSBundle, CFBundleRef oldCFBundle, NSBundle *guestBundle,
+    CFBundleRef guestCFBundle) {
+  if (TempMailGuestIdentityKeepAliveObjects == nil) {
+    TempMailGuestIdentityKeepAliveObjects = [NSMutableArray array];
+  }
+  if (oldNSBundle != nil) {
+    [TempMailGuestIdentityKeepAliveObjects addObject:oldNSBundle];
+  }
+  if (oldCFBundle != NULL) {
+    [TempMailGuestIdentityKeepAliveObjects addObject:(__bridge id)oldCFBundle];
+  }
+  if (guestBundle != nil) {
+    [TempMailGuestIdentityKeepAliveObjects addObject:guestBundle];
+  }
+  if (guestCFBundle != NULL) {
+    [TempMailGuestIdentityKeepAliveObjects addObject:(__bridge id)guestCFBundle];
+  }
+}
+
+static BOOL TempMailWritePointer(void *address, void *expectedValue,
+                               void *replacementValue, const char *name,
+                               vm_prot_t *finalProtectionState,
+                               BOOL *mappingChangedOut) {
+  if (mappingChangedOut != NULL) {
+    *mappingChangedOut = NO;
+  }
+  vm_prot_t observedProtection = VM_PROT_NONE;
+  void *currentValue = NULL;
+  if (!TempMailAddressRangeInfo(address, sizeof(void *),
+                              &observedProtection) ||
+      !TempMailReadPointer(address, &currentValue)) {
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY write_failed name=%s reason=unreadable "
+           "address=%p",
+          name, address);
+    return NO;
+  }
+  if (currentValue != expectedValue) {
+    return NO;
+  }
+  vm_prot_t finalProtection = observedProtection;
+  if (finalProtectionState != NULL) {
+    if (*finalProtectionState == VM_PROT_NONE) {
+      *finalProtectionState = observedProtection;
+    } else {
+      finalProtection = *finalProtectionState;
+    }
+  }
+
+  vm_address_t pageAddress = trunc_page((vm_address_t)address);
+  vm_address_t endAddress = round_page((vm_address_t)address + sizeof(void *));
+  vm_size_t protectedLength = endAddress - pageAddress;
+  BOOL changedProtection = (observedProtection & VM_PROT_WRITE) == 0;
+  if (changedProtection) {
+    vm_prot_t writableProtection =
+        observedProtection | VM_PROT_WRITE;
+    kern_return_t protectResult = vm_protect(
+        mach_task_self(), pageAddress, protectedLength, FALSE,
+        writableProtection);
+    if (protectResult != KERN_SUCCESS) {
+      protectResult = vm_protect(
+          mach_task_self(), pageAddress, protectedLength, FALSE,
+          writableProtection | VM_PROT_COPY);
+      if (protectResult == KERN_SUCCESS && mappingChangedOut != NULL) {
+        // VM_PROT_COPY can replace the underlying mapping and alter its
+        // maximum protection. Restoring only the current protection later is
+        // not enough to make an in-process host fallback provably safe.
+        *mappingChangedOut = YES;
+      }
+    }
+    if (protectResult != KERN_SUCCESS) {
+      NSLog(@"TEMPMAIL_IOS27_IDENTITY write_failed name=%s reason=vm_protect "
+             "kr=%d address=%p protection=%x",
+            name, protectResult, address, observedProtection);
+      return NO;
+    }
+  }
+
+  uintptr_t expectedBits = (uintptr_t)expectedValue;
+  BOOL wroteValue = __atomic_compare_exchange_n(
+      (uintptr_t *)address, &expectedBits, (uintptr_t)replacementValue, false,
+      __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+  if (!wroteValue) {
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY write_failed name=%s reason=value_changed "
+           "address=%p observed=%p",
+          name, address, (void *)expectedBits);
+  }
+  void *writtenValue = NULL;
+  wroteValue = wroteValue && TempMailReadPointer(address, &writtenValue) &&
+      writtenValue == replacementValue;
+
+  if (changedProtection || observedProtection != finalProtection) {
+    kern_return_t restoreResult = vm_protect(
+        mach_task_self(), pageAddress, protectedLength, FALSE,
+        finalProtection);
+    if (restoreResult != KERN_SUCCESS) {
+      NSLog(@"TEMPMAIL_IOS27_IDENTITY protection_restore_failed name=%s kr=%d "
+             "address=%p",
+            name, restoreResult, address);
+      wroteValue = NO;
+    }
+  }
+  return wroteValue;
+}
+
+static BOOL TempMailPointerStorageMatchesState(void *address,
+                                              void *expectedValue,
+                                              vm_prot_t expectedProtection) {
+  if (expectedProtection == VM_PROT_NONE) {
+    return NO;
+  }
+  void *value = NULL;
+  vm_prot_t protection = VM_PROT_NONE;
+  return TempMailAddressRangeInfo(address, sizeof(void *), &protection) &&
+      TempMailReadPointer(address, &value) && value == expectedValue &&
+      protection == expectedProtection;
+}
+
+static BOOL TempMailPointerCandidateMatchesImage(
+    void *candidate, void *expectedValue, const void *implementation) {
+  vm_prot_t protection = VM_PROT_NONE;
+  void *value = NULL;
+  if (((uintptr_t)candidate & (sizeof(void *) - 1)) != 0 ||
+      !TempMailAddressRangeInfo(candidate, sizeof(void *), &protection) ||
+      (protection & VM_PROT_EXECUTE) != 0 ||
+      !TempMailReadPointer(candidate, &value) || value != expectedValue) {
+    return NO;
+  }
+
+  Dl_info implementationInfo = {0};
+  Dl_info candidateInfo = {0};
+  if (dladdr(implementation, &implementationInfo) == 0 ||
+      dladdr(candidate, &candidateInfo) == 0 ||
+      implementationInfo.dli_fbase != candidateInfo.dli_fbase) {
+    return NO;
+  }
+  return YES;
+}
+
+static void TempMailAddUniqueStorageCandidate(void *candidate,
+                                             void **candidates,
+                                             size_t *candidateCount,
+                                             size_t capacity) {
+  if (candidate == NULL || candidates == NULL || candidateCount == NULL) {
+    return;
+  }
+  for (size_t index = 0; index < *candidateCount; index++) {
+    if (candidates[index] == candidate) {
+      return;
+    }
+  }
+  if (*candidateCount < capacity) {
+    candidates[(*candidateCount)++] = candidate;
+  }
+}
+
+static void **TempMailFindIOS27MainNSBundleStorage(NSBundle *currentBundle) {
+#if defined(__arm64__)
+  Method method = class_getClassMethod(NSBundle.class, @selector(mainBundle));
+  if (method == NULL || currentBundle == nil) {
+    return NULL;
+  }
+  uint32_t *implementation = (uint32_t *)method_getImplementation(method);
+  void *candidates[8] = {0};
+  size_t candidateCount = 0;
+  const int scanInstructionCount = 28;
+
+  for (int index = 0; index < 20; index++) {
+    if (!TempMailAddressRangeInfo(&implementation[index], sizeof(uint32_t),
+                                NULL)) {
+      break;
+    }
+    for (int addDistance = 1; addDistance <= 4; addDistance++) {
+      int addIndex = index + addDistance;
+      if (addIndex >= scanInstructionCount ||
+          !TempMailAddressRangeInfo(&implementation[addIndex],
+                                  sizeof(uint32_t), NULL)) {
+        break;
+      }
+      uint32_t addInstruction = implementation[addIndex];
+      uint32_t adrpRegister = implementation[index] & 0x1F;
+      uint32_t addSourceRegister = (addInstruction >> 5) & 0x1F;
+      uint32_t addDestinationRegister = addInstruction & 0x1F;
+      if (adrpRegister != addSourceRegister ||
+          addSourceRegister != addDestinationRegister) {
+        continue;
+      }
+      uint64_t addAddress = TempMailAArch64ADRPAdd(
+          implementation[index], addInstruction,
+          (uint64_t)&implementation[index]);
+      if (addAddress == 0) {
+        continue;
+      }
+      uint32_t addressRegister = addDestinationRegister;
+      // The address is carried across a call to objc_msgSend in the iOS 27
+      // implementation. Only callee-saved registers can hold that base safely.
+      if (addressRegister < 19 || addressRegister > 28) {
+        continue;
+      }
+
+      for (int loadDistance = addDistance + 1;
+           loadDistance <= addDistance + 6;
+           loadDistance++) {
+        int loadIndex = index + loadDistance;
+        if (loadIndex >= scanInstructionCount ||
+            !TempMailAddressRangeInfo(&implementation[loadIndex],
+                                    sizeof(uint32_t), NULL)) {
+          break;
+        }
+        uint32_t loadInstruction = implementation[loadIndex];
+        if ((loadInstruction & 0xFFE00C00) != 0xF8400000 ||
+            ((loadInstruction >> 5) & 0x1F) != addressRegister) {
+          continue;
+        }
+        BOOL baseRegisterClobbered = NO;
+        for (int intermediateIndex = addIndex + 1;
+             intermediateIndex < loadIndex;
+             intermediateIndex++) {
+          uint32_t intermediate = implementation[intermediateIndex];
+          BOOL isBranch = (intermediate & 0x7C000000) == 0x14000000;
+          if (!isBranch && (intermediate & 0x1F) == addressRegister) {
+            baseRegisterClobbered = YES;
+            break;
+          }
+        }
+        if (baseRegisterClobbered) {
+          continue;
+        }
+        int64_t immediate = (loadInstruction >> 12) & 0x1FF;
+        if ((immediate & 0x100) != 0) {
+          immediate |= ~0x1FFLL;
+        }
+        void *candidate = (void *)(uintptr_t)((int64_t)addAddress + immediate);
+        if (TempMailPointerCandidateMatchesImage(
+                candidate, (__bridge void *)currentBundle, implementation)) {
+          TempMailAddUniqueStorageCandidate(
+              candidate, candidates, &candidateCount,
+              sizeof(candidates) / sizeof(candidates[0]));
+        }
+      }
+    }
+  }
+
+  NSLog(@"TEMPMAIL_IOS27_IDENTITY nsbundle_candidates=%zu", candidateCount);
+  return candidateCount == 1 ? (void **)candidates[0] : NULL;
+#else
+  return NULL;
+#endif
+}
+
+static void **TempMailFindLegacyMainNSBundleStorage(NSBundle *currentBundle) {
+#if defined(__arm64__)
+  Method method = class_getClassMethod(NSBundle.class, @selector(mainBundle));
+  if (method == NULL || currentBundle == nil) {
+    return NULL;
+  }
+  uint32_t *implementation = (uint32_t *)method_getImplementation(method);
+  for (int index = 0; index < 20; index++) {
+    if (!TempMailAddressRangeInfo(&implementation[index],
+                                sizeof(uint32_t) * 5, NULL)) {
+      break;
+    }
+    uint64_t globalsAddress = TempMailAArch64ADRPAdd(
+        implementation[index], implementation[index + 1],
+        (uint64_t)&implementation[index]);
+    if (globalsAddress == 0) {
       continue;
     }
-
-    // iOS 17 and newer can address _MergedGlobals+4 with LDUR.
-    if ((implementation[instructionIndex + 4] & 0xFF000000) == 0xF8000000) {
-      mergedGlobals = (void **)((uint64_t)mergedGlobals - 4);
+    if ((implementation[index + 4] & 0xFF000000) == 0xF8000000) {
+      globalsAddress -= 4;
     }
-
+    void *globals = (void *)(uintptr_t)globalsAddress;
+    if (!TempMailAddressRangeInfo(globals, sizeof(void *) * 20, NULL)) {
+      continue;
+    }
     for (int globalIndex = 0; globalIndex < 20; globalIndex++) {
-      if (mergedGlobals[globalIndex] == (__bridge void *)oldBundle) {
-        mergedGlobals[globalIndex] = (__bridge void *)newBundle;
-        replaced = YES;
-        break;
+      void *slot = (uint8_t *)globals + sizeof(void *) * globalIndex;
+      void *value = NULL;
+      if (TempMailReadPointer(slot, &value) &&
+          value == (__bridge void *)currentBundle) {
+        return (void **)slot;
       }
     }
   }
-  return replaced && NSBundle.mainBundle == newBundle;
+#endif
+  return NULL;
+}
+
+static void **TempMailFindIOS27MainCFBundleStorage(
+    CFBundleRef currentMainBundle) {
+#if defined(__arm64__)
+  uint32_t *implementation = (uint32_t *)CFBundleGetMainBundle;
+  void *candidates[8] = {0};
+  size_t candidateCount = 0;
+  const int scanInstructionCount = 160;
+
+  for (int index = 0; index < scanInstructionCount; index++) {
+    if (!TempMailAddressRangeInfo(&implementation[index], sizeof(uint32_t),
+                                NULL)) {
+      break;
+    }
+
+    if (index > 0) {
+      uint64_t branchTarget = TempMailAArch64TestBitBranchTarget(
+          implementation[index], (uint64_t)&implementation[index]);
+      uint32_t branchInstruction = 0;
+      if (branchTarget != 0 &&
+          TempMailAddressRangeInfo((void *)branchTarget, sizeof(uint32_t),
+                                 NULL)) {
+        memcpy(&branchInstruction, (void *)branchTarget, sizeof(uint32_t));
+        uint64_t address = TempMailAArch64ADRPLoad(
+            implementation[index - 1], branchInstruction,
+            (uint64_t)&implementation[index - 1]);
+        void *candidate = (void *)(uintptr_t)address;
+        if (TempMailPointerCandidateMatchesImage(
+                candidate, (void *)currentMainBundle, implementation)) {
+          TempMailAddUniqueStorageCandidate(
+              candidate, candidates, &candidateCount,
+              sizeof(candidates) / sizeof(candidates[0]));
+        }
+      }
+    }
+
+    for (int distance = 1; distance <= 4; distance++) {
+      if (index + distance >= scanInstructionCount ||
+          !TempMailAddressRangeInfo(&implementation[index + distance],
+                                  sizeof(uint32_t), NULL)) {
+        break;
+      }
+      uint64_t loadAddress = TempMailAArch64ADRPLoad(
+          implementation[index], implementation[index + distance],
+          (uint64_t)&implementation[index]);
+      void *loadCandidate = (void *)(uintptr_t)loadAddress;
+      if (TempMailPointerCandidateMatchesImage(
+              loadCandidate, (void *)currentMainBundle, implementation)) {
+        TempMailAddUniqueStorageCandidate(
+            loadCandidate, candidates, &candidateCount,
+            sizeof(candidates) / sizeof(candidates[0]));
+      }
+      uint64_t addAddress = TempMailAArch64ADRPAdd(
+          implementation[index], implementation[index + distance],
+          (uint64_t)&implementation[index]);
+      void *addCandidate = (void *)(uintptr_t)addAddress;
+      if (TempMailPointerCandidateMatchesImage(
+              addCandidate, (void *)currentMainBundle, implementation)) {
+        TempMailAddUniqueStorageCandidate(
+            addCandidate, candidates, &candidateCount,
+            sizeof(candidates) / sizeof(candidates[0]));
+      }
+    }
+  }
+
+  NSLog(@"TEMPMAIL_IOS27_IDENTITY cfbundle_candidates=%zu", candidateCount);
+  return candidateCount == 1 ? (void **)candidates[0] : NULL;
 #else
-  return NO;
+  return NULL;
 #endif
 }
 
-static BOOL TempMailOverwriteMainCFBundle(NSBundle *newBundle) {
+static void **TempMailFindLegacyMainCFBundleStorage(
+    CFBundleRef currentMainBundle) {
 #if defined(__arm64__)
   uint32_t *instruction = (uint32_t *)CFBundleGetMainBundle;
-  void **mainBundleAddress = NULL;
-
-  if (@available(iOS 27.0, *)) {
-    for (int index = 0; index < 100; index++, instruction++) {
-      if ((*instruction & 0x7F000000) == 0x36000000) {
-        mainBundleAddress = (void **)TempMailAArch64ADRPLoad(
-            *(instruction - 1), *(instruction + 1),
-            (uint64_t)(instruction - 1));
-        break;
-      }
+  for (int index = 0; index < 100; index++, instruction++) {
+    if (!TempMailAddressRangeInfo(instruction, sizeof(uint32_t), NULL)) {
+      break;
     }
-  } else {
-    for (int index = 0; index < 100; index++, instruction++) {
-      uint64_t jumpAddress =
-          TempMailAArch64TBNZTarget(*instruction, (uint64_t)instruction);
-      if (jumpAddress != 0) {
-        mainBundleAddress = (void **)TempMailAArch64ADRPLoad(
-            *(instruction - 1), *(uint32_t *)jumpAddress,
-            (uint64_t)(instruction - 1));
-        break;
-      }
+    uint64_t branchTarget = TempMailAArch64TestBitBranchTarget(
+        *instruction, (uint64_t)instruction);
+    if (branchTarget == 0 || instruction == (uint32_t *)CFBundleGetMainBundle) {
+      continue;
+    }
+    uint32_t branchInstruction = 0;
+    if (!TempMailAddressRangeInfo((void *)branchTarget, sizeof(uint32_t), NULL)) {
+      continue;
+    }
+    memcpy(&branchInstruction, (void *)branchTarget, sizeof(uint32_t));
+    uint64_t address = TempMailAArch64ADRPLoad(
+        *(instruction - 1), branchInstruction,
+        (uint64_t)(instruction - 1));
+    void *candidate = (void *)(uintptr_t)address;
+    void *value = NULL;
+    if (TempMailReadPointer(candidate, &value) &&
+        value == (void *)currentMainBundle) {
+      return (void **)candidate;
     }
   }
-
-  if (mainBundleAddress == NULL || newBundle.bundleURL == nil) {
-    return NO;
-  }
-
-  // `_cfBundle` is a private NSBundle selector and is rejected by App Store
-  // validation. Create the equivalent Core Foundation bundle through the
-  // public API and retain it for the lifetime of the guest process instead.
-  CFBundleRef guestCFBundle = CFBundleCreate(
-      kCFAllocatorDefault, (__bridge CFURLRef)newBundle.bundleURL);
-  if (guestCFBundle == NULL) {
-    return NO;
-  }
-  TempMailGuestMainCFBundle = guestCFBundle;
-  *mainBundleAddress = (void *)guestCFBundle;
-  return CFBundleGetMainBundle() == guestCFBundle;
-#else
-  return NO;
 #endif
+  return NULL;
 }
 
-static BOOL TempMailInstallGuestProcessIdentity(NSString *bundlePath,
-                                               NSString *executablePath) {
+typedef NS_ENUM(NSInteger, TempMailGuestIdentityInstallResult) {
+  TempMailGuestIdentityInstallResultUnsafe = -1,
+  TempMailGuestIdentityInstallResultFailedSafely = 0,
+  TempMailGuestIdentityInstallResultSucceeded = 1,
+};
+
+static TempMailGuestIdentityInstallResult
+TempMailInstallGuestProcessIdentity(NSString *bundlePath,
+                                  NSString *executablePath) {
+  NSBundle *oldNSBundle = NSBundle.mainBundle;
+  CFBundleRef oldCFBundle = CFBundleGetMainBundle();
+  NSString *oldArgumentZero = NSProcessInfo.processInfo.arguments.firstObject;
+  NSString *oldProcessName = NSProcessInfo.processInfo.processName;
   NSBundle *guestBundle = [[NSBundle alloc] initWithPath:bundlePath];
-  if (guestBundle == nil) {
-    return NO;
+  if (oldNSBundle == nil || oldCFBundle == NULL || guestBundle == nil ||
+      guestBundle.bundleURL == nil) {
+    return TempMailGuestIdentityInstallResultFailedSafely;
+  }
+  CFBundleRef guestCFBundle = CFBundleCreate(
+      kCFAllocatorDefault, (__bridge CFURLRef)guestBundle.bundleURL);
+  if (guestCFBundle == NULL) {
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY guest_cfbundle_create_failed path=%@",
+          bundlePath);
+    return TempMailGuestIdentityInstallResultFailedSafely;
   }
 
+  NSLog(@"TEMPMAIL_IOS27_IDENTITY begin system=%@ old=%@ new=%@",
+        UIDevice.currentDevice.systemVersion, oldNSBundle.executablePath,
+        guestBundle.executablePath);
+
+  void **nsBundleStorage = NULL;
+  void **cfBundleStorage = NULL;
+  if (@available(iOS 27.0, *)) {
+    nsBundleStorage = TempMailFindIOS27MainNSBundleStorage(oldNSBundle);
+    cfBundleStorage = TempMailFindIOS27MainCFBundleStorage(oldCFBundle);
+  } else {
+    nsBundleStorage = TempMailFindLegacyMainNSBundleStorage(oldNSBundle);
+    cfBundleStorage = TempMailFindLegacyMainCFBundleStorage(oldCFBundle);
+  }
+  if (nsBundleStorage == NULL || cfBundleStorage == NULL) {
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY storage_lookup_failed ns=%p cf=%p",
+          nsBundleStorage, cfBundleStorage);
+    CFRelease(guestCFBundle);
+    return TempMailGuestIdentityInstallResultFailedSafely;
+  }
+
+  vm_prot_t nsBundleFinalProtection = VM_PROT_NONE;
+  vm_prot_t cfBundleFinalProtection = VM_PROT_NONE;
+  BOOL nsForwardMappingChanged = NO;
+  BOOL nsBundleReplaced = TempMailWritePointer(
+      nsBundleStorage, (__bridge void *)oldNSBundle,
+      (__bridge void *)guestBundle, "NSBundle.mainBundle",
+      &nsBundleFinalProtection, &nsForwardMappingChanged);
+  void *nsBundleSlotValue = NULL;
+  BOOL nsBundleSlotReadable =
+      TempMailReadPointer(nsBundleStorage, &nsBundleSlotValue);
+  nsBundleReplaced = nsBundleReplaced && nsBundleSlotReadable &&
+      nsBundleSlotValue == (__bridge void *)guestBundle &&
+      NSBundle.mainBundle == guestBundle;
+  if (!nsBundleReplaced) {
+    BOOL rollbackWriteSucceeded = YES;
+    BOOL rollbackMappingChanged = NO;
+    if (nsBundleSlotReadable &&
+        nsBundleSlotValue == (__bridge void *)guestBundle) {
+      rollbackWriteSucceeded = TempMailWritePointer(
+          nsBundleStorage, (__bridge void *)guestBundle,
+          (__bridge void *)oldNSBundle, "NSBundle.mainBundle.rollback",
+          &nsBundleFinalProtection, &rollbackMappingChanged);
+    } else if (!nsBundleSlotReadable ||
+               nsBundleSlotValue != (__bridge void *)oldNSBundle) {
+      rollbackWriteSucceeded = NO;
+    }
+    nsBundleSlotReadable = TempMailReadPointer(
+        nsBundleStorage, &nsBundleSlotValue);
+    BOOL nsBundleRolledBack = rollbackWriteSucceeded &&
+        !nsForwardMappingChanged && !rollbackMappingChanged &&
+        TempMailPointerStorageMatchesState(
+            nsBundleStorage, (__bridge void *)oldNSBundle,
+            nsBundleFinalProtection) && NSBundle.mainBundle == oldNSBundle;
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY nsbundle_replace_failed rollback=%d "
+           "write=%d forward_mapping=%d rollback_mapping=%d accessor_old=%d "
+           "slot=%p protection=%x",
+          nsBundleRolledBack, rollbackWriteSucceeded,
+          nsForwardMappingChanged, rollbackMappingChanged,
+          NSBundle.mainBundle == oldNSBundle, nsBundleSlotValue,
+          nsBundleFinalProtection);
+    if (!nsBundleRolledBack) {
+      // A failed vm_protect restoration is unsafe even when the slot happens
+      // to contain the old pointer. Keep both generations alive until the
+      // caller terminates the contaminated process.
+      TempMailKeepGuestIdentityObjectsAlive(
+          oldNSBundle, oldCFBundle, guestBundle, guestCFBundle);
+    }
+    CFRelease(guestCFBundle);
+    return nsBundleRolledBack
+        ? TempMailGuestIdentityInstallResultFailedSafely
+        : TempMailGuestIdentityInstallResultUnsafe;
+  }
+
+  BOOL cfForwardMappingChanged = NO;
+  BOOL cfBundleReplaced = TempMailWritePointer(
+      cfBundleStorage, (void *)oldCFBundle, (void *)guestCFBundle,
+      "CFBundleGetMainBundle", &cfBundleFinalProtection,
+      &cfForwardMappingChanged);
+  void *cfBundleSlotValue = NULL;
+  BOOL cfBundleSlotReadable =
+      TempMailReadPointer(cfBundleStorage, &cfBundleSlotValue);
+  cfBundleReplaced = cfBundleReplaced && cfBundleSlotReadable &&
+      cfBundleSlotValue == (void *)guestCFBundle &&
+      CFBundleGetMainBundle() == guestCFBundle;
+  if (!cfBundleReplaced) {
+    BOOL cfRollbackWriteSucceeded = YES;
+    BOOL cfRollbackMappingChanged = NO;
+    if (cfBundleSlotReadable && cfBundleSlotValue == (void *)guestCFBundle) {
+      cfRollbackWriteSucceeded = TempMailWritePointer(
+          cfBundleStorage, (void *)guestCFBundle, (void *)oldCFBundle,
+          "CFBundleGetMainBundle.rollback", &cfBundleFinalProtection,
+          &cfRollbackMappingChanged);
+    } else if (!cfBundleSlotReadable ||
+               cfBundleSlotValue != (void *)oldCFBundle) {
+      cfRollbackWriteSucceeded = NO;
+    }
+    nsBundleSlotReadable = TempMailReadPointer(
+        nsBundleStorage, &nsBundleSlotValue);
+    BOOL nsRollbackWriteSucceeded = YES;
+    BOOL nsRollbackMappingChanged = NO;
+    if (nsBundleSlotReadable &&
+        nsBundleSlotValue == (__bridge void *)guestBundle) {
+      nsRollbackWriteSucceeded = TempMailWritePointer(
+          nsBundleStorage, (__bridge void *)guestBundle,
+          (__bridge void *)oldNSBundle, "NSBundle.mainBundle.rollback",
+          &nsBundleFinalProtection, &nsRollbackMappingChanged);
+    } else if (!nsBundleSlotReadable ||
+               nsBundleSlotValue != (__bridge void *)oldNSBundle) {
+      nsRollbackWriteSucceeded = NO;
+    }
+    cfBundleSlotReadable = TempMailReadPointer(
+        cfBundleStorage, &cfBundleSlotValue);
+    nsBundleSlotReadable = TempMailReadPointer(
+        nsBundleStorage, &nsBundleSlotValue);
+    BOOL cfBundleRolledBack = cfRollbackWriteSucceeded &&
+        !cfForwardMappingChanged && !cfRollbackMappingChanged &&
+        TempMailPointerStorageMatchesState(
+            cfBundleStorage, (void *)oldCFBundle,
+            cfBundleFinalProtection) &&
+        CFBundleGetMainBundle() == oldCFBundle;
+    BOOL nsBundleRolledBack = nsRollbackWriteSucceeded &&
+        !nsForwardMappingChanged && !nsRollbackMappingChanged &&
+        TempMailPointerStorageMatchesState(
+            nsBundleStorage, (__bridge void *)oldNSBundle,
+            nsBundleFinalProtection) && NSBundle.mainBundle == oldNSBundle;
+    BOOL rollbackSafe = cfBundleRolledBack && nsBundleRolledBack;
+    if (!rollbackSafe) {
+      TempMailKeepGuestIdentityObjectsAlive(
+          oldNSBundle, oldCFBundle, guestBundle, guestCFBundle);
+    }
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY cfbundle_replace_failed cf_rollback=%d "
+           "ns_rollback=%d cf_write=%d ns_write=%d cf_forward_mapping=%d "
+           "cf_rollback_mapping=%d ns_forward_mapping=%d "
+           "ns_rollback_mapping=%d cf_accessor_old=%d ns_accessor_old=%d "
+           "cf_slot=%p ns_slot=%p cf_protection=%x ns_protection=%x",
+          cfBundleRolledBack, nsBundleRolledBack,
+          cfRollbackWriteSucceeded, nsRollbackWriteSucceeded,
+          cfForwardMappingChanged, cfRollbackMappingChanged,
+          nsForwardMappingChanged, nsRollbackMappingChanged,
+          CFBundleGetMainBundle() == oldCFBundle,
+          NSBundle.mainBundle == oldNSBundle, cfBundleSlotValue,
+          nsBundleSlotValue, cfBundleFinalProtection,
+          nsBundleFinalProtection);
+    CFRelease(guestCFBundle);
+    return rollbackSafe
+        ? TempMailGuestIdentityInstallResultFailedSafely
+        : TempMailGuestIdentityInstallResultUnsafe;
+  }
+
+  TempMailPreviousMainBundle = oldNSBundle;
+  if (TempMailPreviousMainCFBundle != NULL) {
+    CFRelease(TempMailPreviousMainCFBundle);
+  }
+  TempMailPreviousMainCFBundle = (CFBundleRef)CFRetain(oldCFBundle);
+  TempMailMainNSBundleStorage = nsBundleStorage;
+  TempMailMainCFBundleStorage = cfBundleStorage;
+  TempMailMainNSBundleProtection = nsBundleFinalProtection;
+  TempMailMainCFBundleProtection = cfBundleFinalProtection;
+  TempMailMainNSBundleMappingTainted = nsForwardMappingChanged;
+  TempMailMainCFBundleMappingTainted = cfForwardMappingChanged;
+  TempMailPreviousArgumentZero = oldArgumentZero;
+  TempMailPreviousProcessName = oldProcessName;
   TempMailGuestMainBundle = guestBundle;
-  BOOL nsBundleReplaced = TempMailOverwriteMainNSBundle(guestBundle);
-  BOOL cfBundleReplaced =
-      nsBundleReplaced && TempMailOverwriteMainCFBundle(guestBundle);
+  if (TempMailGuestMainCFBundle != NULL) {
+    CFRelease(TempMailGuestMainCFBundle);
+  }
+  TempMailGuestMainCFBundle = guestCFBundle;
 
   NSMutableArray<NSString *> *arguments =
       NSProcessInfo.processInfo.arguments.mutableCopy;
-  if (arguments.count > 0) {
+  SEL setArgumentsSelector = NSSelectorFromString(@"setArguments:");
+  if (arguments.count > 0 &&
+      [NSProcessInfo.processInfo respondsToSelector:setArgumentsSelector]) {
     arguments[0] = executablePath;
-    [NSProcessInfo.processInfo performSelector:@selector(setArguments:)
-                                    withObject:arguments];
-    Class swiftProcessInfo = NSClassFromString(@"_NSSwiftProcessInfo");
-    if (swiftProcessInfo != Nil) {
+    @try {
+      ((void (*)(id, SEL, id))objc_msgSend)(
+          NSProcessInfo.processInfo, setArgumentsSelector, arguments);
+      Class swiftProcessInfo = NSClassFromString(@"_NSSwiftProcessInfo");
       SEL argumentsSelector = @selector(arguments);
-      method_setImplementation(
-          class_getInstanceMethod(swiftProcessInfo, argumentsSelector),
-          class_getMethodImplementation(NSProcessInfo.class,
-                                        argumentsSelector));
+      Method swiftArguments = swiftProcessInfo == Nil
+          ? NULL
+          : class_getInstanceMethod(swiftProcessInfo, argumentsSelector);
+      Method processArguments =
+          class_getInstanceMethod(NSProcessInfo.class, argumentsSelector);
+      if (swiftArguments != NULL && processArguments != NULL) {
+        method_setImplementation(swiftArguments,
+                                 method_getImplementation(processArguments));
+      }
+    } @catch (NSException *exception) {
+      NSLog(@"TEMPMAIL_IOS27_IDENTITY arguments_update_failed name=%@ reason=%@",
+            exception.name, exception.reason);
     }
   }
   NSString *processName = guestBundle.infoDictionary[@"CFBundleExecutable"];
@@ -4060,11 +5056,295 @@ static BOOL TempMailInstallGuestProcessIdentity(NSString *bundlePath,
     setprogname(processName.UTF8String);
   }
 
-  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_identity nsbundle=%d cfbundle=%d path=%@ identifier=%@ executable=%@",
-        nsBundleReplaced, cfBundleReplaced, NSBundle.mainBundle.bundlePath,
-        NSBundle.mainBundle.bundleIdentifier,
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_identity nsbundle=%d cfbundle=%d "
+         "ns_storage=%p cf_storage=%p path=%@ identifier=%@ executable=%@",
+        nsBundleReplaced, cfBundleReplaced, nsBundleStorage, cfBundleStorage,
+        NSBundle.mainBundle.bundlePath, NSBundle.mainBundle.bundleIdentifier,
         NSProcessInfo.processInfo.arguments.firstObject);
-  return nsBundleReplaced && cfBundleReplaced;
+  return TempMailGuestIdentityInstallResultSucceeded;
+}
+
+static BOOL TempMailRestorePreviousProcessIdentity(void) {
+  BOOL hasAnyTransactionState = TempMailMainNSBundleStorage != NULL ||
+      TempMailMainCFBundleStorage != NULL || TempMailPreviousMainBundle != nil ||
+      TempMailPreviousMainCFBundle != NULL || TempMailGuestMainBundle != nil ||
+      TempMailGuestMainCFBundle != NULL ||
+      TempMailPreviousArgumentZero != nil || TempMailPreviousProcessName != nil ||
+      TempMailMainNSBundleProtection != VM_PROT_NONE ||
+      TempMailMainCFBundleProtection != VM_PROT_NONE ||
+      TempMailMainNSBundleMappingTainted || TempMailMainCFBundleMappingTainted;
+  if (!hasAnyTransactionState) {
+    return YES;
+  }
+  BOOL hasCompleteTransactionState = TempMailMainNSBundleStorage != NULL &&
+      TempMailMainCFBundleStorage != NULL && TempMailPreviousMainBundle != nil &&
+      TempMailPreviousMainCFBundle != NULL && TempMailGuestMainBundle != nil &&
+      TempMailGuestMainCFBundle != NULL &&
+      TempMailPreviousArgumentZero != nil && TempMailPreviousProcessName != nil &&
+      TempMailMainNSBundleProtection != VM_PROT_NONE &&
+      TempMailMainCFBundleProtection != VM_PROT_NONE;
+  if (!hasCompleteTransactionState) {
+    TempMailKeepGuestIdentityObjectsAlive(
+        TempMailPreviousMainBundle, TempMailPreviousMainCFBundle,
+        TempMailGuestMainBundle, TempMailGuestMainCFBundle);
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY host_restore_failed reason=partial_transaction "
+           "ns_storage=%p cf_storage=%p old_ns=%d old_cf=%d guest_ns=%d "
+           "guest_cf=%d ns_protection=%x cf_protection=%x",
+          TempMailMainNSBundleStorage, TempMailMainCFBundleStorage,
+          TempMailPreviousMainBundle != nil,
+          TempMailPreviousMainCFBundle != NULL, TempMailGuestMainBundle != nil,
+          TempMailGuestMainCFBundle != NULL, TempMailMainNSBundleProtection,
+          TempMailMainCFBundleProtection);
+    return NO;
+  }
+  if (TempMailMainNSBundleMappingTainted || TempMailMainCFBundleMappingTainted) {
+    TempMailKeepGuestIdentityObjectsAlive(
+        TempMailPreviousMainBundle, TempMailPreviousMainCFBundle,
+        TempMailGuestMainBundle, TempMailGuestMainCFBundle);
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY host_restore_failed "
+           "reason=forward_mapping_tainted ns=%d cf=%d",
+          TempMailMainNSBundleMappingTainted,
+          TempMailMainCFBundleMappingTainted);
+    return NO;
+  }
+
+  void *nsBundleSlotValue = NULL;
+  BOOL nsBundleSlotReadable = TempMailReadPointer(
+      TempMailMainNSBundleStorage, &nsBundleSlotValue);
+  BOOL nsBundleWriteSucceeded = YES;
+  BOOL nsBundleMappingChanged = NO;
+  if (nsBundleSlotReadable &&
+      nsBundleSlotValue == (__bridge void *)TempMailGuestMainBundle) {
+    nsBundleWriteSucceeded = TempMailWritePointer(
+        TempMailMainNSBundleStorage,
+        (__bridge void *)TempMailGuestMainBundle,
+        (__bridge void *)TempMailPreviousMainBundle,
+        "NSBundle.mainBundle.host_restore", &TempMailMainNSBundleProtection,
+        &nsBundleMappingChanged);
+  } else if (!nsBundleSlotReadable ||
+             nsBundleSlotValue != (__bridge void *)TempMailPreviousMainBundle) {
+    nsBundleWriteSucceeded = NO;
+  }
+
+  void *cfBundleSlotValue = NULL;
+  BOOL cfBundleSlotReadable = TempMailReadPointer(
+      TempMailMainCFBundleStorage, &cfBundleSlotValue);
+  BOOL cfBundleWriteSucceeded = YES;
+  BOOL cfBundleMappingChanged = NO;
+  if (cfBundleSlotReadable &&
+      cfBundleSlotValue == (void *)TempMailGuestMainCFBundle) {
+    cfBundleWriteSucceeded = TempMailWritePointer(
+        TempMailMainCFBundleStorage,
+        (void *)TempMailGuestMainCFBundle,
+        (void *)TempMailPreviousMainCFBundle,
+        "CFBundleGetMainBundle.host_restore", &TempMailMainCFBundleProtection,
+        &cfBundleMappingChanged);
+  } else if (!cfBundleSlotReadable ||
+             cfBundleSlotValue != (void *)TempMailPreviousMainCFBundle) {
+    cfBundleWriteSucceeded = NO;
+  }
+
+  nsBundleSlotReadable = TempMailReadPointer(
+      TempMailMainNSBundleStorage, &nsBundleSlotValue);
+  cfBundleSlotReadable = TempMailReadPointer(
+      TempMailMainCFBundleStorage, &cfBundleSlotValue);
+  BOOL nsBundleRestored = nsBundleWriteSucceeded &&
+      !nsBundleMappingChanged &&
+      TempMailPointerStorageMatchesState(
+          TempMailMainNSBundleStorage,
+          (__bridge void *)TempMailPreviousMainBundle,
+          TempMailMainNSBundleProtection);
+  BOOL cfBundleRestored = cfBundleWriteSucceeded &&
+      !cfBundleMappingChanged &&
+      TempMailPointerStorageMatchesState(
+          TempMailMainCFBundleStorage, (void *)TempMailPreviousMainCFBundle,
+          TempMailMainCFBundleProtection);
+  BOOL accessorsRestored = NSBundle.mainBundle == TempMailPreviousMainBundle &&
+      CFBundleGetMainBundle() == TempMailPreviousMainCFBundle;
+  if (!nsBundleRestored || !cfBundleRestored || !accessorsRestored) {
+    TempMailKeepGuestIdentityObjectsAlive(
+        TempMailPreviousMainBundle, TempMailPreviousMainCFBundle,
+        TempMailGuestMainBundle, TempMailGuestMainCFBundle);
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY host_restore_failed ns=%d cf=%d "
+           "ns_write=%d cf_write=%d ns_mapping=%d cf_mapping=%d "
+           "accessors=%d ns_slot=%p cf_slot=%p",
+          nsBundleRestored, cfBundleRestored, nsBundleWriteSucceeded,
+          cfBundleWriteSucceeded, nsBundleMappingChanged,
+          cfBundleMappingChanged, accessorsRestored, nsBundleSlotValue,
+          cfBundleSlotValue);
+    return NO;
+  }
+
+  BOOL argumentsRestored = TempMailPreviousArgumentZero.length == 0;
+  NSMutableArray<NSString *> *arguments =
+      NSProcessInfo.processInfo.arguments.mutableCopy;
+  SEL setArgumentsSelector = NSSelectorFromString(@"setArguments:");
+  if (arguments.count > 0 && TempMailPreviousArgumentZero.length > 0 &&
+      [NSProcessInfo.processInfo respondsToSelector:setArgumentsSelector]) {
+    arguments[0] = TempMailPreviousArgumentZero;
+    @try {
+      ((void (*)(id, SEL, id))objc_msgSend)(
+          NSProcessInfo.processInfo, setArgumentsSelector, arguments);
+      argumentsRestored = [NSProcessInfo.processInfo.arguments.firstObject
+          isEqualToString:TempMailPreviousArgumentZero];
+    } @catch (NSException *exception) {
+      NSLog(@"TEMPMAIL_IOS27_IDENTITY host_arguments_restore_failed name=%@ "
+             "reason=%@",
+            exception.name, exception.reason);
+      argumentsRestored = NO;
+    }
+  }
+  BOOL processNameRestored = TempMailPreviousProcessName.length == 0;
+  if (TempMailPreviousProcessName.length > 0) {
+    NSProcessInfo.processInfo.processName = TempMailPreviousProcessName;
+    setprogname(TempMailPreviousProcessName.UTF8String);
+    processNameRestored = [NSProcessInfo.processInfo.processName
+        isEqualToString:TempMailPreviousProcessName];
+  }
+  if (!argumentsRestored || !processNameRestored) {
+    TempMailKeepGuestIdentityObjectsAlive(
+        TempMailPreviousMainBundle, TempMailPreviousMainCFBundle,
+        TempMailGuestMainBundle, TempMailGuestMainCFBundle);
+    NSLog(@"TEMPMAIL_IOS27_IDENTITY host_restore_failed reason=metadata "
+           "arguments=%d process_name=%d",
+          argumentsRestored, processNameRestored);
+    return NO;
+  }
+
+  CFBundleRef previousCFBundle = TempMailPreviousMainCFBundle;
+  CFBundleRef guestCFBundle = TempMailGuestMainCFBundle;
+  TempMailGuestMainBundle = nil;
+  TempMailPreviousMainBundle = nil;
+  TempMailGuestMainCFBundle = NULL;
+  TempMailPreviousMainCFBundle = NULL;
+  if (guestCFBundle != NULL) {
+    CFRelease(guestCFBundle);
+  }
+  if (previousCFBundle != NULL) {
+    CFRelease(previousCFBundle);
+  }
+  TempMailMainNSBundleStorage = NULL;
+  TempMailMainCFBundleStorage = NULL;
+  TempMailMainNSBundleProtection = VM_PROT_NONE;
+  TempMailMainCFBundleProtection = VM_PROT_NONE;
+  TempMailMainNSBundleMappingTainted = NO;
+  TempMailMainCFBundleMappingTainted = NO;
+  TempMailPreviousArgumentZero = nil;
+  TempMailPreviousProcessName = nil;
+  NSLog(@"TEMPMAIL_IOS27_IDENTITY host_restored path=%@ identifier=%@",
+        NSBundle.mainBundle.bundlePath, NSBundle.mainBundle.bundleIdentifier);
+  return YES;
+}
+
+static BOOL TempMailRestoreHostApplicationSurface(void) {
+  TempMailGuestLaunchGeneration += 1;
+  TempMailResetInProcessGuestLifecycle();
+  TempMailCancelGuestWindowVisibilityDeferral();
+  if (!TempMailHostApplicationSurfaceCaptured) {
+    TempMailInProcessGuestRootController = nil;
+    TempMailInProcessGuestWindow = nil;
+    TempMailInProcessGuestDelegate = nil;
+    return YES;
+  }
+
+  UIApplication *application = UIApplication.sharedApplication;
+  SEL setDelegateSelector = NSSelectorFromString(@"setDelegate:");
+  BOOL delegateRestored = application.delegate == TempMailHostApplicationDelegate;
+  if (TempMailHostApplicationDelegate != nil &&
+      application.delegate != TempMailHostApplicationDelegate) {
+    if ([application respondsToSelector:setDelegateSelector]) {
+      ((void (*)(id, SEL, id))objc_msgSend)(
+          application, setDelegateSelector, TempMailHostApplicationDelegate);
+      delegateRestored = application.delegate == TempMailHostApplicationDelegate;
+    } else {
+      delegateRestored = NO;
+    }
+  }
+  if (TempMailInProcessGuestWindow != nil &&
+      TempMailInProcessGuestWindow != TempMailHostApplicationWindow) {
+    TempMailInProcessGuestWindow.hidden = YES;
+  }
+  BOOL rootRestored = TempMailHostApplicationWindow == nil;
+  BOOL visibilityRestored = TempMailHostApplicationWindow == nil;
+  BOOL keyStateRestored = !TempMailHostWindowWasKey;
+  if (TempMailHostApplicationWindow != nil) {
+    if (TempMailOriginalSetRootViewController != NULL) {
+      ((void (*)(id, SEL, id))TempMailOriginalSetRootViewController)(
+          TempMailHostApplicationWindow, @selector(setRootViewController:),
+          TempMailHostRootViewController);
+    } else {
+      TempMailHostApplicationWindow.rootViewController =
+          TempMailHostRootViewController;
+    }
+    TempMailHostApplicationWindow.hidden = TempMailHostWindowWasHidden;
+    if (TempMailHostWindowWasKey && !TempMailHostWindowWasHidden) {
+      [TempMailHostApplicationWindow makeKeyAndVisible];
+    }
+    rootRestored = TempMailHostApplicationWindow.rootViewController ==
+        TempMailHostRootViewController;
+    visibilityRestored = TempMailHostApplicationWindow.hidden ==
+        TempMailHostWindowWasHidden;
+    keyStateRestored = !TempMailHostWindowWasKey ||
+        TempMailHostApplicationWindow.isKeyWindow;
+  }
+  BOOL restored = delegateRestored && rootRestored && visibilityRestored &&
+      keyStateRestored;
+  if (!restored) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME host_surface_restore_failed delegate=%d "
+           "root=%d visibility=%d key=%d",
+          delegateRestored, rootRestored, visibilityRestored,
+          keyStateRestored);
+  }
+  TempMailInProcessGuestRootController = nil;
+  TempMailInProcessGuestWindow = nil;
+  TempMailInProcessGuestDelegate = nil;
+  TempMailHostRootViewController = nil;
+  TempMailHostApplicationWindow = nil;
+  TempMailHostApplicationDelegate = nil;
+  TempMailHostWindowWasHidden = NO;
+  TempMailHostWindowWasKey = NO;
+  TempMailHostApplicationSurfaceCaptured = NO;
+  return restored;
+}
+
+// PackageInfo must describe the verified guest, not the TempMail host.
+static IMP TempMailOriginalPackageInfoMethod;
+static NSDictionary *TempMailFlutterInstalledMetadata;
+
+static void TempMailGuestPackageInfo(id self, SEL command, id call, void (^result)(id)) {
+  NSString *method = [call valueForKey:@"method"];
+  if (![method isEqualToString:@"getAll"]) {
+    ((void (*)(id, SEL, id, id))TempMailOriginalPackageInfoMethod)(self, command, call, result);
+    return;
+  }
+  void (^guestResult)(id) = ^(id value) {
+    if (![value isKindOfClass:NSDictionary.class]) { result(value); return; }
+    NSMutableDictionary *info = [value mutableCopy];
+    NSDictionary *keys = @{@"packageName": @"CFBundleIdentifier",
+                           @"appName": @"CFBundleDisplayName",
+                           @"version": @"CFBundleShortVersionString",
+                           @"buildNumber": @"CFBundleVersion"};
+    for (NSString *key in keys) {
+      NSString *verified = TempMailFlutterInstalledMetadata[keys[key]];
+      if ([verified isKindOfClass:NSString.class] && verified.length > 0) {
+        info[key] = verified;
+      }
+    }
+    NSLog(@"TEMPMAIL_FLUTTER_RUNTIME package_info guest=%@ version=%@+%@",
+          info[@"packageName"], info[@"version"], info[@"buildNumber"]);
+    result(info);
+  };
+  ((void (*)(id, SEL, id, id))TempMailOriginalPackageInfoMethod)(self, command, call, guestResult);
+}
+
+static void TempMailInstallGuestPackageInfo(NSDictionary *metadata) {
+  TempMailFlutterInstalledMetadata = metadata;
+  Class plugin = NSClassFromString(@"FPPPackageInfoPlusPlugin");
+  Method method = class_getInstanceMethod(plugin, NSSelectorFromString(@"handleMethodCall:result:"));
+  if (method != NULL && TempMailOriginalPackageInfoMethod == NULL) {
+    TempMailOriginalPackageInfoMethod = method_getImplementation(method);
+    method_setImplementation(method, (IMP)TempMailGuestPackageInfo);
+  }
 }
 
 @interface TempMailFlutterGuestDelegate : UIResponder <UIApplicationDelegate>
@@ -4103,7 +5383,7 @@ static BOOL TempMailInstallGuestProcessIdentity(NSString *bundlePath,
   id engine = ((id (*)(id, SEL, id, id, BOOL))objc_msgSend)(
       [engineClass alloc],
       NSSelectorFromString(@"initWithName:project:allowHeadlessExecution:"),
-      @"tempmail.guest", project, YES);
+      @"tempmail.pornhub", project, YES);
   BOOL started = ((BOOL (*)(id, SEL, id))objc_msgSend)(
       engine, NSSelectorFromString(@"runWithEntrypoint:"), nil);
   if (!started) {
@@ -4123,6 +5403,9 @@ static BOOL TempMailInstallGuestProcessIdentity(NSString *bundlePath,
   TempMailRegisterFlutterPlugin(engine, @"package_info_plus",
                               @"FPPPackageInfoPlusPlugin",
                               @"FPPPackageInfoPlusPlugin");
+  NSDictionary *verifiedMetadata = [NSDictionary dictionaryWithContentsOfFile:
+      [[guestBundlePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"Installed.plist"]];
+  TempMailInstallGuestPackageInfo(verifiedMetadata);
   TempMailRegisterFlutterPlugin(engine, @"connectivity_plus",
                               @"ConnectivityPlusPlugin",
                               @"ConnectivityPlusPlugin");
@@ -4164,6 +5447,11 @@ static BOOL TempMailInstallGuestProcessIdentity(NSString *bundlePath,
 static int TempMailRunFlutterGuest(int argc, char *argv[]) {
   if (TempMailLoadFramework(@"Flutter") == NULL) {
     return -1;
+  }
+  if ([NSProcessInfo.processInfo.arguments
+          containsObject:@"--tempmail-diagnostic-signals"]) {
+    TempMailInstallDiagnosticSignalHandler();
+    TempMailWriteDiagnosticStage("runtime_loaded");
   }
   NSLog(@"TEMPMAIL_FLUTTER_RUNTIME guest_boot");
   return UIApplicationMain(argc, argv, nil,
@@ -4380,7 +5668,292 @@ static void TempMailInspectGuestRegistration(NSTimeInterval delay) {
   });
 }
 
+static BOOL TempMailAcquireGuestRuntimeLaunchClaim(void) {
+  int expected = 0;
+  return __atomic_compare_exchange_n(
+      &TempMailGuestRuntimeLaunchClaim, &expected, 1, false,
+      __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+}
+
+static void TempMailReleaseGuestRuntimeLaunchClaim(void) {
+  __atomic_store_n(&TempMailGuestRuntimeLaunchClaim, 0, __ATOMIC_SEQ_CST);
+}
+
+static BOOL TempMailHBuilderWWWNeedsRefresh(NSString *sourceWWW,
+                                         NSString *destinationWWW) {
+  NSFileManager *files = NSFileManager.defaultManager;
+  BOOL destinationIsDirectory = NO;
+  if (![files fileExistsAtPath:destinationWWW
+                   isDirectory:&destinationIsDirectory] ||
+      !destinationIsDirectory) {
+    return YES;
+  }
+  for (NSString *relativePath in @[
+         @"__uniappview.html", @"manifest.json", @"app-service.js",
+         @"app-view.js", @"app-config.js"
+       ]) {
+    NSData *sourceData = [NSData dataWithContentsOfFile:
+        [sourceWWW stringByAppendingPathComponent:relativePath]];
+    NSData *destinationData = [NSData dataWithContentsOfFile:
+        [destinationWWW stringByAppendingPathComponent:relativePath]];
+    if (sourceData == nil || destinationData == nil ||
+        ![sourceData isEqualToData:destinationData]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+static BOOL TempMailSynchronizeHBuilderWebResources(NSString *bundlePath) {
+  NSFileManager *files = NSFileManager.defaultManager;
+  NSString *sourceApps = [bundlePath
+      stringByAppendingPathComponent:@"Pandora/apps"];
+  BOOL sourceIsDirectory = NO;
+  if (![files fileExistsAtPath:sourceApps isDirectory:&sourceIsDirectory] ||
+      !sourceIsDirectory) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+           "reason=source_apps_missing path=%@",
+          sourceApps);
+    return NO;
+  }
+
+  NSURL *libraryURL = [files URLsForDirectory:NSLibraryDirectory
+                                     inDomains:NSUserDomainMask].lastObject;
+  NSString *destinationApps = [[libraryURL URLByAppendingPathComponent:
+      @"Pandora/apps" isDirectory:YES] path];
+  NSError *directoryError = nil;
+  if (![files createDirectoryAtPath:destinationApps
+         withIntermediateDirectories:YES
+                          attributes:nil
+                               error:&directoryError]) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+           "reason=destination_apps error=%@",
+          directoryError.localizedDescription ?: @"unknown");
+    return NO;
+  }
+
+  NSError *enumerationError = nil;
+  NSArray<NSString *> *appIdentifiers =
+      [files contentsOfDirectoryAtPath:sourceApps error:&enumerationError];
+  if (appIdentifiers == nil) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+           "reason=enumerate error=%@",
+          enumerationError.localizedDescription ?: @"unknown");
+    return NO;
+  }
+
+  NSUInteger synchronizedApps = 0;
+  for (NSString *appIdentifier in appIdentifiers) {
+    NSString *sourceWWW = [[sourceApps
+        stringByAppendingPathComponent:appIdentifier]
+        stringByAppendingPathComponent:@"www"];
+    BOOL sourceWWWIsDirectory = NO;
+    if (![files fileExistsAtPath:sourceWWW
+                     isDirectory:&sourceWWWIsDirectory] ||
+        !sourceWWWIsDirectory ||
+        ![files fileExistsAtPath:[sourceWWW
+            stringByAppendingPathComponent:@"__uniappview.html"]]) {
+      continue;
+    }
+
+    NSString *destinationApp =
+        [destinationApps stringByAppendingPathComponent:appIdentifier];
+    NSString *destinationWWW =
+        [destinationApp stringByAppendingPathComponent:@"www"];
+    if (!TempMailHBuilderWWWNeedsRefresh(sourceWWW, destinationWWW)) {
+      synchronizedApps += 1;
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_ready appid=%@ "
+             "action=reuse",
+            appIdentifier);
+      continue;
+    }
+
+    NSError *appDirectoryError = nil;
+    if (![files createDirectoryAtPath:destinationApp
+           withIntermediateDirectories:YES
+                            attributes:nil
+                                 error:&appDirectoryError]) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+             "reason=destination_app appid=%@ error=%@",
+            appIdentifier,
+            appDirectoryError.localizedDescription ?: @"unknown");
+      return NO;
+    }
+
+    NSString *stagingWWW = [destinationApp stringByAppendingPathComponent:
+        [NSString stringWithFormat:@"www.tempmail-staging-%@",
+                                   NSUUID.UUID.UUIDString]];
+    NSError *copyError = nil;
+    if (![files copyItemAtPath:sourceWWW
+                        toPath:stagingWWW
+                         error:&copyError]) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+             "reason=copy appid=%@ error=%@",
+            appIdentifier, copyError.localizedDescription ?: @"unknown");
+      return NO;
+    }
+
+    NSError *activationError = nil;
+    if ([files fileExistsAtPath:destinationWWW]) {
+      BOOL activated = [files
+          replaceItemAtURL:[NSURL fileURLWithPath:destinationWWW]
+             withItemAtURL:[NSURL fileURLWithPath:stagingWWW]
+            backupItemName:nil
+                   options:0
+          resultingItemURL:nil
+                     error:&activationError];
+      if (!activated) {
+        [files removeItemAtPath:stagingWWW error:nil];
+        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+               "reason=replace appid=%@ error=%@",
+              appIdentifier,
+              activationError.localizedDescription ?: @"unknown");
+        return NO;
+      }
+    } else if (![files moveItemAtPath:stagingWWW
+                               toPath:destinationWWW
+                                error:&activationError]) {
+      [files removeItemAtPath:stagingWWW error:nil];
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+             "reason=activate appid=%@ error=%@",
+            appIdentifier,
+            activationError.localizedDescription ?: @"unknown");
+      return NO;
+    }
+    synchronizedApps += 1;
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_ready appid=%@ "
+           "action=refresh",
+          appIdentifier);
+  }
+
+  if (synchronizedApps == 0) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_www_sync_failed "
+           "reason=no_packaged_apps");
+    return NO;
+  }
+  return YES;
+}
+
+static NSDictionary *TempMailPrepareHBuilderSceneManifest(
+    NSString *bundlePath, NSDictionary *guestInfo) {
+  if (guestInfo == nil) {
+    return nil;
+  }
+  NSString *executableName = guestInfo[@"CFBundleExecutable"];
+  if (![executableName isEqualToString:@"HBuilder"] ||
+      guestInfo[@"UIApplicationSceneManifest"] != nil) {
+    return guestInfo;
+  }
+
+  NSMutableDictionary *updatedInfo = [guestInfo mutableCopy];
+  updatedInfo[@"UIApplicationSceneManifest"] = @{
+    @"UIApplicationSupportsMultipleScenes": @NO,
+    @"UISceneConfigurations": @{
+      @"UIWindowSceneSessionRoleApplication": @[
+        @{
+          @"UISceneConfigurationName": @"TempMail Guest Configuration",
+          @"UISceneDelegateClassName": @"TempMailGuestSceneDelegate",
+        },
+      ],
+    },
+  };
+
+  NSString *infoPath = [bundlePath stringByAppendingPathComponent:@"Info.plist"];
+  NSError *serializationError = nil;
+  NSData *plistData = [NSPropertyListSerialization
+      dataWithPropertyList:updatedInfo
+                    format:NSPropertyListBinaryFormat_v1_0
+                   options:0
+                     error:&serializationError];
+  if (plistData == nil) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_manifest_failed "
+           "reason=serialize error=%@",
+          serializationError.localizedDescription ?: @"unknown");
+    return nil;
+  }
+
+  NSError *writeError = nil;
+  if (![plistData writeToFile:infoPath
+                      options:NSDataWritingAtomic
+                        error:&writeError]) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_manifest_failed "
+           "reason=write error=%@",
+          writeError.localizedDescription ?: @"unknown");
+    return nil;
+  }
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_scene_manifest_installed path=%@",
+        infoPath);
+  return [updatedInfo copy];
+}
+
+// Host routing URLs must not be interpreted as HBuilder guest launch intents.
+// A cold URL relaunch otherwise enters the guest's unrelated URL-import path.
+static IMP TempMailGuestOriginalDefaultFileManager;
+static NSFileManager *TempMailHBuilderFileManager;
+
+static id TempMailHBuilderDefaultFileManager(id self, SEL selector) {
+  // A private manager accepts the delegate used by the legacy HBuilder URL
+  // import path. Foundation's global default manager rejects setDelegate:.
+  return TempMailHBuilderFileManager;
+}
+
+static void TempMailInstallHBuilderFileManager(void) {
+  if (TempMailGuestOriginalDefaultFileManager != NULL) { return; }
+  TempMailHBuilderFileManager = [[NSFileManager alloc] init];
+  Method method = class_getClassMethod(NSFileManager.class, @selector(defaultManager));
+  TempMailGuestOriginalDefaultFileManager = method_getImplementation(method);
+  method_setImplementation(method, (IMP)TempMailHBuilderDefaultFileManager);
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_private_file_manager_installed");
+}
+
+static IMP TempMailGuestOriginalWillFinish;
+static IMP TempMailGuestOriginalDidFinish;
+
+static NSDictionary *TempMailGuestLaunchOptions(NSDictionary *options) {
+  NSURL *url = options[UIApplicationLaunchOptionsURLKey];
+  if (![url isKindOfClass:NSURL.class] ||
+      ![url.scheme.lowercaseString isEqualToString:@"tempmail"]) {
+    return options;
+  }
+  NSMutableDictionary *filtered = [options mutableCopy];
+  [filtered removeObjectForKey:UIApplicationLaunchOptionsURLKey];
+  [filtered removeObjectForKey:UIApplicationLaunchOptionsSourceApplicationKey];
+  [filtered removeObjectForKey:UIApplicationLaunchOptionsAnnotationKey];
+  NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME host_launch_url_filtered");
+  return filtered.count > 0 ? filtered : nil;
+}
+
+static BOOL TempMailGuestWillFinish(id self, SEL command, UIApplication *app,
+                                     NSDictionary *options) {
+  return ((BOOL (*)(id, SEL, id, id))TempMailGuestOriginalWillFinish)(
+      self, command, app, TempMailGuestLaunchOptions(options));
+}
+
+static BOOL TempMailGuestDidFinish(id self, SEL command, UIApplication *app,
+                                    NSDictionary *options) {
+  return ((BOOL (*)(id, SEL, id, id))TempMailGuestOriginalDidFinish)(
+      self, command, app, TempMailGuestLaunchOptions(options));
+}
+
+static void TempMailFilterHBuilderHostLaunchIntent(void) {
+  Class delegate = NSClassFromString(@"AppDelegate");
+  if (delegate == Nil) { return; }
+  Method will = class_getInstanceMethod(delegate, @selector(application:willFinishLaunchingWithOptions:));
+  Method did = class_getInstanceMethod(delegate, @selector(application:didFinishLaunchingWithOptions:));
+  if (will != NULL && TempMailGuestOriginalWillFinish == NULL) {
+    TempMailGuestOriginalWillFinish = method_getImplementation(will);
+    class_replaceMethod(delegate, method_getName(will), (IMP)TempMailGuestWillFinish,
+                        method_getTypeEncoding(will));
+  }
+  if (did != NULL && TempMailGuestOriginalDidFinish == NULL) {
+    TempMailGuestOriginalDidFinish = method_getImplementation(did);
+    class_replaceMethod(delegate, method_getName(did), (IMP)TempMailGuestDidFinish,
+                        method_getTypeEncoding(did));
+  }
+}
+
 static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
+  NSUInteger guestLaunchGeneration = ++TempMailGuestLaunchGeneration;
   NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
   NSString *bundleIdentifier = [defaults
       stringForKey:@"TempMailPlayBoxGuestBundleIdentifier"];
@@ -4403,6 +5976,18 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
       [NSString stringWithFormat:@"Applications/%@.app", storageIdentifier]] path];
   NSDictionary *guestInfo = [NSDictionary dictionaryWithContentsOfFile:
       [bundlePath stringByAppendingPathComponent:@"Info.plist"]];
+  if ([guestInfo[@"CFBundleExecutable"] isEqualToString:@"HBuilder"] &&
+      !TempMailSynchronizeHBuilderWebResources(bundlePath)) {
+    [defaults setBool:NO forKey:TempMailGuestModeKey];
+    return -1;
+  }
+  guestInfo = TempMailPrepareHBuilderSceneManifest(bundlePath, guestInfo);
+  if (guestInfo == nil) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_boot_failed "
+           "reason=scene_manifest");
+    [defaults setBool:NO forKey:TempMailGuestModeKey];
+    return -1;
+  }
   NSString *executableName = guestInfo[@"CFBundleExecutable"];
   NSString *executablePath = executableName.length > 0
       ? [bundlePath stringByAppendingPathComponent:executableName]
@@ -4428,9 +6013,19 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     return -1;
   }
 
+  // dlopen with RTLD_GLOBAL, dyld callbacks, Objective-C class registration,
+  // and later rebinding cannot be reliably undone. Make this flag sticky
+  // before the first runtime load so every subsequent failure terminates the
+  // contaminated process instead of returning to the host UI.
+  TempMailGuestRuntimeIrreversible = YES;
   if (!TempMailLoadPlayBoxRuntime()) {
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_boot_failed reason=runtime_load");
     return -1;
+  }
+  if ([NSProcessInfo.processInfo.arguments
+          containsObject:@"--tempmail-diagnostic-signals"]) {
+    TempMailInstallDiagnosticSignalHandler();
+    TempMailWriteDiagnosticStage("playbox_runtime_loaded");
   }
   if ([NSProcessInfo.processInfo.arguments
           containsObject:@"--tempmail-preload-native-app"]) {
@@ -4471,16 +6066,29 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     TempMailInstallNativeYunCengPluginClass();
   }
   NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_boot bundle=%@", bundlePath.lastPathComponent);
-  if (!TempMailInstallGuestProcessIdentity(bundlePath, executablePath)) {
+  TempMailWriteDiagnosticStage("identity_begin");
+  TempMailGuestIdentityInstallResult identityResult =
+      TempMailInstallGuestProcessIdentity(bundlePath, executablePath);
+  if (identityResult == TempMailGuestIdentityInstallResultUnsafe) {
+    TempMailWriteDiagnosticStage("identity_unsafe");
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted "
+           "reason=identity_transaction_unsafe");
+    _exit(78);
+  }
+  if (identityResult != TempMailGuestIdentityInstallResultSucceeded) {
+    TempMailWriteDiagnosticStage("identity_failed");
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_boot_failed reason=identity_redirect");
     [defaults setBool:NO forKey:TempMailGuestModeKey];
     return -1;
   }
+  TempMailWriteDiagnosticStage("identity_ready");
   if ([NSProcessInfo.processInfo.arguments
           containsObject:@"--tempmail-bridge-kiwi-listener"]) {
     TempMailInstallKiwiListenerBridge();
   }
+  TempMailWriteDiagnosticStage("nud_begin");
   TempMailNUDGuestHooksInit();
+  TempMailWriteDiagnosticStage("nud_ready");
   TempMailAdversarysHandler(TempMailGuestCrashHandler);
   // adversarys_4 accepts an Objective-C class name (it resolves the class and
   // metaclass with objc_getClass/object_getClass), not a framework name.
@@ -4637,10 +6245,22 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     return -1;
   }
 
+#if defined(TEMPMAIL_HBUILDER_DIAGNOSTICS)
+  if ([NSProcessInfo.processInfo.arguments
+          containsObject:@"--tempmail-diagnostic-hbuilder"]) {
+    TempMailInstallHBuilderDiagnostics();
+  }
+#endif
+
   if (TempMailInProcessGuestBootstrap) {
     UIApplication *application = UIApplication.sharedApplication;
-    BOOL guestBuildsOwnWindow =
+    BOOL isChungongGuest =
         [bundleIdentifier isEqualToString:@"com.cg.client.pro"];
+    NSString *mainStoryboardName = guestInfo[@"UIMainStoryboardFile"];
+    BOOL isHBuilderGuest =
+        [executableName isEqualToString:@"HBuilder"] &&
+        mainStoryboardName.length == 0;
+    BOOL guestBuildsOwnWindow = isChungongGuest || isHBuilderGuest;
     BOOL preserveHostApplicationDelegate = guestBuildsOwnWindow ||
         [bundleIdentifier isEqualToString:@"com.laodeng.worldcupapp"];
     NSString *swiftModule = guestInfo[@"CFBundleExecutable"];
@@ -4686,11 +6306,21 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     if (hostWindow == nil) {
       hostWindow = TempMailCurrentForegroundWindow(application);
     }
+    TempMailHostApplicationDelegate = hostDelegate;
+    TempMailHostApplicationWindow = hostWindow;
+    TempMailHostRootViewController = hostWindow.rootViewController;
+    TempMailHostWindowWasHidden = hostWindow.hidden;
+    TempMailHostWindowWasKey = hostWindow.isKeyWindow;
+    TempMailHostApplicationSurfaceCaptured = hostWindow != nil;
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME host_window_captured delegate=%@ window=%@ "
           "key=%d hidden=%d",
           NSStringFromClass([hostDelegate class]),
           NSStringFromClass(hostWindow.class), hostWindow.isKeyWindow,
           hostWindow.hidden);
+    if (hostWindow == nil) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME in_process_failed reason=host_window");
+      return -1;
+    }
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME delegate_alloc_begin class=%@",
           NSStringFromClass(delegateClass));
     id guestDelegate = [delegateClass alloc];
@@ -4734,40 +6364,19 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     UIViewController *guestRoot = nil;
     UIWindow *guestWindow = nil;
     if (!guestBuildsOwnWindow) {
-      NSString *storyboardName = guestInfo[@"UIMainStoryboardFile"];
-      if (storyboardName.length == 0) {
-        storyboardName = guestInfo[@"NSMainStoryboardFile"];
-      }
-      if (storyboardName.length == 0 &&
-          [TempMailGuestMainBundle pathForResource:@"Main"
-                                          ofType:@"storyboardc"] != nil) {
-        storyboardName = @"Main";
-      }
-      if (storyboardName.length > 0) {
-        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_create_begin name=%@ "
-              "bundle=%@ path=%@",
-              storyboardName, TempMailGuestMainBundle.bundleIdentifier,
-              TempMailGuestMainBundle.bundlePath);
-        UIStoryboard *storyboard =
-            [UIStoryboard storyboardWithName:storyboardName
-                                      bundle:TempMailGuestMainBundle];
-        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_create_end storyboard=%p",
-              (__bridge void *)storyboard);
-        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_instantiate_begin");
-        guestRoot = [storyboard instantiateInitialViewController];
-        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_instantiate_end root=%p class=%@",
-              (__bridge void *)guestRoot,
-              guestRoot == nil ? @"nil" : NSStringFromClass([guestRoot class]));
-      } else {
-        // Several PlayBox-converted UIKit/HBuilder guests intentionally have
-        // no UIMainStoryboardFile. UIApplicationMain still supplies a window;
-        // the guest AppDelegate populates it from didFinishLaunching. Mirror
-        // that contract with a neutral root instead of assuming Main.storyboard.
-        guestRoot = [[UIViewController alloc] init];
-        guestRoot.view.backgroundColor = UIColor.blackColor;
-        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_absent fallback_root=%@",
-              NSStringFromClass(guestRoot.class));
-      }
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_create_begin bundle=%@ path=%@",
+            TempMailGuestMainBundle.bundleIdentifier,
+            TempMailGuestMainBundle.bundlePath);
+      UIStoryboard *storyboard =
+          [UIStoryboard storyboardWithName:mainStoryboardName
+                                    bundle:TempMailGuestMainBundle];
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_create_end storyboard=%p",
+            (__bridge void *)storyboard);
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_instantiate_begin");
+      guestRoot = [storyboard instantiateInitialViewController];
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME storyboard_instantiate_end root=%p class=%@",
+            (__bridge void *)guestRoot,
+            guestRoot == nil ? @"nil" : NSStringFromClass([guestRoot class]));
       if (hostWindow.windowScene != nil) {
         NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_window_create_begin mode=scene");
         guestWindow =
@@ -4789,8 +6398,8 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
                                               setWindowSelector, guestWindow);
         NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_delegate_window_set_end");
       }
-    } else {
-      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_window_mode=delegate");
+    } else if (isChungongGuest) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_window_mode=chungong_delegate");
       // The Chungong AppDelegate allocates and assigns its UIWindow before
       // makeKeyAndVisible. Pre-instantiating the storyboard here schedules its
       // translated lifecycle methods while didFinish is still running and
@@ -4803,6 +6412,8 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
       TempMailInstallChungongAppearanceEnumCompatibility();
       TempMailPrewarmChungongModelWitness();
       TempMailInstallChungongModelValueWitnessCompatibility();
+    } else {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_window_mode=hbuilder_delegate");
     }
 
     NSDictionary *launchOptions = @{};
@@ -4811,9 +6422,7 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     BOOL willResult = YES;
     BOOL didResult = YES;
     BOOL deferredGuestWindowVisibility =
-        [bundleIdentifier isEqualToString:@"com.cg.client.pro"]
-            ? TempMailBeginGuestWindowVisibilityDeferral()
-            : NO;
+        isChungongGuest ? TempMailBeginGuestWindowVisibilityDeferral() : NO;
     if ([guestDelegate respondsToSelector:willFinish]) {
       NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME will_finish_begin");
       willResult = ((BOOL (*)(id, SEL, id, id))objc_msgSend)(
@@ -4836,10 +6445,33 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
         guestWindow = delegateWindow;
       }
     }
+    if (isHBuilderGuest && guestWindow != nil &&
+        hostWindow.windowScene != nil &&
+        guestWindow.windowScene != hostWindow.windowScene) {
+      guestWindow.windowScene = hostWindow.windowScene;
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_scene_attached scene=%@",
+            hostWindow.windowScene.session.persistentIdentifier);
+    }
     TempMailInProcessGuestWindow =
-        guestBuildsOwnWindow ? hostWindow : guestWindow;
+        isChungongGuest ? hostWindow : guestWindow;
+    if (isHBuilderGuest) {
+      TempMailInProcessGuestRootController = guestWindow.rootViewController;
+    }
     SEL becameActive = @selector(applicationDidBecomeActive:);
-    if (guestBuildsOwnWindow) {
+    BOOL inProcessLaunchSucceeded = willResult && didResult &&
+        guestWindow != nil;
+    if (isChungongGuest) {
+      inProcessLaunchSucceeded = inProcessLaunchSucceeded &&
+          deferredGuestWindowVisibility &&
+          TempMailOriginalSetRootViewController != NULL;
+    } else if (isHBuilderGuest) {
+      inProcessLaunchSucceeded = inProcessLaunchSucceeded &&
+          guestWindow.rootViewController != nil &&
+          hostWindow.windowScene != nil &&
+          guestWindow.windowScene == hostWindow.windowScene;
+    }
+    NSBundle *guestBundleForLaunch = TempMailGuestMainBundle;
+    if (isChungongGuest && inProcessLaunchSucceeded) {
       // UIKit activates the new root controller synchronously from
       // makeKeyAndVisible. Running that lifecycle while the translated guest
       // launch callback is unwinding makes the non-reentrant interpreter race
@@ -4851,13 +6483,20 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
                                    (int64_t)(0.20 * NSEC_PER_SEC)),
                      dispatch_get_main_queue(), ^{
+        if (guestLaunchGeneration != TempMailGuestLaunchGeneration) {
+          NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME window_activation_cancelled "
+                 "generation=%lu current=%lu",
+                (unsigned long)guestLaunchGeneration,
+                (unsigned long)TempMailGuestLaunchGeneration);
+          return;
+        }
         UIWindow *deferredGuestWindow = nil;
         UIViewController *deferredGuestController =
             TempMailTakeDeferredGuestRootController(&deferredGuestWindow);
         UIViewController *nativeContainer = [[UIViewController alloc] init];
         nativeContainer.view.backgroundColor = UIColor.blackColor;
         UIImage *launchImage = [UIImage imageNamed:@"ic_welcome_m"
-                                          inBundle:TempMailGuestMainBundle
+                                          inBundle:guestBundleForLaunch
                          compatibleWithTraitCollection:nil];
         UIImageView *launchImageView = [[UIImageView alloc]
             initWithFrame:nativeContainer.view.bounds];
@@ -4885,12 +6524,18 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
         ((void (*)(id, SEL, id))TempMailOriginalSetRootViewController)(
             hostWindow, @selector(setRootViewController:), nativeContainer);
         hostWindow.hidden = NO;
-        TempMailInstallGuestFloatingControl(hostWindow);
         NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME native_container_applied window=%@",
               NSStringFromClass(hostWindow.class));
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
                                      (int64_t)(0.10 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
+          if (guestLaunchGeneration != TempMailGuestLaunchGeneration) {
+            NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_cancelled "
+                   "generation=%lu current=%lu",
+                  (unsigned long)guestLaunchGeneration,
+                  (unsigned long)TempMailGuestLaunchGeneration);
+            return;
+          }
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME native_launch_surface_ready image=%d "
                 "guest_controller=%@",
                 launchImage != nil,
@@ -4912,7 +6557,7 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
           if (tabControllerClass == Nil) {
             NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_failed "
                   "reason=class_missing");
-            return;
+            _exit(79);
           }
           SEL tabInitializer = @selector(initWithNibName:bundle:);
           Method nativeTabInitializer = class_getInstanceMethod(
@@ -4920,10 +6565,15 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
           if (nativeTabInitializer == NULL) {
             NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_failed "
                   "reason=super_initializer_missing");
-            return;
+            _exit(79);
           }
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_alloc_begin");
           id allocatedTabController = [tabControllerClass alloc];
+          if (allocatedTabController == nil) {
+            NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_failed "
+                   "reason=allocation");
+            _exit(79);
+          }
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_alloc_end object=%@",
                 NSStringFromClass([allocatedTabController class]));
           Class nativeTabControllerClass =
@@ -4941,6 +6591,10 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
                                          tabInitializer, nil, nil);
           if (tabController != nil) {
             object_setClass(tabController, tabControllerClass);
+          } else {
+            NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_failed "
+                   "reason=initialization");
+            _exit(79);
           }
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_super_init_end object=%@",
                 NSStringFromClass(tabController.class));
@@ -4958,26 +6612,72 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
                   : method_getImplementation(guestTabViewDidLoad);
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_view_did_load_begin imp=%p",
                 guestTabViewDidLoadImplementation);
-          if (guestTabViewDidLoadImplementation != NULL) {
-            object_setClass(tabController, nativeTabControllerClass);
-            ((void (*)(id, SEL))guestTabViewDidLoadImplementation)(
-                tabController, @selector(viewDidLoad));
-            object_setClass(tabController, tabControllerClass);
+          if (guestTabViewDidLoadImplementation == NULL) {
+            NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_bootstrap_failed "
+                   "reason=view_did_load_missing");
+            _exit(79);
           }
+          object_setClass(tabController, nativeTabControllerClass);
+          ((void (*)(id, SEL))guestTabViewDidLoadImplementation)(
+              tabController, @selector(viewDidLoad));
+          object_setClass(tabController, tabControllerClass);
           NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_view_did_load_end children=%lu "
                 "subviews=%lu",
                 (unsigned long)tabController.childViewControllers.count,
                 (unsigned long)tabController.view.subviews.count);
+          if (guestLaunchGeneration != TempMailGuestLaunchGeneration) {
+            NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_handoff_cancelled "
+                   "generation=%lu current=%lu",
+                  (unsigned long)guestLaunchGeneration,
+                  (unsigned long)TempMailGuestLaunchGeneration);
+            return;
+          }
+          ((void (*)(id, SEL, id))TempMailOriginalSetRootViewController)(
+              hostWindow, @selector(setRootViewController:), tabController);
+          hostWindow.hidden = NO;
+          if ([guestDelegate respondsToSelector:becameActive]) {
+            ((void (*)(id, SEL, id))objc_msgSend)(
+                guestDelegate, becameActive, application);
+          }
+          TempMailInstallGuestFloatingControl(hostWindow);
+          TempMailMarkInProcessGuestLifecycleActive();
+          NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME tab_handoff_complete root=%@",
+                NSStringFromClass(hostWindow.rootViewController.class));
         });
       });
+    } else if (isChungongGuest) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME window_activation_not_scheduled "
+             "will=%d did=%d window=%@",
+            willResult, didResult, NSStringFromClass(guestWindow.class));
+    } else if (isHBuilderGuest && inProcessLaunchSucceeded) {
+      [guestWindow makeKeyAndVisible];
+      TempMailInstallGuestFloatingControl(guestWindow);
+      hostWindow.hidden = YES;
+      if ([guestDelegate respondsToSelector:becameActive]) {
+        ((void (*)(id, SEL, id))objc_msgSend)(guestDelegate, becameActive,
+                                              application);
+      }
+      TempMailMarkInProcessGuestLifecycleActive();
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME in_process_ready mode=hbuilder "
+             "delegate=%@ will=%d did=%d window=%@ root=%@",
+            NSStringFromClass(delegateClass), willResult, didResult,
+            NSStringFromClass(guestWindow.class),
+            NSStringFromClass(guestWindow.rootViewController.class));
+    } else if (isHBuilderGuest) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME hbuilder_window_failed will=%d did=%d "
+             "window=%@ root=%@ host_scene=%@ guest_scene=%@",
+            willResult, didResult, NSStringFromClass(guestWindow.class),
+            NSStringFromClass(guestWindow.rootViewController.class),
+            hostWindow.windowScene, guestWindow.windowScene);
     } else {
       [guestWindow makeKeyAndVisible];
-      hostWindow.hidden = YES;
       TempMailInstallGuestFloatingControl(guestWindow);
+      hostWindow.hidden = YES;
       if (didResult && [guestDelegate respondsToSelector:becameActive]) {
         ((void (*)(id, SEL, id))objc_msgSend)(guestDelegate, becameActive,
                                               application);
       }
+      TempMailMarkInProcessGuestLifecycleActive();
       NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME in_process_ready delegate=%@ will=%d "
             "did=%d window=%@ root=%@",
             NSStringFromClass(delegateClass), willResult, didResult,
@@ -4987,7 +6687,7 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     TempMailScheduleGuestScreenshot(5, @"inprocess-guest-screen-05.png");
     TempMailScheduleGuestScreenshot(15, @"inprocess-guest-screen-15.png");
     TempMailScheduleGuestScreenshot(30, @"inprocess-guest-screen-30.png");
-    return willResult && didResult && guestWindow != nil ? 0 : -1;
+    return inProcessLaunchSucceeded ? 0 : -1;
   }
 
   NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_main_start");
@@ -5011,13 +6711,17 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
     NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME debug_wait_before_guest_main");
     sleep(12);
   }
-  argv[0] = strdup(executablePath.fileSystemRepresentation);
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
-                               (int64_t)(2.0 * NSEC_PER_SEC)),
-                 dispatch_get_main_queue(), ^{
-    TempMailInstallGuestFloatingControl(
-        TempMailCurrentForegroundWindow(UIApplication.sharedApplication));
-  });
+  if ([executableName isEqualToString:@"HBuilder"]) {
+    TempMailFilterHBuilderHostLaunchIntent();
+    TempMailInstallHBuilderFileManager();
+  }
+  char *originalArgumentZero = argv[0];
+  char *guestArgumentZero = strdup(executablePath.fileSystemRepresentation);
+  if (guestArgumentZero == NULL) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_main_failed reason=argv0_allocation");
+    return -1;
+  }
+  argv[0] = guestArgumentZero;
   TempMailScheduleGuestScreenshot(5, @"guest-screen-05.png");
   TempMailScheduleGuestScreenshot(15, @"guest-screen-15.png");
   TempMailScheduleGuestScreenshot(30, @"guest-screen-30.png");
@@ -5031,16 +6735,46 @@ static int TempMailRunPlayBoxGuest(int argc, char *argv[]) {
                   error:nil];
   });
   int result = guestMain(argc, argv);
+  if (TempMailGuestOriginalDefaultFileManager != NULL) {
+    Method method = class_getClassMethod(NSFileManager.class, @selector(defaultManager));
+    method_setImplementation(method, TempMailGuestOriginalDefaultFileManager);
+    TempMailGuestOriginalDefaultFileManager = NULL;
+    TempMailHBuilderFileManager = nil;
+  }
+  argv[0] = originalArgumentZero;
+  free(guestArgumentZero);
   NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME guest_main_returned code=%d", result);
   return result;
 }
 
 int TempMailLaunchSelectedPlayBoxGuestInProcess(void) {
+  if (!TempMailAcquireGuestRuntimeLaunchClaim()) {
+    NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME launch_ignored reason=already_active");
+    return 0;
+  }
+  TempMailResetInProcessGuestLifecycle();
+  TempMailGuestRuntimeIrreversible = NO;
   TempMailInProcessGuestBootstrap = YES;
   const char *executable = NSBundle.mainBundle.executablePath.fileSystemRepresentation;
   char *arguments[] = {(char *)executable, NULL};
   int result = TempMailRunPlayBoxGuest(1, arguments);
   TempMailInProcessGuestBootstrap = NO;
+  if (result < 0) {
+    if (TempMailGuestRuntimeIrreversible) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted "
+             "reason=irreversible_runtime_state");
+      _exit(79);
+    }
+    if (!TempMailRestorePreviousProcessIdentity()) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted reason=identity_restore");
+      _exit(78);
+    }
+    if (!TempMailRestoreHostApplicationSurface()) {
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted reason=surface_restore");
+      _exit(80);
+    }
+    TempMailReleaseGuestRuntimeLaunchClaim();
+  }
   return result;
 }
 
@@ -5072,6 +6806,29 @@ int main(int argc, char *argv[]) {
     }
 
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    NSURL *qaReturnMarker = [TempMailPlayBoxContinuationMarkerURL().URLByDeletingLastPathComponent
+        URLByAppendingPathComponent:@"qa-floating-return"];
+    if ([processArguments containsObject:@"--tempmail-test-floating-return"]) {
+      [NSFileManager.defaultManager createDirectoryAtURL:qaReturnMarker.URLByDeletingLastPathComponent
+                           withIntermediateDirectories:YES attributes:nil error:nil];
+      [@"1" writeToURL:qaReturnMarker atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    }
+    if ([processArguments containsObject:@"--tempmail-stop-capture"]) {
+      [defaults removeObjectForKey:@"TempMailQAFloatingReturn"];
+      [NSFileManager.defaultManager removeItemAtURL:qaReturnMarker error:nil];
+      [defaults synchronize];
+    }
+
+    if ([defaults boolForKey:@"TempMailQACaptureSurface"]) {
+      NSString *logPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/TempMailTest/qa-runtime.log"];
+      FILE *log = fopen(logPath.fileSystemRepresentation, "a");
+      if (log != NULL) {
+        dup2(fileno(log), STDERR_FILENO);
+        setvbuf(stderr, NULL, _IOLBF, 0);
+        fclose(log);
+      }
+    }
+
     BOOL installCommand = NO;
     for (NSString *argument in processArguments) {
       if ([argument hasPrefix:@"--tempmail-install-"]) {
@@ -5090,6 +6847,63 @@ int main(int argc, char *argv[]) {
                     error:nil];
       NSLog(@"TEMPMAIL_RUNTIME launch_state_cleared reason=%@",
             installCommand ? @"install" : @"explicit");
+    }
+    // Deterministic real-device harness: bypass the launcher/relaunch hop so
+    // devicectl can keep stdout attached while a selected PlayBox guest boots.
+    // These arguments are test-only one-shot commands; normal UI launches keep
+    // using TempMailLauncherViewController's relaunch flow.
+    NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *>
+        *directPlayBoxGuests = @{
+      @"--tempmail-run-tianya-348-direct": @{
+        @"bundle": @"com.laodeng.worldcupapp",
+        @"storage": @"tianya_348",
+      },
+      @"--tempmail-run-adult-douyin-direct": @{
+        @"bundle": @"com.amk2ns2n9j.alan2is71",
+        @"storage": @"com.amk2ns2n9j.alan2is71",
+      },
+      @"--tempmail-run-dyzb-gq-direct": @{
+        @"bundle": @"ady.DYZB168dyzb.app",
+        @"storage": @"dyzb_gq",
+      },
+      @"--tempmail-run-dyzb-gq-loose": @{
+        @"bundle": @"ady.DYZB168dyzb.app",
+        @"storage": @"dyzb_gq",
+      },
+      @"--tempmail-run-dyzb-tf-direct": @{
+        @"bundle": @"ady.DYZB168dyzb.app",
+        @"storage": @"dyzb_tf",
+      },
+      @"--tempmail-run-chungong-direct": @{
+        @"bundle": @"com.cg.client.pro",
+        @"storage": @"chungong_3_9_1",
+      },
+      @"--tempmail-run-chungong-loose": @{
+        @"bundle": @"com.cg.client.pro",
+        @"storage": @"chungong_3_9_1",
+      },
+      @"--tempmail-run-ig-xiongmao-direct": @{
+        @"bundle": @"com.igvideo.jingdong",
+        @"storage": @"ig_xiongmao",
+      },
+    };
+    for (NSString *argument in directPlayBoxGuests) {
+      if (![NSProcessInfo.processInfo.arguments containsObject:argument]) {
+        continue;
+      }
+      NSDictionary<NSString *, NSString *> *guest =
+          directPlayBoxGuests[argument];
+      [defaults setObject:@"playbox" forKey:TempMailRuntimeKindKey];
+      [defaults setObject:NSUUID.UUID.UUIDString
+                   forKey:TempMailRuntimeLaunchTokenKey];
+      [defaults setObject:guest[@"bundle"]
+                   forKey:@"TempMailPlayBoxGuestBundleIdentifier"];
+      [defaults setObject:guest[@"storage"]
+                   forKey:@"TempMailPlayBoxGuestStorageIdentifier"];
+      [defaults synchronize];
+      NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME direct_harness guest=%@",
+            guest[@"storage"]);
+      break;
     }
     NSString *launchToken = [defaults stringForKey:TempMailRuntimeLaunchTokenKey];
     NSString *runtimeKind = [defaults stringForKey:TempMailRuntimeKindKey];
@@ -5118,11 +6932,32 @@ int main(int argc, char *argv[]) {
       [defaults removeObjectForKey:TempMailRuntimeLaunchTokenKey];
       [defaults removeObjectForKey:TempMailGuestLaunchTokenKey];
       [defaults synchronize];
-      int result = [runtimeKind isEqualToString:@"flutter"]
-          ? TempMailRunFlutterGuest(argc, argv)
-          : TempMailRunPlayBoxGuest(argc, argv);
+      BOOL playBoxRuntime = ![runtimeKind isEqualToString:@"flutter"];
+      if (playBoxRuntime && !TempMailAcquireGuestRuntimeLaunchClaim()) {
+        NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME launch_aborted reason=already_active");
+        return 81;
+      }
+      if (playBoxRuntime) {
+        TempMailGuestRuntimeIrreversible = NO;
+      }
+      int result = playBoxRuntime
+          ? TempMailRunPlayBoxGuest(argc, argv)
+          : TempMailRunFlutterGuest(argc, argv);
       if (result >= 0) {
         return result;
+      }
+      if (playBoxRuntime) {
+        if (TempMailGuestRuntimeIrreversible) {
+          NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted "
+                 "reason=irreversible_runtime_state");
+          return 79;
+        }
+        if (!TempMailRestorePreviousProcessIdentity()) {
+          NSLog(@"TEMPMAIL_PLAYBOX_RUNTIME fallback_aborted "
+                 "reason=identity_restore");
+          return 78;
+        }
+        TempMailReleaseGuestRuntimeLaunchClaim();
       }
     }
     return UIApplicationMain(argc, argv, nil,

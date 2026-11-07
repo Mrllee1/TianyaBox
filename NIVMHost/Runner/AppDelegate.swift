@@ -1,6 +1,9 @@
 import UIKit
 import PBPlayerKit
 
+@_silgen_name("TempMailForwardInProcessGuestLifecycle")
+private func TempMailForwardInProcessGuestLifecycle(_ event: Int32)
+
 @objc(TempMailHostDelegate)
 final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompatible {
   var window: UIWindow?
@@ -44,14 +47,17 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    let window = UIWindow(frame: UIScreen.main.bounds)
+    return true
+  }
+
+  fileprivate func installRoot(in window: UIWindow, initialURL: URL? = nil) {
     self.window = window
     if ProcessInfo.processInfo.arguments.contains("--tempmail-playbox-developer") {
       PBPlayerKitBox.setupApp()
       guard let controllerClass = NSClassFromString("PBPlayerKit.DeveloperController") as? NSObject.Type,
             let controller = controllerClass.init() as? UIViewController else {
         print("TEMPMAIL_PLAYBOX_DEVELOPER boot_failed reason=controller_missing")
-        return false
+        return
       }
       let navigation = UINavigationController(rootViewController: controller)
       window.rootViewController = navigation
@@ -64,11 +70,33 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
       window.rootViewController = coordinator
     }
     window.makeKeyAndVisible()
-    if let url = launchOptions?[.url] as? URL {
+    let qaArguments = ProcessInfo.processInfo.arguments
+    if qaArguments.contains("--tempmail-capture-surface") {
+      UserDefaults.standard.set(true, forKey: "TempMailQACaptureSurface")
+    }
+    if qaArguments.contains("--tempmail-stop-capture") {
+      UserDefaults.standard.removeObject(forKey: "TempMailQACaptureSurface")
+    }
+    if UserDefaults.standard.bool(forKey: "TempMailQACaptureSurface") {
+      for delay in [10.0, 30.0, 60.0] {
+      DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
+        let png = renderer.image { _ in
+          window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }.pngData()
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let directory = documents.appendingPathComponent("TempMailTest", isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try? png?.write(to: directory.appendingPathComponent("surface.png"), options: .atomic)
+        print("TEMPMAIL_QA surface_capture delay=\(delay) bytes=\(png?.count ?? 0)")
+      }
+      }
+    }
+
+    if let url = initialURL {
       _ = surfaceCoordinator?.handle(url: url)
     }
     print("TEMPMAIL_RUNTIME host_ready runtime=\(ProcessInfo.processInfo.arguments.contains("--tempmail-playbox-developer") ? "playbox_developer" : "launcher")")
-    return true
   }
 
   func application(
@@ -119,4 +147,37 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
     }
     return result
   }
+}
+
+
+@objc(TempMailSceneDelegate)
+final class TempMailSceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
+             options connectionOptions: UIScene.ConnectionOptions) {
+    guard let windowScene = scene as? UIWindowScene else { return }
+    if let delegate = UIApplication.shared.delegate as? TempMailHostDelegate {
+      let window = UIWindow(windowScene: windowScene)
+      self.window = window
+      delegate.installRoot(in: window, initialURL: connectionOptions.urlContexts.first?.url)
+    } else if let guestWindow = UIApplication.shared.delegate?.window ?? nil {
+      // The source-built Flutter runtime creates its own window before scene connection.
+      guestWindow.windowScene = windowScene
+      self.window = guestWindow
+      guestWindow.makeKeyAndVisible()
+    }
+  }
+
+  func scene(_ scene: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
+    guard let delegate = UIApplication.shared.delegate as? TempMailHostDelegate else { return }
+    for context in contexts {
+      _ = delegate.application(UIApplication.shared, open: context.url)
+    }
+  }
+
+  func sceneWillResignActive(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(1) }
+  func sceneDidEnterBackground(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(2) }
+  func sceneWillEnterForeground(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(3) }
+  func sceneDidBecomeActive(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(4) }
 }

@@ -1,0 +1,53 @@
+diff --git a/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm b/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm
+index 74fea45026d..3d4a5f1bfea 100644
+--- a/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm
++++ b/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm
+@@ -1454,7 +1454,13 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch)
+   // the first frame to render when the application/scene is actually active.
+   // This must run after updateViewportMetrics so that the surface creation tasks are queued after
+   // the viewport metrics update tasks.
+-  if (firstViewBoundsUpdate && self.stateIsActive && self.engine) {
++  // CoreDevice's console launch can leave the test app inactive while a system
++  // overlay owns focus. Allow AppBox's explicit surface-test launch to
++  // create the first surface so the downloaded guest can be proven on-device.
++  // Normal launches still require the application or scene to be active.
++  BOOL appBoxForceSurface =
++      [NSProcessInfo.processInfo.arguments containsObject:@"--appbox-force-surface"];
++  if (firstViewBoundsUpdate && (self.stateIsActive || appBoxForceSurface) && self.engine) {
+     [self surfaceUpdated:YES];
+ #if FLUTTER_RUNTIME_MODE == FLUTTER_RUNTIME_MODE_DEBUG
+     NSTimeInterval timeout = 0.2;
+diff --git a/shell/platform/darwin/ios/framework/Source/vsync_waiter_ios.mm b/shell/platform/darwin/ios/framework/Source/vsync_waiter_ios.mm
+index e73ed315a7f..580eee66ac9 100644
+--- a/shell/platform/darwin/ios/framework/Source/vsync_waiter_ios.mm
++++ b/shell/platform/darwin/ios/framework/Source/vsync_waiter_ios.mm
+@@ -114,7 +114,10 @@ double VsyncWaiterIOS::GetRefreshRate() const {
+ }
+ 
+ - (void)onDisplayLink:(CADisplayLink*)link {
+-  CFTimeInterval delay = CACurrentMediaTime() - link.timestamp;
++  // iOS 26 can report a display-link timestamp a few ticks ahead of
++  // CACurrentMediaTime(). Treat that clock-domain rounding as zero latency so
++  // the resulting frame start never lies in the future.
++  CFTimeInterval delay = fmax(0, CACurrentMediaTime() - link.timestamp);
+   fml::TimePoint frame_start_time = fml::TimePoint::Now() - fml::TimeDelta::FromSecondsF(delay);
+ 
+   CFTimeInterval duration = link.targetTimestamp - link.timestamp;
+diff --git a/runtime/ptrace_check.cc b/runtime/ptrace_check.cc
+index c9baa6d9c5b..cca44ead4ae 100644
+--- a/runtime/ptrace_check.cc
++++ b/runtime/ptrace_check.cc
+@@ -115,6 +115,13 @@ static bool EnableTracingManually(const Settings& vm_settings) {
+ }
+ 
+ static bool EnableTracingIfNecessaryOnce(const Settings& vm_settings) {
++  // AppBox's target-specific Guest.bundle never executes JIT pages on the host
++  // CPU; downloaded ARM64 instructions are data consumed by the Dart
++  // simulator. Tracing/debugserver is therefore not a prerequisite for it.
++  if (vm_settings.assets_path.find("Guest.bundle") != std::string::npos) {
++    return true;
++  }
++
+   if (IsLaunchedByFlutterCLI(vm_settings)) {
+     return true;
+   }
