@@ -1,0 +1,255 @@
+{
+  "files": [
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/drawable/shape_msg_tab_dot.xml",
+      "bytes": 284,
+      "sha256": "f885e9ebbf27d6045197a128c36e802676954c0f63b79c9baa7ee254c0e00d33"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/layout/fragment_home.xml",
+      "bytes": 5408,
+      "sha256": "a35e6afd8bfce2a16db5ff01adec45b241b379648af7d75be5ae12c9ab6e2d1b"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black01.webp",
+      "bytes": 3624,
+      "sha256": "6b891b24fba5899babd31df4825005fec05194426aaf4eeb44210ca1097e3873"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black02.webp",
+      "bytes": 3568,
+      "sha256": "1c81e8d7fd5c58ef6cb1accafd52197e08321fa89a6fdd311e31e2cf1e3287f7"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black03.webp",
+      "bytes": 4928,
+      "sha256": "145b46f1bcfc3b7242ead30dd5b06d4520f73ea140226370124e79b02bfd3540"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black04.webp",
+      "bytes": 5230,
+      "sha256": "d2c69c321c726563400f9cee42231a6133ccc4e0bf4af6622a3b61097d489dfa"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black05.webp",
+      "bytes": 2772,
+      "sha256": "abb1d10371b47b526423e2bcd3a38a2d2b1129d5670b254a0aab156c469e2d70"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black06.webp",
+      "bytes": 2786,
+      "sha256": "7fec439fa0ab7d801786df2f550b729131602e3a848377ff3ff87474906c5900"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black07.webp",
+      "bytes": 3728,
+      "sha256": "e2262513134fd197967fe668ca1a922a2cf58ee7d9c1f7943580994d781355a3"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_black08.webp",
+      "bytes": 4398,
+      "sha256": "57982e7c3896bfb14aad0267ba954e23fcb3027a90a24b005d5483b39378f298"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white01.webp",
+      "bytes": 3660,
+      "sha256": "61c08850cf0ec7c19698af8d31f87a87a4c8913979e3ba723f465a6d6e78cc91"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white02.webp",
+      "bytes": 3622,
+      "sha256": "8fe4b353049ad2c08d6ab8f0817553fe2db593461cdf9270ea50be1b7f2fe456"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white03.webp",
+      "bytes": 5008,
+      "sha256": "237c72f1fc1e97f6b21b95c4880d08a5e9516a4c431f10745a981de2d114bcea"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white04.webp",
+      "bytes": 5354,
+      "sha256": "701546ddca4f51df68163fdead2c268345d6257356eb7cba1a55693b769799c4"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white05.webp",
+      "bytes": 2910,
+      "sha256": "0747ff8e8cc36672470882b8232b70bf6511d072ce0ad8a004163455bf065fd7"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white06.webp",
+      "bytes": 2996,
+      "sha256": "db87588bbc07e3c4fe0dd7f8308fa213be1d929c8392712c3726eaa82837defd"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white07.webp",
+      "bytes": 4026,
+      "sha256": "1db1b9ca4cf1dcfb14fb74d798eb39336ae415aa988959c0db4950df4624e90d"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/mipmap-xxhdpi/home_tittle_white08.webp",
+      "bytes": 4532,
+      "sha256": "60eac308fe211a06bc6fc60ec0e8682b110de7de9e1d2aed425e9b1c4a7807bf"
+    },
+    {
+      "path": "/Users/king/Downloads/qingqing-analysis/decompiled/sources/com/xaebike/qifo/view/fragment/HomeFragment.java",
+      "bytes": 24914,
+      "sha256": "f1cdae123afeb4c236b887ca508e164bf9d83429804a5c389584f718321a37c9"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-group.png",
+      "bytes": 1257019,
+      "sha256": "e25300ccff38de950e8284865d0e7b618cc3de44689aa0a54e1a001cd06b542b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-group.xml",
+      "bytes": 62856,
+      "sha256": "7199be20802749e2aa5439cca6baf4139f31548233a38240568650faee83e135"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-recommend.png",
+      "bytes": 1402954,
+      "sha256": "ca9c6e7835e409166f910c6bfb570954330dc0f58a46d2075bc540607e0249cb"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-recommend.xml",
+      "bytes": 30242,
+      "sha256": "99549503abec711376e06362f5b6fb989ce5d2c5070f82736e2d80e667227033"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-simulator.png",
+      "bytes": 2805399,
+      "sha256": "e410cc37af0a11127ca5bb0cfa56204aa6ca63ed3343cd5a56d51b65db27e755"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-simulator.xml",
+      "bytes": 36382,
+      "sha256": "49b4ed9f11bce16aa9e800f38fff4745c4096b666862acd98baecf6a1624ded5"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-theater.png",
+      "bytes": 1707314,
+      "sha256": "ccee116ce4cd888b0b48e0732119a8c9a8f861bf4f1314e4b7c89e88ed5b1c84"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/android-tabs-theater.xml",
+      "bytes": 42162,
+      "sha256": "e13406a28a5468f35221fa80e50ec6615ee1682c406e6fd9bf6cf8c0a9d24d76"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/device-build.log",
+      "bytes": 46944,
+      "sha256": "2defaae28d14e751a526ea1c53d010e5e0fbe02a0ae354d403a53ddc27b887ef"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/device-sign.log",
+      "bytes": 8586,
+      "sha256": "d268eb7fb285b2379df7db2d4185c043ac0a60a51cadfa1ee8f9b1b74ce37191"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/ios-home-tabs-eight-states.png",
+      "bytes": 382475,
+      "sha256": "895a15b023f2bfd9909405a1f3c7f0f17cace1f2fc94fc410f85cf158e87149e"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/native-preview/build.log",
+      "bytes": 351419,
+      "sha256": "e9934c21f0f1fc0222569d05165fd49b9b4ef11413cdc818a6ffec43291c9840"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingRootView.swift",
+      "bytes": 19067,
+      "sha256": "2b095a57611bcd12a2df08a95df27fd3745b0ce5ff86de0952c3dd0f2aea40d5"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black01.imageset/home_tittle_black01.png",
+      "bytes": 4035,
+      "sha256": "3b8375277ed7bfb045ab084cddb1d5f494051e9170cc5edfa026833fff627037"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black02.imageset/home_tittle_black02.png",
+      "bytes": 4102,
+      "sha256": "ceed99658b1ac30a776bc0a0f9136f9e0c9756498a1f29225e454359e774bf89"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black03.imageset/home_tittle_black03.png",
+      "bytes": 5596,
+      "sha256": "de015440fd13a28502c315f85ebad9b585481846305a5653e208b7b83f0d1d25"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black04.imageset/home_tittle_black04.png",
+      "bytes": 6460,
+      "sha256": "8ad975a24aa4f96a4db64a43f8f66ba18c0119119c91604d9551575ce1ef45f4"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black05.imageset/home_tittle_black05.png",
+      "bytes": 3901,
+      "sha256": "8d3f918efa5f28e43ea17cb9f87e30d6de04cf2d84b42c2d794237bd1cd2e968"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black06.imageset/home_tittle_black06.png",
+      "bytes": 3956,
+      "sha256": "b692572804fe92ef327275c283d82f50737e56b022efc656a14798aba3d60dae"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black07.imageset/home_tittle_black07.png",
+      "bytes": 5379,
+      "sha256": "8496fa1cfb47670fe58958543fd23b7ee7136e9472fae15ef2497262d4f0501b"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_black08.imageset/home_tittle_black08.png",
+      "bytes": 6031,
+      "sha256": "206bfc00b9ef4e4caa453ff8095c35fd523dd548ab57ba45c46752ee7f672e5d"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white01.imageset/home_tittle_white01.png",
+      "bytes": 4225,
+      "sha256": "0c749c342c942a7cac22fe952812d1faeff3f5e31bef8e699433d97cbb87faee"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white02.imageset/home_tittle_white02.png",
+      "bytes": 4291,
+      "sha256": "26cafda92b7fe4b59b85e5fb726846c9560300ec50e5a965b3739960162c13ec"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white03.imageset/home_tittle_white03.png",
+      "bytes": 5932,
+      "sha256": "f0bdd2ed85598f3429407dd085c872dc7c1be6d936f92c2ef5272331751668b5"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white04.imageset/home_tittle_white04.png",
+      "bytes": 6789,
+      "sha256": "ceba1251bd58d4bf1abe61e0d86f67ecbae91e33c13d210799068c8829981ccf"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white05.imageset/home_tittle_white05.png",
+      "bytes": 4168,
+      "sha256": "fafefe8d490776dc95685c2920264cec6c29fdb515581c0ae5a4e005c2b37680"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white06.imageset/home_tittle_white06.png",
+      "bytes": 4319,
+      "sha256": "ece9005c568a8dbc2b7385fe0935e85907960e58d6f208f2e833da94dd6635e4"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white07.imageset/home_tittle_white07.png",
+      "bytes": 5901,
+      "sha256": "c31fc01af68000ffe036920e0ba0999800a657d0d31a774e6839c9fc02e0e119"
+    },
+    {
+      "path": "NIVMHost/Runner/Assets.xcassets/Qingqing/qq_home_tittle_white08.imageset/home_tittle_white08.png",
+      "bytes": 6607,
+      "sha256": "4d1371dba5082ab63f81c9019874fb6cbaa71c720a068ebeb8d8f4ebc6a47629"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewMain.swift",
+      "bytes": 15133,
+      "sha256": "32ae8d5d5b3d17c4f8acebe4b116cf1fc3f5bb4413a202f722dac42b0f6c5237"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-home-tabs-20261108/asset-raster-check.log",
+      "bytes": 30,
+      "sha256": "15a602a48ab7f8dff00b118083c32a4107e87e4015ec3fe87a3372c169c97df9"
+    }
+  ],
+  "note": "Source and local evidence fingerprints only; no account data or raw screenshots committed."
+}

@@ -55,28 +55,40 @@ struct QingqingRootView: View {
   }
 }
 
+struct QQHomeCategoryHeader: View {
+  let selection: Int
+  let darkBackdrop: Bool
+  let select: (Int) -> Void
+  var body: some View {
+      HStack(spacing: 12) {
+        ForEach(0..<4) { index in
+          Button { select(index) } label: {
+            VStack(spacing: 3) {
+              // The APK supplies distinct active/inactive artwork, all at alpha 1.
+              QQArtwork(name: "home_tittle_" + (darkBackdrop ? "white" : "black") + String(format: "%02d", index + (selection == index ? 1 : 5)))
+                .frame(width: [34.0, 34, 48, 64][index], height: 20)
+              Capsule().fill(selection == index ? Color(red: 0, green: 203.0 / 255, blue: 1) : .clear).frame(width: 12, height: 4)
+            }.frame(height: 44).contentShape(Rectangle())
+          }.accessibilityLabel(["推荐", "群聊", "模拟器", "互动剧场"][index]).accessibilityIdentifier("qingqing.home.section." + String(index)).accessibilityAddTraits(selection == index ? .isSelected : [])
+        }
+        Spacer(minLength: 0)
+        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 30, height: 30).frame(width: 50, height: 50).contentShape(Rectangle()) }
+          .accessibilityLabel("会员中心")
+      }.padding(.leading, 20).frame(height: 57).buttonStyle(.plain)
+  }
+}
+
 private struct QQHomeView: View {
   @EnvironmentObject private var store: QingqingStore
   @State private var focused = 0
-  @State private var backdrop = Color(red: 0.89, green: 0.94, blue: 0.94)
-  @State private var darkBackdrop = false
+  @State private var palettes: [Int: (Color, Bool)] = [:]
+  private var palette: (Color, Bool)? { [0, 3].contains(store.homeSection) ? palettes[store.homeSection] : nil }
+  private var image: String { items.indices.contains(focused) ? items[focused].image : "" }
   var body: some View {
-    VStack(spacing: 14) {
-      HStack(spacing: 12) {
-        ForEach(Array(["01", "06", "07", "08"].enumerated()), id: \.offset) { index, suffix in
-          Button { focused = 0; store.homeSection = index } label: {
-            VStack(spacing: 4) {
-              QQArtwork(name: "home_tittle_" + (darkBackdrop ? "white" : "black") + suffix)
-                .frame(width: [34.0, 34, 48, 64][index], height: 20)
-                .opacity(store.homeSection == index ? 1 : 0.45)
-              Capsule().fill(store.homeSection == index ? Color.cyan : .clear).frame(width: 12, height: 4)
-            }.frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
-          }.accessibilityLabel(["推荐", "群聊", "模拟器", "剧场"][index]).accessibilityIdentifier("qingqing.home.section." + String(index)).accessibilityAddTraits(store.homeSection == index ? .isSelected : [])
-        }
-        Spacer(minLength: 0)
-        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 34, height: 34).frame(width: 44, height: 44).contentShape(Rectangle()) }
-          .accessibilityLabel("会员中心")
-      }.padding(.horizontal, 20).padding(.top, 8).zIndex(1)
+    VStack(spacing: 0) {
+      QQHomeCategoryHeader(selection: store.homeSection, darkBackdrop: palette?.1 ?? false) { index in
+        focused = 0; store.homeSection = index
+      }.zIndex(1)
       ZStack {
         if let error = store.sectionErrors[store.homeSection], items.isEmpty {
           QQEmptyState(text: error) { Task { await store.loadSection(store.homeSection, force: true) } }
@@ -108,11 +120,12 @@ private struct QQHomeView: View {
         }
       }.frame(maxWidth: .infinity, maxHeight: .infinity).clipped().contentShape(Rectangle())
     }
-    .background(LinearGradient(colors: [backdrop, QQStyle.background], startPoint: .top, endPoint: .bottom))
+    .background(LinearGradient(colors: [palette?.0 ?? Color(white: 249.0 / 255), Color(white: 249.0 / 255)], startPoint: .top, endPoint: .bottom))
     .task(id: store.homeSection) { await store.loadSection(store.homeSection) }
-    .task(id: items.indices.contains(focused) ? items[focused].image : "") {
-      guard items.indices.contains(focused), let palette = await QQImagePalette.backdrop(items[focused].image), !Task.isCancelled else { return }
-      backdrop = palette.0; darkBackdrop = palette.1
+    .task(id: "\(store.homeSection)|\(image)") {
+      let section = store.homeSection
+      guard [0, 3].contains(section), let palette = await QQImagePalette.backdrop(image), !Task.isCancelled else { return }
+      palettes[section] = palette
     }
   }
   private var items: [QQRecord] {

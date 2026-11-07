@@ -15,6 +15,7 @@ struct PreviewScreen: View {
       if !ready { ProgressView() }
       else { switch mode {
       case "local-diagnostics": QQPreviewLocalDiagnostics()
+      case "home-tabs-fixture": QQHomeTabsPreview()
       case "navigation-fixture", "discovery-fixture", "section-error-fixture": QQNavigationInteractionPreview(mode: mode)
       case "compact-navigation-fixture": QQNavigationInteractionPreview(mode: mode).frame(width: 320, height: 568)
       case "cast-guards-fixture": QQCastGuardsPreview()
@@ -59,6 +60,23 @@ struct PreviewScreen: View {
       default: QingqingRootView()
       } }
     }.task { if !mode.hasSuffix("-fixture") && !["local-diagnostics", "home", "library", "mine", "messages", "group", "simulator", "theater"].contains(mode) { await store.start() }; ready = true }
+  }
+}
+
+private struct QQHomeTabsPreview: View {
+  @StateObject private var store = QQInteractionFixtures.store(mode: "navigation")
+  var body: some View {
+    NavigationStack {
+      VStack(spacing: 20) {
+        ForEach([false, true], id: \.self) { dark in
+          VStack(spacing: 0) {
+            ForEach(0..<4) { selected in
+              QQHomeCategoryHeader(selection: selected, darkBackdrop: dark, select: { _ in })
+            }
+          }.background(dark ? Color(red: 0.06, green: 0.18, blue: 0.23) : Color(white: 249.0 / 255))
+        }
+      }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }.environmentObject(store)
   }
 }
 
