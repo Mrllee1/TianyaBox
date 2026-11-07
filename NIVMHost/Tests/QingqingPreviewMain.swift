@@ -15,6 +15,11 @@ struct PreviewScreen: View {
       if !ready { ProgressView() }
       else { switch mode {
       case "local-diagnostics": QQPreviewLocalDiagnostics()
+      case "navigation-fixture", "discovery-fixture", "section-error-fixture": QQNavigationInteractionPreview(mode: mode)
+      case "compact-navigation-fixture": QQNavigationInteractionPreview(mode: mode).frame(width: 320, height: 568)
+      case "cast-guards-fixture": QQCastGuardsPreview()
+      case "chat-draft-fixture": QQChatDraftInteractionPreview()
+      case "long-header-fixture": QQLongHeaderInteractionPreview()
       case "background-sheet-fixture": QQBackgroundSheetPreview(custom: false)
       case "background-custom-fixture": QQBackgroundSheetPreview(custom: true)
       case "memory-capacity-fixture", "memory-unlock-fixture", "memory-owned-fixture": NavigationStack { QQMemoryOfferPreview(mode: mode) }
@@ -178,5 +183,37 @@ private struct QQRolePreview: View {
         }
       } else { ProgressView() }
     }.task { role = try? await store.api.request("home/getRole", parameters: ["page": "1", "pageSize": "1", "category": "all"]).records.first }
+  }
+}
+
+private struct QQNavigationInteractionPreview: View {
+  @StateObject private var store: QingqingStore
+  init(mode: String) {
+    let store = QQInteractionFixtures.store(mode: mode == "discovery-fixture" ? "paging" : mode == "section-error-fixture" ? "section-error" : "navigation")
+    if mode == "discovery-fixture" { store.selectedTab = 1 }
+    _store = StateObject(wrappedValue: store)
+  }
+  var body: some View { QingqingRootView(store: store) }
+}
+private struct QQCastGuardsPreview: View {
+  @StateObject private var store = QQInteractionFixtures.store(mode: "navigation")
+  @State private var player = "lead"
+  @State private var agents: [String: QQRecord] = [:]
+  var body: some View { QQSimulatorCastView(title: "身份限制验收", scenarioID: "qa-only", roles: QQInteractionFixtures.roles, playerRoleID: $player, agents: $agents, busy: false, start: {}).environmentObject(store) }
+}
+
+private struct QQChatDraftInteractionPreview: View {
+  @StateObject private var store = QQInteractionFixtures.store(mode: "chat-draft")
+  var body: some View { NavigationStack { QQChatView(role: QQRecord(.object(["id": .string("draft-role"), "name": .string("草稿验收角色")])) ) }.environmentObject(store).task { await store.start() } }
+}
+private struct QQLongHeaderInteractionPreview: View {
+  @State private var presented = false
+  var body: some View {
+    NavigationStack {
+      Button("打开长标题页面") { presented = true }
+        .navigationDestination(isPresented: $presented) {
+          QQPage(title: String(repeating: "很长的验收标题", count: 5)) { Color.gray }
+        }
+    }.frame(width: 320, height: 568)
   }
 }

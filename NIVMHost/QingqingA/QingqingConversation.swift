@@ -80,7 +80,7 @@ final class QQChatModel: ObservableObject {
   @Published var error: String?
   @Published var suggestions: [String] = []
   @Published var panel: [QQRecord] = []
-  var draftAfterFailure: String?
+  @Published var draftAfterFailure: String?
 
   func history(store: QingqingStore, roleID: String, kind: QQConversationKind) async {
     busy = true; error = nil
@@ -194,6 +194,10 @@ struct QQChatView: View {
                   if !store.loggedIn { Button("登录后继续") { store.loginPresented = true } }
                 }.foregroundStyle(.white).padding(14).frame(maxWidth: .infinity).background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
               }
+              if let failed = chat.draftAfterFailure {
+                Button("恢复未发送内容") { input = QQChatDraft.recovering(failed, alongside: input); chat.draftAfterFailure = nil }
+                  .font(.system(size: 13)).foregroundStyle(.white).padding(12).background(.black.opacity(0.35), in: Capsule())
+              }
               Color.clear.frame(height: 2).id("bottom")
             }.padding(16)
           }.mask { GeometryReader { geometry in
@@ -278,7 +282,7 @@ struct QQChatView: View {
         }
       }
       HStack(alignment: .bottom, spacing: 5) {
-        TextField("自由输入…", text: $input, axis: .vertical).focused($inputFocused).lineLimit(1...2).font(.system(size: 14)).foregroundStyle(.white).tint(.white).padding(.vertical, 13).padding(.leading, 15)
+        TextField("自由输入…", text: $input, axis: .vertical).accessibilityIdentifier("qingqing.chat.input").focused($inputFocused).lineLimit(1...2).font(.system(size: 14)).foregroundStyle(.white).tint(.white).padding(.vertical, 13).padding(.leading, 15)
         if input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
           Button { Task { await chat.candidateReplies(store: store, roleID: roleID, kind: kind) } } label: { QQArtwork(name: "chat_ico_ai01").frame(width: 24, height: 24).frame(height: 50) }.accessibilityLabel("回复灵感").disabled(chat.busy)
           Button { showActions.toggle() } label: { QQArtwork(name: "chat_ico_more").frame(width: 24, height: 24).frame(height: 50) }.accessibilityLabel("更多功能")
@@ -305,9 +309,15 @@ struct QQChatView: View {
 
   private func send() {
     store.requireLogin {
+      guard !chat.busy, !input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
       let message = input
       input = ""
-      Task { if !(await chat.send(message, store: store, roleID: roleID, model: modelCode, kind: kind)) { input = message } }
+      Task {
+        if !(await chat.send(message, store: store, roleID: roleID, model: modelCode, kind: kind)) {
+          if input.isEmpty { input = message }
+          else { chat.draftAfterFailure = QQChatDraft.recovering(chat.draftAfterFailure ?? "", alongside: message) }
+        }
+      }
     }
   }
 }

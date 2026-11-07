@@ -15,14 +15,14 @@ struct QQPage<Content: View>: View {
   var body: some View {
     VStack(spacing: 0) {
       ZStack {
-        Text(title).font(.system(size: 18, weight: .bold))
+        Text(title).font(.system(size: 18, weight: .bold)).lineLimit(1).truncationMode(.tail).padding(.horizontal, 54).frame(maxWidth: .infinity)
         HStack {
           if closeOnRight { Spacer() }
           Button { dismiss() } label: { QQArtwork(name: closeOnRight ? "pop_ico_close" : "ico_back").frame(width: closeOnRight ? 18 : 24, height: closeOnRight ? 18 : 24).frame(width: 50, height: 50) }.accessibilityLabel(closeOnRight ? "关闭" : "返回")
           if !closeOnRight { Spacer() }
         }
-      }.frame(height: headerHeight)
-      content().frame(maxWidth: .infinity, maxHeight: .infinity)
+      }.frame(height: headerHeight).zIndex(1)
+      content().frame(maxWidth: .infinity, maxHeight: .infinity).clipped().contentShape(Rectangle())
     }.foregroundStyle(QQStyle.ink).background(alignment: .top) { if let backgroundArtwork { Image("qq_" + backgroundArtwork).resizable().frame(height: artworkHeight).ignoresSafeArea(edges: .top) } }.background(color.ignoresSafeArea())
       .toolbar(.hidden, for: .navigationBar).buttonStyle(.plain)
   }

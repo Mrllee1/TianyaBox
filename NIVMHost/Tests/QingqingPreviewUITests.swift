@@ -5,6 +5,141 @@ import XCTest
 final class QingqingPreviewUITests: XCTestCase {
   override func setUpWithError() throws { continueAfterFailure = false }
 
+  func testTheaterCanSwitchBackToRecommendation() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=theater"]
+    app.launch()
+    let more = app.buttons["更多剧场"]
+    XCTAssertTrue(more.waitForExistence(timeout: 40))
+    capture(app, "theater-before-category-tap")
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = "theater-hit-regions"; tree.lifetime = .keepAlways; add(tree)
+    app.buttons["推荐"].tap()
+    let leftTheater = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: more)
+    XCTAssertEqual(XCTWaiter.wait(for: [leftTheater], timeout: 5), .completed)
+    capture(app, "recommendation-after-theater")
+  }
+
+  func testAllHomeSectionsAndBottomBarRemainReachable() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    for mode in ["navigation-fixture", "compact-navigation-fixture"] {
+      app.launchArguments = ["--qq=" + mode]
+      app.launch()
+      XCTAssertTrue(app.buttons["qingqing.home.section.0"].waitForExistence(timeout: 10))
+      for index in [3, 0, 1, 2, 3, 1, 0, 3] {
+        let tab = app.buttons["qingqing.home.section.\(index)"]
+        XCTAssertTrue(tab.isHittable)
+        tab.tap()
+        XCTAssertTrue(tab.isSelected)
+      }
+      let more = app.buttons["qingqing.theater.slot.4"]
+      XCTAssertTrue(more.waitForExistence(timeout: 10))
+      more.tap()
+      XCTAssertTrue(app.staticTexts["剧场验收剧情1"].exists)
+      XCTAssertTrue(app.buttons["聊天"].isHittable)
+      capture(app, mode + "-theater-bounds")
+      for index in [1, 3, 2, 0] {
+        let tab = app.buttons["qingqing.tab.\(index)"]
+        // Exercise the bar cell's upper edge, outside the 24-point icon.
+        tab.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)).tap()
+        XCTAssertTrue(tab.isSelected)
+      }
+      app.buttons["会员中心"].tap()
+      let back = app.buttons["返回"]
+      XCTAssertTrue(back.waitForExistence(timeout: 10))
+      back.tap()
+      XCTAssertTrue(app.buttons["qingqing.home.section.3"].isSelected)
+      app.terminate()
+    }
+  }
+
+  func testDiscoveryPaginationFailureRetryAndModeSwitching() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=discovery-fixture"]
+    app.launch()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+    app.buttons["qingqing.category.slow"].tap()
+    app.buttons["qingqing.category.fast"].tap()
+    XCTAssertTrue(app.buttons["qingqing.library.role.fast-1"].waitForExistence(timeout: 10))
+    app.buttons["qingqing.category.all"].tap()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+    let more = app.buttons["qingqing.library.load-more"]
+    for _ in 0..<14 { if more.exists && more.isHittable { break }; app.swipeUp() }
+    XCTAssertTrue(more.isHittable)
+    more.tap()
+    XCTAssertTrue(app.buttons["重试加载更多"].waitForExistence(timeout: 10))
+    capture(app, "discovery-page-failure-preserves-results")
+    more.tap()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-21"].waitForExistence(timeout: 10))
+    app.buttons["排行榜"].tap()
+    XCTAssertTrue(app.staticTexts["排行验收角色"].waitForExistence(timeout: 10))
+    app.buttons["热门标签"].tap()
+    app.swipeDown()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+  }
+
+  func testFailedHomeSectionStillAllowsSwitching() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=section-error-fixture"]
+    app.launch()
+    let group = app.buttons["qingqing.home.section.1"]
+    XCTAssertTrue(group.waitForExistence(timeout: 10))
+    group.tap()
+    XCTAssertTrue(app.buttons["重新加载"].waitForExistence(timeout: 10))
+    app.buttons["qingqing.home.section.3"].tap()
+    XCTAssertTrue(app.buttons["更多剧场"].waitForExistence(timeout: 10))
+    app.buttons["qingqing.home.section.0"].tap()
+    XCTAssertTrue(app.buttons["推荐验收角色"].waitForExistence(timeout: 10))
+    XCTAssertFalse(app.buttons["重新加载"].exists)
+  }
+
+  func testSupportingSimulatorIdentityCannotBeAssignedToPlayer() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=cast-guards-fixture"]
+    app.launch()
+    let main = app.buttons["qingqing.cast.self.lead"]
+    XCTAssertTrue(main.waitForExistence(timeout: 10))
+    XCTAssertTrue(main.isEnabled)
+    XCTAssertFalse(app.buttons["qingqing.cast.self.support"].isEnabled)
+    capture(app, "simulator-playable-identity-guards")
+  }
+
+  func testFailedChatDoesNotOverwriteNewTyping() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=chat-draft-fixture"]
+    app.launch()
+    let input = app.descendants(matching: .any)["qingqing.chat.input"]
+    XCTAssertTrue(input.waitForExistence(timeout: 10))
+    input.tap(); input.typeText("first draft")
+    app.buttons["发送消息"].tap()
+    input.tap(); input.typeText("new draft")
+    let recover = app.buttons["恢复未发送内容"]
+    XCTAssertTrue(recover.waitForExistence(timeout: 12))
+    XCTAssertEqual(input.value as? String, "new draft")
+    recover.tap()
+    XCTAssertTrue((input.value as? String ?? "").contains("first draft"))
+    XCTAssertTrue((input.value as? String ?? "").contains("new draft"))
+    capture(app, "failed-chat-keeps-both-drafts-fixture")
+  }
+
+  func testLongPageTitleLeavesBackButtonReachable() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=long-header-fixture"]
+    app.launch()
+    let open = app.buttons["打开长标题页面"]
+    XCTAssertTrue(open.waitForExistence(timeout: 10))
+    open.tap()
+    let back = app.buttons["返回"]
+    XCTAssertTrue(back.waitForExistence(timeout: 10))
+    let title = app.staticTexts[String(repeating: "很长的验收标题", count: 5)]
+    XCTAssertTrue(title.exists)
+    XCTAssertGreaterThanOrEqual(title.frame.minX, back.frame.maxX)
+    XCTAssertTrue(back.isHittable)
+    capture(app, "long-title-bounded-header-fixture")
+    back.tap()
+    XCTAssertTrue(open.waitForExistence(timeout: 10))
+  }
+
   func testLiveAgentSearchClearAndScroll() {
     let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
     app.launchArguments = ["--qq=agent-picker"]

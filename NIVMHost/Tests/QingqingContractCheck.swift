@@ -134,17 +134,25 @@ struct QingqingContractCheck {
     catch QQAPIError.invalidResponse {}
     print("PASS malformed encryption envelope rejection")
 
-    let identities = ["self", "advisor", "guard"].map { QQRecord(.object(["id": .string($0)])) }
+    let identities = ["self", "advisor", "guard"].map { QQRecord(.object(["id": .string($0), "playable": .bool($0 == "self")])) }
     let agentA = QQRecord(.object(["id": .string("42")]))
     let agentB = QQRecord(.object(["id": .string("84")]))
     let cast = QQSimulatorCast(playerRoleID: "self", agentsByRole: ["guard": agentB, "advisor": agentA])
     let parameters = try cast.parameters(scenarioID: "7", roles: identities)
     precondition(parameters == ["scenario_id": "7", "select_role_id": "advisor|42,guard|84", "player_role_id": "self"])
     print("PASS simulator identity-to-agent request contract")
-    for invalid in [QQSimulatorCast(playerRoleID: "", agentsByRole: ["advisor": agentA]), QQSimulatorCast(playerRoleID: "self", agentsByRole: [:]), QQSimulatorCast(playerRoleID: "self", agentsByRole: ["advisor": agentA, "guard": agentA]), QQSimulatorCast(playerRoleID: "self", agentsByRole: ["self": agentA])] {
+    for invalid in [QQSimulatorCast(playerRoleID: "", agentsByRole: ["advisor": agentA]), QQSimulatorCast(playerRoleID: "self", agentsByRole: [:]), QQSimulatorCast(playerRoleID: "self", agentsByRole: ["advisor": agentA, "guard": agentA]), QQSimulatorCast(playerRoleID: "self", agentsByRole: ["self": agentA]), QQSimulatorCast(playerRoleID: "guard", agentsByRole: ["advisor": agentA])] {
       do { _ = try invalid.parameters(scenarioID: "7", roles: identities); preconditionFailure("Invalid simulator cast was accepted") } catch QQAPIError.service {}
     }
-    print("PASS simulator participation, unique actor and self-assignment guards")
+    print("PASS simulator participation, playable-only self assignment and unique actor guards")
+    precondition(QQTheaterSelection.index(selection: 0, slot: 0, count: 0) == nil)
+    for count in 1...5 { for selection in -3...7 { for slot in 0..<5 { let index = QQTheaterSelection.index(selection: selection, slot: slot, count: count)!; precondition((0..<count).contains(index)) } } }
+    print("PASS theater circular selection with empty, small and changed catalogs")
+    precondition(QQChatDraft.recovering("first", alongside: "") == "first")
+    precondition(QQChatDraft.recovering("first", alongside: "new") == "first\nnew")
+    precondition(QQChatDraft.recovering("first", alongside: "first") == "first")
+    precondition(QQChatDraft.recovering("", alongside: "new") == "new")
+    print("PASS failed chat draft recovery preserves text typed during the request")
     let initial = QQIntimacyProgress(value: 0, configuration: .null)
     precondition(initial.level == 1 && initial.stage == 1 && initial.need == 10 && initial.percent == 0)
     let boundary = QQIntimacyProgress(value: 10, configuration: .null)

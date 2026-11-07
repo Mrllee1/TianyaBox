@@ -48,7 +48,7 @@ struct QQRemoteImage: View {
           }
         }
       }
-    }.clipped()
+    }.clipped().contentShape(Rectangle())
   }
 }
 

@@ -17,9 +17,13 @@ def main():
     parser.add_argument('--configuration', type=Path, help='Private JSON service configuration')
     parser.add_argument('--install', action='store_true')
     parser.add_argument('--test', action='store_true', help='Run non-consuming preview UI checks')
+    parser.add_argument('--only-testing', action='append', default=[], help='PreviewUITests test identifier to run')
+    parser.add_argument('--output', type=Path, help='Separate output directory under NIVMHost/Build')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
-    output = root / 'NIVMHost/Build/QA/qingqing-parity/native-preview'
+    output = args.output.resolve() if args.output else root / 'NIVMHost/Build/QA/qingqing-parity/native-preview'
+    if (root / 'NIVMHost/Build').resolve() not in output.parents:
+        raise SystemExit('Preview output must be inside the ignored NIVMHost/Build directory')
     project = output / 'Preview.xcodeproj'
     project.mkdir(parents=True, exist_ok=True)
     template = (root / 'NIVMHost/Tests/QingqingPreview.project.pbxproj').read_text()
@@ -57,6 +61,7 @@ def main():
                                  '-configuration', 'Debug', '-destination', 'platform=iOS Simulator,id=' + args.simulator,
                                  '-derivedDataPath', str(output / 'DerivedData')]
         if args.test:
+            command += ['-only-testing:PreviewUITests/' + identifier for identifier in args.only_testing]
             command += ['-parallel-testing-enabled', 'NO', '-resultBundlePath', str(output / ('UI-' + datetime.now().strftime('%Y%m%d-%H%M%S') + '.xcresult')), 'test']
         else:
             command += ['build']

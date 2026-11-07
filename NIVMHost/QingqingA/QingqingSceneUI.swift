@@ -7,40 +7,58 @@ struct QQTheaterCarousel: View {
   @State private var destination: QQRecord?
   @State private var initialized = false
   var body: some View {
-    VStack(spacing: 10) {
-      if items.indices.contains(selection) {
-        let item = items[selection]
-        ZStack(alignment: .bottomLeading) {
-          QQRemoteImage(address: item.image)
-          LinearGradient(colors: [.clear, .black.opacity(0.9)], startPoint: .center, endPoint: .bottom)
-          VStack(alignment: .leading, spacing: 14) {
-            Text(item.name).font(.system(size: 24, weight: .bold)).lineLimit(2)
-            QQWrapLayout(spacing: 6) { ForEach(item.tags, id: \.self) { tag in Text(tag).font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) } }
-            Text(item.intro).font(.system(size: 14)).lineSpacing(7).lineLimit(4)
-            Button { store.requireLogin { destination = item } } label: { Text("聊天").font(.system(size: 16, weight: .bold)).foregroundStyle(QQStyle.ink).frame(width: 180, height: 48).background(QQStyle.gradient, in: Capsule()) }.frame(maxWidth: .infinity).padding(.top, 8)
-          }.foregroundStyle(.white).padding(20).padding(.bottom, 6)
-        }.clipShape(QQTheaterCardShape()).padding(.horizontal, 10)
-      }
-      ZStack {
-        QQArtwork(name: "home_theater_line").frame(height: 54).padding(.horizontal, 30)
-        HStack(alignment: .center, spacing: 0) {
-          ForEach(0..<5) { slot in
-            let index = items.isEmpty ? 0 : (selection + slot - 2 + items.count) % items.count
-            let size: CGFloat = [42, 50, 54, 50, 42][slot]
-            if items.indices.contains(index) {
-              Button { withAnimation(.easeInOut(duration: 0.25)) { selection = index } } label: {
-                QQRemoteImage(address: items[index].image).frame(width: size, height: size).clipShape(Circle()).overlay {
-                  if slot == 2 { QQArtwork(name: "home_theater_pointer").frame(width: 70, height: 80) }
-                  if slot == 4 { QQArtwork(name: "home_theater_more").frame(width: 42, height: 42).allowsHitTesting(false) }
-                }.frame(maxWidth: .infinity).offset(y: [0.0, 10, 18, 10, 0][slot])
-              }.accessibilityLabel(slot == 4 ? "更多剧场" : items[index].name)
+    GeometryReader { geometry in
+      VStack(spacing: 10) {
+        if items.indices.contains(selection) {
+          let item = items[selection]
+          Color.clear.overlay {
+            ZStack(alignment: .bottomLeading) {
+              QQRemoteImage(address: item.image).allowsHitTesting(false)
+              LinearGradient(colors: [.clear, .black.opacity(0.9)], startPoint: .center, endPoint: .bottom).allowsHitTesting(false)
+              VStack(alignment: .leading, spacing: 14) {
+                ViewThatFits(in: .vertical) {
+                  information(item)
+                  ScrollView { information(item) }
+                }
+                Button { store.requireLogin { destination = item } } label: { Text("聊天").font(.system(size: 16, weight: .bold)).foregroundStyle(QQStyle.ink).frame(width: 180, height: 48).background(QQStyle.gradient, in: Capsule()) }.frame(maxWidth: .infinity).padding(.top, 8)
+              }.foregroundStyle(.white).padding(20).padding(.bottom, 6)
             }
-          }
-        }.padding(.horizontal, 25)
-      }.frame(height: 100).contentShape(Rectangle()).gesture(DragGesture(minimumDistance: 20).onEnded { value in guard !items.isEmpty else { return }; withAnimation(.easeInOut(duration: 0.25)) { selection = (selection + (value.translation.width < 0 ? 1 : -1) + items.count) % items.count } })
-    }.navigationDestination(item: $destination) { QQTheaterView(script: $0) }.onAppear { if !initialized { selection = min(2, max(0, items.count - 1)); initialized = true } }
-
+          }.frame(height: max(0, geometry.size.height - 110)).clipShape(QQTheaterCardShape()).contentShape(QQTheaterCardShape()).padding(.horizontal, 10)
+            .accessibilityIdentifier("qingqing.theater.card")
+        }
+        ZStack {
+          QQArtwork(name: "home_theater_line").frame(height: 54).padding(.horizontal, 30).allowsHitTesting(false).accessibilityHidden(true)
+          HStack(alignment: .center, spacing: 0) {
+            ForEach(0..<5) { slot in
+              let index = QQTheaterSelection.index(selection: selection, slot: slot, count: items.count)
+              let size: CGFloat = [42, 50, 54, 50, 42][slot]
+              if let index {
+                Button { withAnimation(.easeInOut(duration: 0.25)) { selection = index } } label: {
+                  QQRemoteImage(address: items[index].image).frame(width: size, height: size).clipShape(Circle()).overlay {
+                    if slot == 2 { QQArtwork(name: "home_theater_pointer").frame(width: 70, height: 80).allowsHitTesting(false) }
+                    if slot == 4 { QQArtwork(name: "home_theater_more").frame(width: 42, height: 42).allowsHitTesting(false) }
+                  }.frame(maxWidth: .infinity).frame(height: 80).contentShape(Rectangle()).offset(y: [0.0, 10, 18, 10, 0][slot])
+                }.accessibilityLabel(slot == 4 ? "更多剧场" : items[index].name).accessibilityIdentifier("qingqing.theater.slot." + String(slot))
+              }
+            }
+          }.padding(.horizontal, 25)
+        }.frame(height: 100).contentShape(Rectangle()).gesture(DragGesture(minimumDistance: 20).onEnded { value in
+          guard !items.isEmpty, abs(value.translation.width) > abs(value.translation.height) else { return }
+          withAnimation(.easeInOut(duration: 0.25)) { selection = (selection + (value.translation.width < 0 ? 1 : -1) + items.count) % items.count }
+        })
+      }.frame(width: geometry.size.width, height: geometry.size.height).clipped().contentShape(Rectangle())
+    }.navigationDestination(item: $destination) { QQTheaterView(script: $0) }
+      .onAppear { if !initialized { selection = min(2, max(0, items.count - 1)); initialized = true } }
+      .onChange(of: items.map(\.id)) { _, _ in selection = min(max(0, selection), max(0, items.count - 1)) }
   }
+  private func information(_ item: QQRecord) -> some View {
+    VStack(alignment: .leading, spacing: 14) {
+      Text(item.name).font(.system(size: 24, weight: .bold)).lineLimit(2)
+      QQWrapLayout(spacing: 6) { ForEach(Array(item.tags.enumerated()), id: \.offset) { _, tag in Text(tag).font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) } }
+      Text(item.intro).font(.system(size: 14)).lineSpacing(7).lineLimit(4)
+    }
+  }
+
 }
 
 private struct QQTheaterCardShape: Shape {
@@ -113,7 +131,7 @@ struct QQSimulatorCastView: View {
       VStack(spacing: 4) {
         Group { if playerRoleID == role.id { QQRemoteImage(address: store.user?["head_img"] ?? "") } else if let agent = agents[role.id] { QQRemoteImage(address: agent.image) } else { Image(systemName: "person.fill.badge.plus").resizable().scaledToFit().padding(6).foregroundStyle(Color(white: 0.8)).background(Color(white: 0.93)) } }.frame(width: 34, height: 34).clipShape(Circle())
         Text(playerRoleID == role.id ? store.user?["nick"] ?? "我" : agents[role.id]?.name ?? "空缺").font(.system(size: 11)).foregroundStyle(.gray).lineLimit(1)
-        HStack(spacing: 4) { Button(agents[role.id] == nil ? "邀请角色" : "更换角色") { target = role }.padding(.horizontal, 5).frame(height: 22).overlay { Capsule().stroke(.cyan) }; Button(playerRoleID == role.id ? "✓ 我" : "我来扮演") { playerRoleID = role.id; agents.removeValue(forKey: role.id) }.padding(.horizontal, 5).frame(height: 22).background(.cyan.opacity(0.08), in: Capsule()) }.font(.system(size: 10)).foregroundStyle(.cyan)
+        HStack(spacing: 4) { Button(agents[role.id] == nil ? "邀请角色" : "更换角色") { target = role }.padding(.horizontal, 5).frame(height: 22).overlay { Capsule().stroke(.cyan) }; Button(playerRoleID == role.id ? "✓ 我" : "我来扮演") { guard role["playable"] == "1" else { return }; playerRoleID = role.id; agents.removeValue(forKey: role.id) }.padding(.horizontal, 5).frame(height: 22).background(.cyan.opacity(0.08), in: Capsule()).disabled(busy || role["playable"] != "1").accessibilityIdentifier("qingqing.cast.self." + role.id) }.font(.system(size: 10)).foregroundStyle(.cyan)
       }.frame(width: 128)
     }.padding(5).frame(height: 100).background(.white, in: RoundedRectangle(cornerRadius: 20)).contextMenu { Button("移除此身份的扮演者", role: .destructive) { agents.removeValue(forKey: role.id); if playerRoleID == role.id { playerRoleID = "" } } }
   }

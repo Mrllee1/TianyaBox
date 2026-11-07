@@ -8,6 +8,7 @@ struct QingqingRootView: View {
     store.homeSection = initialHomeSection
     _store = StateObject(wrappedValue: store)
   }
+  init(store: QingqingStore) { _store = StateObject(wrappedValue: store) }
   var body: some View {
     NavigationStack {
       VStack(spacing: 0) {
@@ -19,7 +20,7 @@ struct QingqingRootView: View {
           default: QQHomeView()
           }
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        bottomBar
+        bottomBar.zIndex(1)
       }
       .background(QQStyle.background)
       .toolbar(.hidden, for: .navigationBar)
@@ -35,7 +36,7 @@ struct QingqingRootView: View {
       tab(0, selected: "tab001", normal: "tab01", title: "首页")
       tab(1, selected: "tab002", normal: "tab02", title: "发现")
       Button { store.requireLogin { store.creatorPresented = true } } label: {
-        QQArtwork(name: "tab_ico00").frame(width: 48, height: 40).frame(maxWidth: .infinity)
+        QQArtwork(name: "tab_ico00").frame(width: 48, height: 40).frame(maxWidth: .infinity).frame(height: 64).contentShape(Rectangle())
       }.accessibilityLabel("创建智能体")
       tab(2, selected: "tab004", normal: "tab04", title: "消息")
       tab(3, selected: "tab005", normal: "tab05", title: "我的")
@@ -49,8 +50,8 @@ struct QingqingRootView: View {
       else { store.selectedTab = index }
     } label: {
       QQArtwork(name: store.selectedTab == index ? selected : normal)
-        .frame(width: 24, height: 24).frame(maxWidth: .infinity)
-    }.accessibilityLabel(title).accessibilityAddTraits(store.selectedTab == index ? .isSelected : [])
+        .frame(width: 24, height: 24).frame(maxWidth: .infinity).frame(height: 64).contentShape(Rectangle())
+    }.accessibilityLabel(title).accessibilityIdentifier("qingqing.tab." + String(index)).accessibilityAddTraits(store.selectedTab == index ? .isSelected : [])
   }
 }
 
@@ -69,17 +70,17 @@ private struct QQHomeView: View {
                 .frame(width: [34.0, 34, 48, 64][index], height: 20)
                 .opacity(store.homeSection == index ? 1 : 0.45)
               Capsule().fill(store.homeSection == index ? Color.cyan : .clear).frame(width: 12, height: 4)
-            }
-          }.accessibilityLabel(["推荐", "群聊", "模拟器", "剧场"][index])
+            }.frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+          }.accessibilityLabel(["推荐", "群聊", "模拟器", "剧场"][index]).accessibilityIdentifier("qingqing.home.section." + String(index)).accessibilityAddTraits(store.homeSection == index ? .isSelected : [])
         }
         Spacer(minLength: 0)
-        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 34, height: 34) }
+        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 34, height: 34).frame(width: 44, height: 44).contentShape(Rectangle()) }
           .accessibilityLabel("会员中心")
-      }.padding(.horizontal, 20).padding(.top, 8)
+      }.padding(.horizontal, 20).padding(.top, 8).zIndex(1)
       ZStack {
-        if let error = store.error, items.isEmpty {
-          QQEmptyState(text: error) { Task { await store.loadSection(store.homeSection) } }
-        } else if items.isEmpty && store.loading {
+        if let error = store.sectionErrors[store.homeSection], items.isEmpty {
+          QQEmptyState(text: error) { Task { await store.loadSection(store.homeSection, force: true) } }
+        } else if items.isEmpty && store.loadingSections.contains(store.homeSection) {
           ProgressView()
         } else if items.isEmpty {
           QQEmptyState()
@@ -103,9 +104,9 @@ private struct QQHomeView: View {
                 }
               }
             }.padding(.horizontal, 10).padding(.bottom, 18)
-          }.refreshable { await store.loadSection(store.homeSection) }
+          }.refreshable { await store.loadSection(store.homeSection, force: true) }
         }
-      }.frame(maxWidth: .infinity, maxHeight: .infinity)
+      }.frame(maxWidth: .infinity, maxHeight: .infinity).clipped().contentShape(Rectangle())
     }
     .background(LinearGradient(colors: [backdrop, QQStyle.background], startPoint: .top, endPoint: .bottom))
     .task(id: store.homeSection) { await store.loadSection(store.homeSection) }
@@ -138,7 +139,7 @@ private struct QQHeroCard: View {
           QQWrapLayout(spacing: 6) {
             if !role["uid"].isEmpty { NavigationLink { QQAuthorCenterView(authorID: role["uid"]) } label: { QQAuthorBadge(role: role) } }
             if !role["msg_num"].isEmpty { HStack(spacing: 3) { Image(systemName: "flame.fill"); Text(role["msg_num"]) }.font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) }
-            ForEach(role.tags, id: \.self) { tag in Text(tag).font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) }
+            ForEach(Array(role.tags.enumerated()), id: \.offset) { _, tag in Text(tag).font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) }
           }
           Text(role.intro).font(.system(size: 14)).lineSpacing(5).lineLimit(4).foregroundStyle(.white.opacity(0.9))
           QQPrimaryButton(title: "聊天") { store.requireLogin { talking = true } }.padding(.top, 8)
@@ -156,70 +157,92 @@ struct QQLibraryView: View {
   @State private var ranked: [QQRecord] = []
   @State private var rankLabels: [QQRecord] = []
   @State private var rankType = ""
-  @State private var page = 1
   @State private var exhausted = false
+  @State private var moreLoading = false
+  @State private var rankLoading = false
   @State private var rankError: String?
-  @State private var rankRequestID = UUID()
+  @State private var requestID = UUID()
+  private var loadKey: String { "\(ranking)|\(category)|\(rankType)" }
   init(initialRanking: Bool = false) { _ranking = State(initialValue: initialRanking) }
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 12) {
         QQArtwork(name: "list_ico_tittle").frame(width: 40, height: 24)
         Spacer()
-        NavigationLink { QQSearchView() } label: { QQArtwork(name: "list_ico_search").frame(width: 24, height: 24) }.accessibilityLabel("搜索角色")
-        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 30, height: 30) }.accessibilityLabel("会员中心")
+        NavigationLink { QQSearchView() } label: { QQArtwork(name: "list_ico_search").frame(width: 24, height: 24).frame(width: 44, height: 44).contentShape(Rectangle()) }.accessibilityLabel("搜索角色")
+        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 30, height: 30).frame(width: 44, height: 44).contentShape(Rectangle()) }.accessibilityLabel("会员中心")
       }.padding(.leading, 20).padding(.trailing, 10).frame(height: 54)
       HStack(spacing: 8) {
-        segment("热门标签", active: !ranking) { ranking = false; refresh() }
-        segment("排行榜", active: ranking) { ranking = true; refresh() }
+        segment("热门标签", active: !ranking) { ranking = false }
+        segment("排行榜", active: ranking) { ranking = true }
         Spacer()
       }.padding(.horizontal, 10).padding(.top, 8)
       if ranking && !rankLabels.isEmpty {
-        ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 24) { ForEach(rankLabels) { label in Button { rankType = label["type"]; refresh() } label: { Text(label.name).font(.system(size: 14, weight: rankType == label["type"] ? .bold : .regular)).foregroundStyle(rankType == label["type"] ? QQStyle.ink : .gray) } } }.padding(.horizontal, 15) }.frame(height: 42)
+        ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 24) { ForEach(rankLabels) { label in Button { rankType = label["type"] } label: { Text(label.name).font(.system(size: 14, weight: rankType == label["type"] ? .bold : .regular)).foregroundStyle(rankType == label["type"] ? QQStyle.ink : .gray).frame(minHeight: 42).contentShape(Rectangle()) } } }.padding(.horizontal, 15) }.frame(height: 42)
       }
-      if !ranking { ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 24) {
-          ForEach(store.categories) { item in Button { category = item["code"]; refresh() } label: { Text(item.name).font(.system(size: 14, weight: category == item["code"] ? .bold : .regular)).foregroundStyle(category == item["code"] ? QQStyle.ink : .gray) } }
-        }.padding(.horizontal, 15)
-      }.frame(height: 45) }
+      if !ranking {
+        ScrollView(.horizontal, showsIndicators: false) {
+          HStack(spacing: 24) { ForEach(store.categories) { item in
+            Button { category = item["code"] } label: { Text(item.name).font(.system(size: 14, weight: category == item["code"] ? .bold : .regular)).foregroundStyle(category == item["code"] ? QQStyle.ink : .gray).frame(minHeight: 44).contentShape(Rectangle()) }.accessibilityIdentifier("qingqing.category." + item["code"])
+          } }.padding(.horizontal, 15)
+        }.frame(height: 45)
+        if store.categories.isEmpty && store.configurationError != nil { Button("重新加载分类") { Task { await store.loadConfiguration() } }.font(.system(size: 13)) }
+      }
       ScrollView {
         if ranking {
           LazyVStack(spacing: 0) { ForEach(Array(ranked.enumerated()), id: \.element.id) { index, role in QQRoleChatLink(role: role.conversationRole) { QQRankingRow(role: role, index: index) }.buttonStyle(.plain) } }
-          if let rankError { QQEmptyState(text: rankError, action: refresh) }
+          if rankLoading { ProgressView().padding() }
+          else if let rankError { QQEmptyState(text: rankError) { Task { await refresh() } } }
+          else if ranked.isEmpty { QQEmptyState() }
         } else {
-          if let error = store.error, store.roles.isEmpty { QQEmptyState(text: error, action: refresh) }
-          LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { ForEach(store.roles) { role in QQRoleChatLink(role: role) { QQRoleTile(role: role) }.buttonStyle(.plain) } }.padding(.horizontal, 10)
+          LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { ForEach(store.roles) { role in QQRoleChatLink(role: role) { QQRoleTile(role: role) }.buttonStyle(.plain).accessibilityIdentifier("qingqing.library.role." + role.id) } }.padding(.horizontal, 10)
+          if store.rolesLoading { ProgressView().padding() }
+          else if let message = store.rolesError, store.roles.isEmpty { QQEmptyState(text: message) { Task { await refresh() } } }
+          else if store.roles.isEmpty { QQEmptyState() }
+          else {
+            if let message = store.rolesError { Text(message).font(.system(size: 13)).foregroundStyle(.red).padding(12) }
+            if !exhausted { Button(store.rolesError == nil ? "加载更多" : "重试加载更多") { Task { await loadMore() } }.padding(20).font(.system(size: 13)).disabled(moreLoading).accessibilityIdentifier("qingqing.library.load-more") }
+          }
         }
-        if store.loading { ProgressView().padding() }
-        else if !ranking && !store.roles.isEmpty && !exhausted {
-          Button("加载更多") { page += 1; Task { let count = store.roles.count; await store.loadRoles(category: category, page: page); exhausted = store.roles.count == count } }.padding(20).font(.system(size: 13))
-        } else if (ranking ? ranked : store.roles).isEmpty && !store.loading { QQEmptyState() }
-      }.refreshable { refresh() }
-    }.background(.white).task { refresh() }
+      }.refreshable { await refresh() }
+    }.background(.white).task(id: loadKey) { await refresh() }
   }
   private func segment(_ title: String, active: Bool, action: @escaping () -> Void) -> some View {
-    Button(action: action) { Text(title).font(.system(size: 14, weight: .bold)).foregroundStyle(active ? Color(red: 0, green: 0.65, blue: 0.85) : Color(white: 0.55)).padding(.horizontal, 15).frame(height: 32).background(active ? Color(red: 0.88, green: 0.98, blue: 1) : Color(white: 0.97), in: Capsule()) }
+    Button(action: action) { Text(title).font(.system(size: 14, weight: .bold)).foregroundStyle(active ? Color(red: 0, green: 0.65, blue: 0.85) : Color(white: 0.55)).padding(.horizontal, 15).frame(height: 32).background(active ? Color(red: 0.88, green: 0.98, blue: 1) : Color(white: 0.97), in: Capsule()).frame(minHeight: 44).contentShape(Rectangle()) }.accessibilityAddTraits(active ? .isSelected : [])
   }
-  private func refresh() {
-    page = 1; exhausted = false
-    let requestID = UUID(); rankRequestID = requestID
-    let requestedRanking = ranking, requestedCategory = category
-    Task {
-      if requestedRanking {
-        rankError = nil
-        do {
-          if rankLabels.isEmpty {
-            let labels = try await store.api.request("home/roleRankLabel").records
-            guard rankRequestID == requestID else { return }
-            rankLabels = labels; rankType = rankLabels.first?["type"] ?? ""
-          }
-          guard !rankType.isEmpty else { return }
-          let result = try await store.api.request("home/roleRank", parameters: ["type": rankType, "category": requestedCategory]).records
-          guard rankRequestID == requestID else { return }
-          ranked = result
-        } catch { if rankRequestID == requestID { rankError = error.localizedDescription } }
-      } else { await store.loadRoles(category: requestedCategory) }
+  private func refresh() async {
+    let ticket = UUID(); requestID = ticket
+    let key = loadKey, requestedCategory = category
+    exhausted = false; moreLoading = false
+    if ranking {
+      rankLoading = true; rankError = nil; ranked = []
+      defer { if requestID == ticket { rankLoading = false } }
+      do {
+        if rankLabels.isEmpty {
+          let labels = try await store.api.request("home/roleRankLabel").records
+          guard requestID == ticket, !Task.isCancelled else { return }
+          rankLabels = labels
+          if rankType.isEmpty { rankType = labels.first?["type"] ?? ""; return }
+        }
+        guard !rankType.isEmpty else { return }
+        let result = try await store.api.request("home/roleRank", parameters: ["type": rankType, "category": requestedCategory]).records
+        guard requestID == ticket, key == loadKey, !Task.isCancelled else { return }
+        ranked = result
+      } catch { if requestID == ticket, !Task.isCancelled, (error as? URLError)?.code != .cancelled { rankError = error.localizedDescription } }
+    } else {
+      let count = await store.loadRoles(category: requestedCategory)
+      guard requestID == ticket, key == loadKey, let count else { return }
+      exhausted = count < 20
     }
+  }
+  private func loadMore() async {
+    guard !ranking, !moreLoading, !store.rolesLoading, !exhausted else { return }
+    moreLoading = true
+    let ticket = requestID, requestedCategory = category, nextPage = store.lastLoadedRolePage + 1
+    defer { if ticket == requestID { moreLoading = false } }
+    let count = await store.loadRoles(category: requestedCategory, page: nextPage)
+    guard ticket == requestID, category == requestedCategory, !ranking, let count else { return }
+    exhausted = count < 20
   }
 }
 

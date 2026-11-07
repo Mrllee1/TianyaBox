@@ -1,0 +1,210 @@
+{
+  "note": "Local fingerprints; file presence does not imply complete acceptance. No raw account data included.",
+  "files": [
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/background-selected-fixture.png",
+      "bytes": 380864,
+      "sha256": "52465ab7d8268a480eb59debab97a1e1aaa2c4c79ca75df6edf040a0ab0edf83"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/baseline/hit-regions.txt",
+      "bytes": 5362,
+      "sha256": "aa072eea858123776da600bb0fe28fd423d411f8b47bab9e9fce0a299e715e6c"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/baseline/theater-before.png",
+      "bytes": 3180347,
+      "sha256": "1c4212d8fbb2dbfae8cb880e153b02d569bad7ef0622e33db5da2419f7eaeaa6"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/compact-navigation-fixture-theater-bounds.png",
+      "bytes": 532591,
+      "sha256": "1385716d88feaf9ebe6a235626e931f68ccc9abeabb90e82644a9be43e2a1b98"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/contract-check.log",
+      "bytes": 1234,
+      "sha256": "dcf5e0bb858fe7478713b1774aaa0ce738dbebd8b0b58c790b38f72849fae03b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/custom-image-zoom-fixture.png",
+      "bytes": 1115662,
+      "sha256": "279f20f4a1e54b3a14eedf8a75cbe2a8c91564f23f5e919a882eca30528e16e7"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/device-b-catalog.png",
+      "bytes": 2656881,
+      "sha256": "9fa6d68961def97444826802f0e133ffe786bed2246af8857ecd0f3b89cc7bfb"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/device-build.log",
+      "bytes": 46944,
+      "sha256": "99ebf59d8c1ae3568e5ec4a53841925c7bf9d2688623f375ba66b6177833f658"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/device-sign.log",
+      "bytes": 8539,
+      "sha256": "f45243b244a3bcb2a72677252047d57117b9328946ed1f92a9ccccd13879183e"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/discovery-page-failure-preserves-results.png",
+      "bytes": 541757,
+      "sha256": "fc36c236920d757d02dde30177ffdb4d85adb6883592742236b2dbf575b7d3b9"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/failed-chat-keeps-both-drafts-fixture.png",
+      "bytes": 243344,
+      "sha256": "19f4a97d82c28cea84ae2c1fdbf7e664ebdd08592bdd340b1321e80da4f3387a"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/live-agent-empty-search.png",
+      "bytes": 246020,
+      "sha256": "b190b44626a887447b53f2bc43618de98c0e560e46241bb45ddefa5ff7959925"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/live-agent-first-page.png",
+      "bytes": 4084700,
+      "sha256": "19797f0aa21da98b0c1fcbe7fb81c17090bba00450d08ee833dad73bcdbc8a99"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/live-agent-restored-search.png",
+      "bytes": 2803374,
+      "sha256": "460c85f5729fe8768bfb1b2699121902fb80936523f7e0e41612a344d83a2e41"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/long-title-bounded-header-fixture.png",
+      "bytes": 85393,
+      "sha256": "b91cf79bbf6710ca465c02834339a35adb99fb31811f978833d26bc55efa629c"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/memory-capacity-fixture.png",
+      "bytes": 903679,
+      "sha256": "907183e9bdfdd7a44473bad975ac56bf52add283c1c1e4577f4dbb946c5c1c52"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/memory-owned-fixture.png",
+      "bytes": 771270,
+      "sha256": "6ab11a06e2dd0320a44e8aa1fd9a551b2c194a4b4d3394c5d9e33990973d7d3b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/memory-unlock-fixture.png",
+      "bytes": 619152,
+      "sha256": "a643e50ff137c0f39e1f69af207465fe19d891318e08e5daecfc896add7b12ec"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/native-preview/build.log",
+      "bytes": 174319,
+      "sha256": "0fecacdd4e4b285e9dadf49625fe96a15b9ac09cc01a12b79a86e8ba7a8ad91b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/navigation-fixture-theater-bounds.png",
+      "bytes": 727233,
+      "sha256": "0ee7bfcb23791741d1aa3853515a251ec7caa36a3ab3d489f0a94701603000d0"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/recommendation-after-theater.png",
+      "bytes": 2856712,
+      "sha256": "0347cf72f9e04426ddee884db3401af9e7d3d52c7f256f2d0ae2ff6b39b15b5e"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/simulator-playable-identity-guards.png",
+      "bytes": 277780,
+      "sha256": "67977df38b23ecb5784fab62caa3f3e508c89ef447316b161d264e166d8d6742"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/store-check.log",
+      "bytes": 601,
+      "sha256": "183cb93c1c14e645ac98bf7ce7cf306b049db45d59e3082aa58257b5dc473473"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/theater-before-category-tap.png",
+      "bytes": 3149343,
+      "sha256": "2872faf01fd2356c3b31670c5d0db3f1230130bdf83b71213fcb3b4834d15213"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-interaction-20261108/theater-hit-regions.txt",
+      "bytes": 6284,
+      "sha256": "8d1ec5e7e93ca8013b206f7413b9be6f050222ccc7d0948494fdd90493673e56"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-parity/android-mine-diamond-route-r4.png",
+      "bytes": 270302,
+      "sha256": "39059ba523417a77b3d18f39a0da47a58717a225826d01934b89abffea565627"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-parity/android-mine-diamond-route-r4.xml",
+      "bytes": 29719,
+      "sha256": "2533be961948a8fca813b6ede90ed8556760a14be147c65d272de245b582b1d4"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingComponents.swift",
+      "bytes": 10802,
+      "sha256": "7fb09b8066b3317a44815c0351db4a2a6956c4b1ee9e015040c81fe368a8f26a"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingConversation.swift",
+      "bytes": 22319,
+      "sha256": "1ec0c12a083aed77e7e5e1f6dbb8c6bba601157cab39a8c1094bcf7be27755d4"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingModels.swift",
+      "bytes": 10584,
+      "sha256": "7dc9fd908d05709ace071e216ff975f01f34963747f2c5890f7e1653e3324072"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingParityUI.swift",
+      "bytes": 38579,
+      "sha256": "371b5c6fdb89df029e12acddcaaa3311f8a7e6f55b412ccbf8b184607600bd2a"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingRootView.swift",
+      "bytes": 18604,
+      "sha256": "d67f72d55bdd857aaad56cd45bc44a325df94b7ffb5932ec2b0cadd429243974"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingSceneUI.swift",
+      "bytes": 15948,
+      "sha256": "abbf50e7ecc2f065de8b7ca7d852ced33ffa78a0523f87b91213975976c9df5d"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingStore.swift",
+      "bytes": 5663,
+      "sha256": "79a44950281c6d59043ca2b2fca9184acfc1bb88e66e6e9c91e65988db1390ac"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingContractCheck.swift",
+      "bytes": 13701,
+      "sha256": "5a5a257071a02ca128247e3b58e2acb9005f1f56c8fd18e56573fdfc4cd87083"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingInteractionFixtures.swift",
+      "bytes": 5897,
+      "sha256": "15a76c87359cb8ceb97af0b5e9b0da8790071b2269fa090aa63a42958cb11a40"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreview.project.pbxproj",
+      "bytes": 7200,
+      "sha256": "64916ff1de69ef7ef1bf4b021315d1ed2e095719bf4593639a0c9b0bf49b72c2"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewMain.swift",
+      "bytes": 14427,
+      "sha256": "bed01efc11951b9d86d64b343554fef56bd054f8e512d8f9a0301b6ed9e58f84"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewUITests.swift",
+      "bytes": 10439,
+      "sha256": "cf8c2d44a123810060317a2370ea8fb4d5456f39968ab9436d1bb48e88c7ef0e"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingStoreCheck.swift",
+      "bytes": 4201,
+      "sha256": "6ce665462e40f5679f28eca5b8efe73929e0fdd68971fd6829b4510adda98953"
+    },
+    {
+      "path": "NIVMHost/scripts/build_qingqing_preview.py",
+      "bytes": 5886,
+      "sha256": "6c5532f0060d4f6f30b7eebac471d33a6dd50091cea432c21941c9a378e76f46"
+    }
+  ]
+}

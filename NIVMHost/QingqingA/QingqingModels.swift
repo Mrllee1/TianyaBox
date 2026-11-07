@@ -83,6 +83,21 @@ struct QQIdentityInput {
   var canSubmit: Bool { !trimmedName.isEmpty && ["男", "女", "其他"].contains(gender) }
 }
 
+enum QQTheaterSelection {
+  static func index(selection: Int, slot: Int, count: Int) -> Int? {
+    guard count > 0 else { return nil }
+    return ((selection + slot - 2) % count + count) % count
+  }
+}
+
+enum QQChatDraft {
+  static func recovering(_ failed: String, alongside current: String) -> String {
+    if current.isEmpty || current == failed { return failed }
+    if failed.isEmpty { return current }
+    return failed + "\n" + current
+  }
+}
+
 /// The two original screens use different endpoints and payloads. Package IDs
 /// are order identifiers; a display title must never substitute for one.
 struct QQMemoryOffers {
@@ -149,7 +164,7 @@ struct QQSimulatorCast {
   var agentsByRole: [String: QQRecord]
   func parameters(scenarioID: String, roles: [QQRecord]) throws -> [String: String] {
     let allowed = Set(roles.map(\.id))
-    guard !scenarioID.isEmpty, allowed.contains(playerRoleID), !agentsByRole.isEmpty,
+    guard !scenarioID.isEmpty, allowed.contains(playerRoleID), roles.contains(where: { $0.id == playerRoleID && $0["playable"] == "1" }), !agentsByRole.isEmpty,
       agentsByRole[playerRoleID] == nil,
       agentsByRole.allSatisfy({ allowed.contains($0.key) && !$0.value.id.isEmpty }),
       Set(agentsByRole.values.map(\.id)).count == agentsByRole.count else {

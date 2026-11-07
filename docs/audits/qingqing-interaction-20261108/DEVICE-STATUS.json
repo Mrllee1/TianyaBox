@@ -1,0 +1,30 @@
+[
+  {
+    "time": "2026-11-07T22:03:01Z",
+    "path": "home/getRecommend",
+    "http": 200,
+    "code": 200,
+    "session_present": true
+  },
+  {
+    "time": "2026-11-07T22:03:01Z",
+    "path": "home/indexCategory",
+    "http": 200,
+    "code": 200,
+    "session_present": true
+  },
+  {
+    "time": "2026-11-07T22:03:01Z",
+    "path": "home/getModelListV2",
+    "http": 200,
+    "code": 200,
+    "session_present": true
+  },
+  {
+    "time": "2026-11-07T22:03:01Z",
+    "path": "member/info",
+    "http": 200,
+    "code": 200,
+    "session_present": true
+  }
+]

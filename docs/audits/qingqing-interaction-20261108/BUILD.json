@@ -1,0 +1,21 @@
+{
+  "artifact": "dist/TianyaBox-AI-20261108-interaction-r4.ipa",
+  "bytes": 135044260,
+  "sha256": "7f9c47be35ff7cbdaa1fc5edc7bfe358afc8c8b12f90884f2e9d6ca42be7ad6e",
+  "zip_integrity": "pass",
+  "bundle_id": "com.tianya.tempmail",
+  "display_name": "TianyaBox",
+  "contract_checks": 19,
+  "state_concurrency_checks": 8,
+  "b_surface_changed": false,
+  "fixture_markers_in_production": false,
+  "native_ui_tests": 11,
+  "native_ui_failures": 0,
+  "native_ui_result": "NIVMHost/Build/QA/qingqing-interaction-20261108/native-preview/UI-20261108-060117.xcresult",
+  "native_ui_completed_at": "2026-11-08T06:03:58+08:00",
+  "native_ui_seconds": 149.329,
+  "installed_on": "iPhone 100 pro max",
+  "existing_session_preserved": true,
+  "all_pages_1_to_1_accepted": false,
+  "git_branch": "main"
+}
