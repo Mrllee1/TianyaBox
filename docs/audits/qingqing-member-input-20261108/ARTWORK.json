@@ -1,0 +1,162 @@
+[
+  {
+    "name": "vip_ico_alipay",
+    "source_sha256": "642f1d5525b7af6d6690e7677922a141243beb5e37c452846d42f7cbf0b9c30d",
+    "png_sha256": "0c500c013b0094d319716d9b7d703de74cb9be241632aa5845a781dd059ce99b"
+  },
+  {
+    "name": "vip_ico_wechat",
+    "source_sha256": "80264a6c1d4943fd8f90b52ffde7ab48c11568342f1f3189aa35d59e62614182",
+    "png_sha256": "fa85a5fa152134c3a0311af483ac95f9c7c860920a7fd439f001c55d778bf0dd"
+  },
+  {
+    "name": "vip_zfb_tj",
+    "source_sha256": "04d532e704fffdf808a3072db3c0635da11df1e021651827b3389acb8f837824",
+    "png_sha256": "cbee433899325c6475bed72fb5af4796d0cc09d70ce56c8a53f631b08c022631"
+  },
+  {
+    "name": "vip_pic_on",
+    "source_sha256": "546cb9bae1adfa869b44ec465cbccde8122f4ebd9c85fd88e157250c178f0386",
+    "png_sha256": "58322aecfd4a53980a7bd320cc9744c56ddb2c4d6a5b227b88e0702ce85f4b2a"
+  },
+  {
+    "name": "vip_pic_off",
+    "source_sha256": "f642f4b088e4435beefa04ab8cdb7f33b0fbda8206ca136bcfbed694b5321db4",
+    "png_sha256": "445f8f209c96efad70b50e2f46c861a861513c8421495b20f5a506cdcbd2473d"
+  },
+  {
+    "name": "profile_ico_select01",
+    "source_sha256": "fcad492561e705f539612f35268044df88b7a52e54862edea8c6e332f8e747f1",
+    "png_sha256": "64b06737737cc086f66fd1248863b2f3623c61fa863246941ec1657daf782554"
+  },
+  {
+    "name": "profile_ico_select02",
+    "source_sha256": "6614dc1095eb2e5272936fd81583f4578eb676620b0a7903b735f4ea5b9c664d",
+    "png_sha256": "d856c1b29cf5f59637a492645857ea982d9dcb6594e80e9764fbd994581d2ea7"
+  },
+  {
+    "name": "purchase_ico_reminder",
+    "source_sha256": "6d51f32d7bb88f4deddeb41040a34cc1c65506eb5ed935fe9148dfe1526664a8",
+    "png_sha256": "57e90b700b19d4e0c59e65bdbc16745102893e1b8cc872a14352ef8a7bc111f5"
+  },
+  {
+    "name": "diamond_ico_detail_black",
+    "source_sha256": "d8db985f5f920559b8440984b16ca82f6f52f62e596d0293e5fe2dd6b175bf00",
+    "png_sha256": "520d0ae9d6bfb8f6101571600b10c93f74e7b4d5b59c0dce5cbe75063ec504e4"
+  },
+  {
+    "name": "chat_ico_send01",
+    "source_sha256": "1f7b729a38f4d5906fae3707ba1a2d7c4424a0545ea8eb94379b5b8faf44dcb3",
+    "png_sha256": "0df2a903479c5334fdadfb8a81cc9ce5326b0c90c696ec8f2fc53648a89659c7"
+  },
+  {
+    "name": "chat_ico_send02",
+    "source_sha256": "eff1f6aa919adbd896f33fe14b6325e49b2718c95b06e2a191283adbe997ce4d",
+    "png_sha256": "0f1e5b0290864474b927f52dad78fb7ddc27781b28713e3d22fabd11fdf05cf3"
+  },
+  {
+    "name": "chat_ico_parentheses01",
+    "source_sha256": "ef565c17c1607c417fc18df6f83a1f5710fc51a6b4b8027c5eee15b473bd45ea",
+    "png_sha256": "37a8fe7f9c14ef30f289cd731fe940297580bb49b908cad067240f535d563e40"
+  },
+  {
+    "name": "chat_ico_parentheses02",
+    "source_sha256": "462189e68f97c2f866c2aa43b63f63068568301cf148b31bccd9c12628cb259b",
+    "png_sha256": "729c02268b369cda4f501112c05453468e0c6e995b69c9c82c145b628e3ddbc2"
+  },
+  {
+    "name": "chat_ico_add_more01",
+    "source_sha256": "d644ac14eb55b67327984343a8bae238199f80929d578100b712598ebcb2a425",
+    "png_sha256": "0ca72763e5b4891e77bad3db45d6ffd1e3e6713b3deb79853c881d724211aa7b"
+  },
+  {
+    "name": "chat_ico_add_more02",
+    "source_sha256": "ed45b42f1f8ff921fceb5cc5886d05d1b95c15064fbecb0fdcecc587c769ad97",
+    "png_sha256": "5a2bc9e0b8aef2b9b63f9679f9c17dc9689b546185fe617df22258a6548af2cf"
+  },
+  {
+    "name": "chat_ico_ai02",
+    "source_sha256": "ef7489c3d0a05905b1ad2a8953e0347d68358ab5bb93f86eaf4a06caf2538880",
+    "png_sha256": "365a2dbb07d0718ed312fc2cdf7a7ff2bcdcdc5ec15d8ce41d4f97fc4e87330c"
+  },
+  {
+    "name": "purchase_ico_diamond02",
+    "source_sha256": "f30ebfefdbf646d8b5f451754e59c18a14c4a0000d36cab55d5a68b3681890e7",
+    "png_sha256": "3c1d5c2d4f4828b4ca660fcf0e102d274c2004feaf4cdda8c58bb1845de571fd"
+  },
+  {
+    "name": "purchase_ico_diamond03",
+    "source_sha256": "a1d0a6ab90a35d93b9be52b66aa10b00c11430ee59c9df64ee9cafd000c9c1f9",
+    "png_sha256": "77f4a207d3c364990f6a79941eb60b23b8521e2a21c5125343eb5d5a7bf015bc"
+  },
+  {
+    "name": "purchase_ico_diamond04",
+    "source_sha256": "897f6c175447daf590e1feba10118e8892536d657df3a61843f0a911eee45aa0",
+    "png_sha256": "5b2445506d28c42ac9921915416f5c010a20ac5784a3952559033486a597cb8d"
+  },
+  {
+    "name": "purchase_ico_diamond05",
+    "source_sha256": "a217d886af77022b85546af23b901d954bf51f94e39ea5b02b163bbf78274b2b",
+    "png_sha256": "93d596ce96b106d1184a34da9a9ea1fb687e3f5a3b41ca741c01ab9d6f89e08a"
+  },
+  {
+    "name": "chat02_ico_func02",
+    "source_sha256": "af35103c9183e162a6e6548cac5b037567996c74a605b43b253bb7fe1a3a4757",
+    "png_sha256": "5fbfc78fc17c53db196bb7e38476d8c5afa95b7890b5ed8c270a845f147b2344"
+  },
+  {
+    "name": "chat02_ico_func03",
+    "source_sha256": "055e8c4c95c46d8e403ed5084d47a5baffc931afefc82d09be88870508e8c085",
+    "png_sha256": "914d4f0d91da753bcb0788e2f074542ed1b02ce667b5c5c145e3564a255a1136"
+  },
+  {
+    "name": "chat02_ico_func04",
+    "source_sha256": "81aa73095251e22914a4a2d30e10f3e9a5c4b8dd98b40342184a5c33c041539a",
+    "png_sha256": "5253bf4f0ac075d83b3c26565389bfd2fb84b1586470ea6c34a253cb8aa0892e"
+  },
+  {
+    "name": "chat02_ico_func05",
+    "source_sha256": "e0a3eaf7202f3d9a1d7ebb7709349a7af2b3207d6de672f4eb49f6391eff78d9",
+    "png_sha256": "33e2ec046064e7bee27713b44712cd5faff7715d4c83483bad75e08388205f1f"
+  },
+  {
+    "name": "chat02_ico_more01",
+    "source_sha256": "cf14c6e006b23f1464e88397936c1311e9c2d140d58df4568dcfb43692647f10",
+    "png_sha256": "8c8354ef98dcfd80074845cbf03102b6ab512d873d5517076c2313fcec704a71"
+  },
+  {
+    "name": "chat02_ico_more02",
+    "source_sha256": "377eb9eea5941e2a76839cfb116a9a1d02bedc167832feab27ad89db4273df97",
+    "png_sha256": "d2c60d86130e7b8112ed154e073b57bb2b1dd888273fac0b1e3a3650d492ff4b"
+  },
+  {
+    "name": "chat02_ico_more03",
+    "source_sha256": "4a2a97b0c3ebb33131a88ba03da42d6feaec028b43837ebae5c99fd5224bfb22",
+    "png_sha256": "0015a0936acb383e3884decd9e82d4fd20b7676c95fe6b9bde385bf8ed0a3016"
+  },
+  {
+    "name": "chat_ico_input01",
+    "source_sha256": "d258ae7c54747ee557b4136aa02ab1334ca83a6302478135812f84a68f6a4086",
+    "png_sha256": "2bac4e885e85111beeff455f0ed210b9e1d706f2754741f6a30027e31a8d7589"
+  },
+  {
+    "name": "chat_ico_input02",
+    "source_sha256": "34c958d868d1fb05283c760d2c9930b491a001b7548f82297598f5cfb9f5d088",
+    "png_sha256": "776ea70de59b45d1f809564c946385aa00a16ef339472df3cbbff83391262c69"
+  },
+  {
+    "name": "chat_ico_ai001",
+    "source_sha256": "f74348d7fc67c1870cf4662c094d7ee4e330fc07879447846911423b2e6e044b",
+    "png_sha256": "a9d0f79a2103a8f7adebe05acc82b9875ea57061e64a6d8e4b9efb05f87e71d5"
+  },
+  {
+    "name": "chat_ico_ai002",
+    "source_sha256": "63b64380f367dc67d3461e965c3ee5ddcf54886f20bc72f6b5edeab111eea9cb",
+    "png_sha256": "1b4e318efe31fe2675902e6645499e7c2aece203c00a9c156e560a4e83ff04d0"
+  },
+  {
+    "name": "jj_ico_close",
+    "source_sha256": "b70e843d43e0a08ab1fa43e764c1f5ab8840030d4d25668c94f587f17f4aced8",
+    "png_sha256": "33d725a48b2b2c905815a88634d33e781f4b69d3fec93a19f84467baabcfa201"
+  }
+]

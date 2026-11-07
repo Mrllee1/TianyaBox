@@ -45,7 +45,7 @@ final class QQInteractionProtocol: URLProtocol {
     let key = path == "home/getRole" ? "roles.\(category).\(page)" : path
     calls[key, default: 0] += 1
     var payload: Any = [], code = 200, http = 200, delay = 0.04
-    let permittedPosts = ["device/login", "member/getRoleSetting", "home/getRoleDetail", "home/getGroupRoleDetail", "ai/chatList"] + (mode == "chat-draft" ? ["ai/chatV2"] : [])
+    let permittedPosts = ["device/login", "member/getRoleSetting", "home/getRoleDetail", "home/getGroupRoleDetail", "ai/chatList", "ai/chatReply"] + (mode == "chat-draft" ? ["ai/chatV2"] : [])
     if request.httpMethod != "GET" && !permittedPosts.contains(path) {
       code = 405; http = 405
     } else {
@@ -74,12 +74,25 @@ final class QQInteractionProtocol: URLProtocol {
       case "member/getRoleSetting": payload = ["name": "", "gender": "", "setting": ""]
       case "ai/chatList": payload = []
       case "ai/chatV2": http = 503; code = 503; delay = 3
+      case "ai/chatReply": payload = ["合成回复灵感一", "合成回复灵感二"]; delay = 1.5
       case "ai/getMemoryHome": payload = ["home_is_show": 0]
       case "role/getMemberRole", "role/getConfig": payload = [String: String]()
       case "member/getInvite": payload = ["invite_total": "0"]
       case "ai/getMemberRoleCount": payload = ["count": "0", "max": "3"]
       case "member/memberRoleList", "ai/roleList", "member/followList", "member/getInviteList", "member/getCoinList", "ai/systemMsg": payload = []
-      case "member/getCoinTotal": payload = ["coin": "0"]
+      case "member/getCoinTotal": payload = ["total_coin": "1234", "limit_time_coin": "34"]
+      case "order/packageV2":
+        let titles = ["高级模式无限畅聊", "角色记忆增强", "创建角色数量", "高峰期不限速", "角色回复速度提升", "更多回复灵感", "更多改写次数", "优先通过审核", "有限体验新功能"]
+        let tips = titles.enumerated().map { i, name in ["title": name, "lv2": i == 2 ? "1000" : "1", "lv1": i == 2 ? "1000" : i >= 3 && i != 4 ? "1" : "0", "lv0": i == 2 ? "50" : "0"] }
+        var plans: [[String: Any]] = [
+          ["id": "qa-vip-trial", "name": "体验会员", "price": "10", "price_text1": "10", "price_text2": "/3天", "coin": "100", "ty_text": "新人专享"],
+          ["id": "qa-vip-long", "name": "100年会员", "price": "500", "price_text1": "0.04", "price_text2": "/月", "coin": "60000", "over_time": 900],
+          ["id": "qa-vip-half", "name": "半年会员", "price": "210", "price_text1": "35", "price_text2": "/月", "coin": "3500"],
+          ["id": "qa-vip-month", "name": "月会员", "price": "55", "price_text1": "55", "price_text2": "/月", "coin": "500"]]
+        if mode == "member-expiring" { plans[0]["over_time"] = 5 }
+        let coins: [[String: Any]] = [160, 1000, 4000, 20000, 40000, 60000].enumerated().map { i, coin in ["id": "qa-coin-\(i)", "price": "\((i + 1) * 28)", "coin": String(coin), "desc1": i == 1 ? "9折" : "", "sc_desc": i == 1 ? "最多赠送+560" : ""] }
+        payload = ["tips": tips, "package": mode == "member-empty" ? [] : plans, "coin": mode == "member-empty" ? [] : coins]
+      case "order/payWay": payload = [["code": "qa-alipay", "type": "alipay", "name2": "支付宝支付", "desc": "（秒到账）", "priority": 1, "checked": false], ["code": "qa-wechat", "type": "wechat", "name2": "微信支付", "desc": "（到账略有延迟）", "checked": true]]
       default: code = 404; http = 404
       }
     }

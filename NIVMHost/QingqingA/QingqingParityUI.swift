@@ -488,10 +488,10 @@ struct QQDiamondBalance: View {
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 6) { Text(totals["total_coin"].text).font(.system(size: 30, weight: .bold)); QQArtwork(name: "purchase_ico_diamond").frame(width: 30, height: 30) }.padding(.top, 15)
-      Text("钻石总数").font(.system(size: 14, weight: .bold)).foregroundStyle(.gray).padding(.top, 5)
+      Text("钻石总数").font(.system(size: 12, weight: .bold)).foregroundStyle(Color(white: 101.0/255)).padding(.top, 4)
       Spacer(minLength: 10)
-      HStack(spacing: 4) { Text("限时钻石：").foregroundStyle(.gray); Text(totals["limit_time_coin"].text); QQArtwork(name: "vip_ico_diamond").frame(width: 14, height: 14); Spacer(); Label("优先使用", systemImage: "exclamationmark.circle.fill").font(.system(size: 11)).padding(.horizontal, 7).frame(height: 22).foregroundStyle(.white).background(.cyan, in: Capsule()) }.font(.system(size: 14, weight: .bold)).padding(.horizontal, 10).frame(height: 36).background(Color(red: 185.0/255, green: 243.0/255, blue: 254.0/255), in: RoundedRectangle(cornerRadius: 12)).padding(10)
-    }.frame(height: 135).frame(maxWidth: .infinity).background(Color(red: 209.0/255, green: 248.0/255, blue: 254.0/255), in: RoundedRectangle(cornerRadius: 22))
+      HStack(spacing: 4) { Text("限时钻石：").font(.system(size: 12, weight: .bold)).foregroundStyle(Color(white: 101.0/255)); Text(totals["limit_time_coin"].text).font(.system(size: 16, weight: .bold)); QQArtwork(name: "vip_ico_diamond").frame(width: 15, height: 16); Spacer(); HStack(spacing: 3) { QQArtwork(name: "purchase_ico_reminder").frame(width: 10, height: 10); Text("优先使用") }.font(.system(size: 10)).padding(.horizontal, 7).frame(height: 20).foregroundStyle(.white).background(Color(red: 0, green: 203.0/255, blue: 1), in: Capsule()) }.padding(.horizontal, 10).frame(height: 36).background(Color(red: 185.0/255, green: 243.0/255, blue: 254.0/255), in: RoundedRectangle(cornerRadius: 12)).padding(10)
+    }.frame(height: 136).frame(maxWidth: .infinity).background(Color(red: 209.0/255, green: 248.0/255, blue: 254.0/255), in: RoundedRectangle(cornerRadius: 22))
   }
 }
 

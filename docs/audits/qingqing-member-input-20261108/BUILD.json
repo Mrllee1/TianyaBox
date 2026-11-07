@@ -1,0 +1,39 @@
+{
+  "artifact": "dist/TianyaBox-AI-20261108-member-input-r6.ipa",
+  "bytes": 135410929,
+  "sha256": "d749797a1545db609602550cbfb37937ea664564438404d14ec8e1a77c094c16",
+  "zip_integrity": "pass",
+  "signature_deep_strict": "pass",
+  "bundle_id": "com.tianya.tempmail",
+  "display_name": "TianyaBox",
+  "contract_checks": 21,
+  "artwork_pixel_matches": 32,
+  "b_surface_changed": false,
+  "fixture_markers_in_production": false,
+  "full_ui_suite": {
+    "tests": 15,
+    "failures": 0,
+    "seconds": 273.182,
+    "result": "NIVMHost/Build/QA/qingqing-member-input-20261108/native-preview/UI-20261108-064204.xcresult",
+    "note": "Full suite before final delayed-reply and expiry guard refinements; final targeted suite follows."
+  },
+  "final_targeted_ui_suite": {
+    "tests": 5,
+    "failures": 0,
+    "seconds": 77.068,
+    "result": "NIVMHost/Build/QA/qingqing-member-input-20261108/native-preview/UI-20261108-064740.xcresult",
+    "scope": "Final production source: chat input/draft/late replies and member selection/empty catalog"
+  },
+  "final_boundary_ui_suite": {
+    "tests": 2,
+    "failures": 0,
+    "seconds": 33.286,
+    "result": "NIVMHost/Build/QA/qingqing-member-input-20261108/native-preview/UI-20261108-065022.xcresult",
+    "scope": "Four-line overflow retains six lines; active offer expires and disables purchase with reload action"
+  },
+  "device_installation": {
+    "status": "pending_device_unlock",
+    "device": "iPhone 100 pro max",
+    "last_attempt": "CoreDevice 10003 / RemotePairing 1016: device locked"
+  }
+}

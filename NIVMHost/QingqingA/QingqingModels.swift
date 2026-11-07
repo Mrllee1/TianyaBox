@@ -76,6 +76,20 @@ struct QQRecord: Identifiable, Hashable, Sendable {
 
 enum QQMemoryOfferKind: String { case capacity, unlock }
 
+enum QQMemberCatalog {
+  static func initialWay(_ ways: [QQRecord]) -> QQRecord? { ways.first(where: { $0["checked"] == "1" }) ?? ways.first }
+  static func diamondArtwork(coin: String) -> String {
+    let amount = Int(coin) ?? 0
+    return "purchase_ico_diamond0" + String(amount < 1000 ? 2 : amount < 4000 ? 3 : amount < 20000 ? 4 : 5)
+  }
+  static func valid(package: QQRecord, way: QQRecord, packages: [QQRecord], ways: [QQRecord]) -> Bool {
+    guard !package["id"].isEmpty, !way["code"].isEmpty,
+      package["price"].range(of: #"^\d+(\.\d{1,2})?$"#, options: .regularExpression) != nil,
+      let price = Decimal(string: package["price"], locale: Locale(identifier: "en_US_POSIX")), price > 0 else { return false }
+    return packages.contains(where: { $0["id"] == package["id"] && $0["price"] == package["price"] }) && ways.contains(where: { $0["code"] == way["code"] })
+  }
+}
+
 struct QQIdentityInput {
   let name: String
   let gender: String
@@ -91,6 +105,13 @@ enum QQTheaterSelection {
 }
 
 enum QQChatDraft {
+  static func insertingParentheses(in text: String, selection: NSRange) -> (String, NSRange) {
+    let value = text as NSString
+    let boundaries = Set(text.indices).union([text.endIndex])
+    let valid = Range(selection, in: text).map { boundaries.contains($0.lowerBound) && boundaries.contains($0.upperBound) } ?? false
+    let safe = valid ? selection : NSRange(location: value.length, length: 0)
+    return (value.replacingCharacters(in: safe, with: "（）"), NSRange(location: safe.location + 1, length: 0))
+  }
   static func recovering(_ failed: String, alongside current: String) -> String {
     if current.isEmpty || current == failed { return failed }
     if failed.isEmpty { return current }

@@ -20,6 +20,8 @@ struct PreviewScreen: View {
       case "compact-navigation-fixture": QQNavigationInteractionPreview(mode: mode).frame(width: 320, height: 568)
       case "cast-guards-fixture": QQCastGuardsPreview()
       case "chat-draft-fixture": QQChatDraftInteractionPreview()
+      case "chat-input-dark-fixture": QQChatDraftInteractionPreview(dark: true)
+      case "member-purchase-fixture", "member-empty-fixture", "member-expiring-fixture", "compact-member-purchase-fixture": QQMemberInteractionPreview(mode: mode)
       case "long-header-fixture": QQLongHeaderInteractionPreview()
       case "background-sheet-fixture": QQBackgroundSheetPreview(custom: false)
       case "background-custom-fixture": QQBackgroundSheetPreview(custom: true)
@@ -221,8 +223,18 @@ private struct QQCastGuardsPreview: View {
 }
 
 private struct QQChatDraftInteractionPreview: View {
+  var dark = false
   @StateObject private var store = QQInteractionFixtures.store(mode: "chat-draft")
-  var body: some View { NavigationStack { QQChatView(role: QQRecord(.object(["id": .string("draft-role"), "name": .string("草稿验收角色")])) ) }.environmentObject(store).task { await store.start() } }
+  var body: some View { NavigationStack { QQChatView(role: QQRecord(.object(["id": .string("draft-role"), "name": .string("草稿验收角色")])) ) }.environmentObject(store).task { UserDefaults.standard.set(dark, forKey: "qingqing.chat.dark"); await store.start() } }
+}
+private struct QQMemberInteractionPreview: View {
+  let mode: String
+  @StateObject private var store: QingqingStore
+  init(mode: String) { self.mode = mode; _store = StateObject(wrappedValue: QQInteractionFixtures.store(mode: mode == "member-empty-fixture" ? "member-empty" : mode == "member-expiring-fixture" ? "member-expiring" : "member")) }
+  var body: some View {
+    NavigationStack { QQMemberView() }.environmentObject(store).task { await store.start() }
+      .frame(width: mode.hasPrefix("compact-") ? 320 : nil, height: mode.hasPrefix("compact-") ? 568 : nil)
+  }
 }
 private struct QQLongHeaderInteractionPreview: View {
   @State private var presented = false

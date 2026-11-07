@@ -201,6 +201,9 @@ struct QQMemberView: View {
   @State private var orderID: String?
   @State private var orderOutcomeUnknown = false
   @State private var statusText: String?
+  @State private var tabSelections: [Int: String] = [:]
+  @State private var tabPaymentWays: [Int: String] = [:]
+  @State private var catalogLoadedAt = Date()
   @Environment(\.scenePhase) private var scenePhase
   init(memoryRoleID: String? = nil, memoryKind: QQMemoryOfferKind = .capacity, initialTab: Int = 0) {
     self.memoryRoleID = memoryRoleID
@@ -211,7 +214,7 @@ struct QQMemberView: View {
   private var coinBackground: Color { Color(red: 209.0/255, green: 248.0/255, blue: 254.0/255) }
   private var purchaseGradient: LinearGradient { LinearGradient(colors: coinMode ? [Color(red: 119.0/255, green: 148.0/255, blue: 1), Color(red: 200.0/255, green: 102.0/255, blue: 1), Color(red: 231.0/255, green: 74.0/255, blue: 1)] : [Color(red: 1, green: 101.0/255, blue: 117.0/255), Color(red: 1, green: 15.0/255, blue: 190.0/255), Color(red: 1, green: 74.0/255, blue: 1)], startPoint: .leading, endPoint: .trailing) }
   var body: some View {
-    QQPage(title: "", color: memoryRoleID != nil ? Color(red: 250.0/255, green: 246.0/255, blue: 1) : coinMode ? Color(red: 241.0/255, green: 253.0/255, blue: 1) : Color(red: 1, green: 0.94, blue: 0.98), backgroundArtwork: memoryRoleID == nil ? nil : memoryKind == .capacity ? "amount_pic_background" : "memory_pic_background2", artworkHeight: 600, closeOnRight: memoryRoleID != nil && memoryKind == .unlock) {
+    QQPage(title: "", color: memoryRoleID != nil ? Color(red: 250.0/255, green: 246.0/255, blue: 1) : .clear, backgroundArtwork: memoryRoleID == nil ? nil : memoryKind == .capacity ? "amount_pic_background" : "memory_pic_background2", artworkHeight: 600, closeOnRight: memoryRoleID != nil && memoryKind == .unlock) {
       if memoryRoleID != nil {
         ScrollView {
           QQMemoryOffersContent(offers: memoryOffers, selected: $selected, selectedWay: $selectedWay, loading: loading, canPurchase: selected != nil && selectedWay != nil && !busy && orderID == nil && !orderOutcomeUnknown) { paying = selectedWay }
@@ -221,31 +224,33 @@ struct QQMemberView: View {
           if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy).padding(15) }
         }
       } else {
-      GeometryReader { geometry in
-        ScrollView {
+        if coinMode {
           VStack(spacing: 0) {
-            if coinMode {
-              QQDiamondBalance(totals: totals).padding(.horizontal, 15).padding(.top, 5)
-              HStack { Text("购买钻石：").font(.system(size: 15, weight: .bold)); Spacer(); NavigationLink { QQDiamondDetailView() } label: { Text("钻石明细▸").font(.system(size: 12)).foregroundStyle(.gray).padding(.horizontal, 7).padding(.vertical, 4).background(.cyan.opacity(0.06), in: Capsule()) } }.padding(.horizontal, 15).padding(.vertical, 17)
-            } else if memoryRoleID == nil { benefits.padding(.horizontal, 16).padding(.top, 5); Spacer(minLength: 20) }
-            VStack(spacing: 20) {
-              catalog
-              if !packages.isEmpty { paymentWays }
-              if !store.loggedIn { QQPrimaryButton(title: "登录查看套餐") { store.loginPresented = true } }
-              else {
-                Button { paying = selectedWay } label: { Text(memoryRoleID != nil ? "立即扩容" : coinMode ? "立即充值" : "立即开通").font(.system(size: 18, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 56).background(purchaseGradient, in: Capsule()) }.disabled(selected == nil || selectedWay == nil || busy || orderID != nil || orderOutcomeUnknown).opacity(selected == nil ? 0.4 : 1)
-              }
-              if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-              if let statusText { Text(statusText).font(.system(size: 13)).foregroundStyle(.secondary) }
-              if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy) }
-            }.padding(coinMode ? 10 : 15).padding(.bottom, 10).background(coinMode ? coinBackground : .white, in: UnevenRoundedRectangle(topLeadingRadius: 22, bottomLeadingRadius: coinMode ? 22 : 0, bottomTrailingRadius: coinMode ? 22 : 0, topTrailingRadius: 22)).padding(.horizontal, coinMode ? 15 : 0).padding(.bottom, coinMode ? 10 : 0)
-          }.frame(minHeight: geometry.size.height, alignment: .top)
+            QQDiamondBalance(totals: totals).padding(.horizontal, 15).padding(.top, 5)
+            HStack {
+              Text("购买钻石：").font(.system(size: 14, weight: .bold)); Spacer()
+              NavigationLink { QQDiamondDetailView() } label: { HStack(spacing: 1) { Text("钻石明细"); QQArtwork(name: "diamond_ico_detail_black").frame(width: 8, height: 10) }.font(.system(size: 11)).foregroundStyle(Color(white: 101.0/255)).padding(.horizontal, 7).frame(height: 22).background(Color(red: 225.0/255, green: 251.0/255, blue: 1), in: Capsule()) }
+            }.padding(.horizontal, 15).padding(.top, 15).padding(.bottom, 15)
+            VStack(spacing: 0) {
+              ScrollView { catalog.padding(.top, 10).padding(.bottom, 15) }.frame(maxHeight: .infinity)
+              if !packages.isEmpty { paymentWays.padding(.horizontal, 10) }
+              purchaseFooter.padding(.horizontal, 10).padding(.bottom, 20)
+            }.background(coinBackground, in: RoundedRectangle(cornerRadius: 22)).padding(.horizontal, 15).padding(.bottom, 9)
+          }
+        } else {
+          ViewThatFits(in: .vertical) {
+            VStack(spacing: 0) { benefits.padding(.horizontal, 16).padding(.top, 5); Spacer(minLength: 15); vipPurchasePanel }
+            ScrollView { VStack(spacing: 15) { benefits.padding(.horizontal, 16).padding(.top, 5); vipPurchasePanel } }
+          }
         }
-      }
       }
     }.overlay(alignment: .top) {
       if memoryRoleID == nil {
-        HStack(spacing: 24) { ForEach(0..<2) { index in Button { tab = index; selected = packages.first } label: { VStack(spacing: 7) { Text(index == 0 ? "开通VIP" : "钻石充值").font(.system(size: tab == index ? 18 : 16, weight: tab == index ? .bold : .regular)).foregroundStyle(tab == index ? QQStyle.ink : .gray); Capsule().fill(tab == index ? .cyan : .clear).frame(width: 12, height: 4) } } } }.frame(height: 50)
+        HStack(spacing: 24) { ForEach(0..<2) { index in Button { switchTab(index) } label: { VStack(spacing: 4) { Text(index == 0 ? "开通VIP" : "钻石充值").font(.system(size: tab == index ? 16 : 14, weight: tab == index ? .bold : .regular)).foregroundStyle(tab == index ? QQStyle.ink : Color(white: 101.0/255)); Capsule().fill(tab == index ? Color(red: 0, green: 203.0/255, blue: 1) : .clear).frame(width: 20, height: 4) }.frame(height: 44).contentShape(Rectangle()) }.accessibilityIdentifier("qingqing.member.tab.\(index)").accessibilityAddTraits(tab == index ? .isSelected : []) } }.frame(height: 50).buttonStyle(.plain)
+      }
+    }.background {
+      if memoryRoleID == nil {
+        LinearGradient(colors: coinMode ? [Color(red: 241.0/255, green: 253.0/255, blue: 1)] : [Color(red: 1, green: 241.0/255, blue: 244.0/255), Color(red: 1, green: 206.0/255, blue: 241.0/255), Color(red: 1, green: 241.0/255, blue: 244.0/255)], startPoint: .leading, endPoint: .trailing).ignoresSafeArea()
       }
     }.task(id: store.loggedIn) {
       let pending = UserDefaults.standard.dictionary(forKey: pendingOrderKey) as? [String: String]
@@ -257,60 +262,147 @@ struct QQMemberView: View {
         if let paying, let selected { Button("确认支付 ¥\(selected["price"])") { Task { await createOrder(package: selected, way: paying) } } }
       }.onChange(of: scenePhase) { _, phase in if phase == .active && orderID != nil { Task { await checkOrder() } } }
   }
+  private var vipPurchasePanel: some View {
+    VStack(spacing: 0) {
+      catalog.padding(.top, 14).padding(.bottom, 20)
+      if !packages.isEmpty { paymentWays.padding(.horizontal, 15).padding(.bottom, 6) }
+      purchaseFooter.padding(.horizontal, 40).padding(.bottom, 21)
+    }.background(.white, in: UnevenRoundedRectangle(topLeadingRadius: 22, topTrailingRadius: 22))
+  }
+  private var purchaseFooter: some View {
+    VStack(spacing: 10) {
+      if !store.loggedIn { QQPrimaryButton(title: "登录查看套餐") { store.loginPresented = true } }
+      else {
+        TimelineView(.periodic(from: .now, by: 1)) { context in
+        Button { if validSelection { paying = selectedWay } } label: {
+          Text(coinMode ? "立即充值" : "立即开通").font(.system(size: 16, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 56).background(purchaseGradient, in: Capsule()).overlay { if coinMode { Capsule().stroke(coinSelectionGradient, lineWidth: 2).allowsHitTesting(false) } }
+        }.disabled(!validSelection || busy || orderID != nil || orderOutcomeUnknown).opacity(selected == nil ? 0.4 : 1).accessibilityIdentifier("qingqing.member.purchase")
+          if let selected, let duration = Double(selected["over_time"]), duration > 0, context.date.timeIntervalSince(catalogLoadedAt) >= duration {
+            Button("重新加载套餐") { Task { loading = true; await load() } }.font(.system(size: 13)).disabled(busy)
+          }
+        }
+      }
+      if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red); Button("重新加载") { Task { loading = true; await load() } }.disabled(busy) }
+      if let statusText { Text(statusText).font(.system(size: 13)).foregroundStyle(.secondary) }
+      if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy) }
+    }.buttonStyle(.plain)
+  }
   private var benefits: some View {
     GeometryReader { geometry in
-      let titleWidth = geometry.size.width * 0.36
-      let valueWidth = geometry.size.width * 0.64 / 3
+      let titleWidth = min(136.0, geometry.size.width * 0.4)
+      let valueWidth = (geometry.size.width - titleWidth) / 3
       VStack(spacing: 0) {
-        HStack(spacing: 0) { Text("权益").frame(width: titleWidth); ForEach(["正式会员", "体验会员", "普通用户"], id: \.self) { Text($0).frame(width: valueWidth) } }.font(.system(size: 14, weight: .bold)).frame(height: 40)
+        HStack(spacing: 0) {
+          Text("权益").frame(width: titleWidth)
+          ForEach(["正式会员", "体验会员", "普通用户"], id: \.self) { name in
+            Text(name).frame(width: valueWidth, height: 40).background(name == "正式会员" ? Color(red: 1, green: 223.0/255, blue: 253.0/255) : .clear, in: UnevenRoundedRectangle(topLeadingRadius: 12, topTrailingRadius: 12))
+          }
+        }.font(.system(size: 12, weight: .bold)).frame(height: 40)
         ForEach(Array(data["tips"].list.enumerated()), id: \.offset) { _, tip in
           HStack(spacing: 0) {
-            Text(tip["title"].text).font(.system(size: 14, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8).frame(width: titleWidth)
+            Text(tip["title"].text).font(.system(size: 12, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8).frame(width: titleWidth)
             ForEach(["lv2", "lv1", "lv0"], id: \.self) { key in
-              Group { if tip[key].text == "1" { Image(systemName: "checkmark").font(.system(size: 13, weight: .bold)).foregroundStyle(Color(red: 1, green: 0.35, blue: 0.92)) } else if tip[key].text == "0" { Text("−").font(.system(size: 16, weight: .bold)).foregroundStyle(Color(white: 0.8)) } else { Text(tip[key].text).font(.system(size: 13)) } }.frame(width: valueWidth)
+              Group {
+                if tip[key].text == "1" || tip[key].text == "0" { QQArtwork(name: tip[key].text == "1" ? "vip_pic_on" : "vip_pic_off").frame(width: 12, height: 12) }
+                else { Text(tip[key].text).font(.system(size: 12)) }
+              }.frame(width: valueWidth)
             }
-          }.frame(height: 40)
+          }.frame(height: 38)
         }
-      }.background(.white.opacity(0.65), in: RoundedRectangle(cornerRadius: 15))
-        .overlay(alignment: .leading) { RoundedRectangle(cornerRadius: 12).stroke(LinearGradient(colors: [.pink.opacity(0.35), Color(red: 1, green: 0.3, blue: 0.94)], startPoint: .leading, endPoint: .trailing), lineWidth: 3).frame(width: valueWidth).offset(x: titleWidth) }
-    }.frame(height: CGFloat(data["tips"].list.count + 1) * 40)
+      }.background(.white.opacity(0.6), in: RoundedRectangle(cornerRadius: 15))
+        .overlay(alignment: .leading) { RoundedRectangle(cornerRadius: 12).stroke(vipSelectionGradient, lineWidth: 3).frame(width: valueWidth).offset(x: titleWidth).allowsHitTesting(false) }
+    }.frame(height: CGFloat(data["tips"].list.count) * 38 + 40)
   }
+  private var vipSelectionGradient: LinearGradient { LinearGradient(colors: [Color(red: 1, green: 185.0/255, blue: 195.0/255), Color(red: 254.0/255, green: 100.0/255, blue: 190.0/255), Color(red: 1, green: 98.0/255, blue: 248.0/255)], startPoint: .leading, endPoint: .trailing) }
+  private var coinSelectionGradient: LinearGradient { LinearGradient(colors: [Color(red: 89.0/255, green: 122.0/255, blue: 1), Color(red: 193.0/255, green: 107.0/255, blue: 1), Color(red: 204.0/255, green: 49.0/255, blue: 1)], startPoint: .leading, endPoint: .trailing) }
   @ViewBuilder private var catalog: some View {
-    if loading { ProgressView().frame(height: 120).frame(maxWidth: .infinity) }
-    else if packages.isEmpty { Text("当前暂无可购买的套餐").font(.system(size: 14)).foregroundStyle(.gray).frame(height: 120).frame(maxWidth: .infinity) }
+    if loading { ProgressView().frame(height: 130).frame(maxWidth: .infinity) }
+    else if packages.isEmpty { Text("当前暂无可购买的套餐").font(.system(size: 14)).foregroundStyle(.gray).frame(height: 130).frame(maxWidth: .infinity) }
     else if coinMode {
-      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) { ForEach(packages) { package in packageCard(package) } }
+      GeometryReader { geometry in
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+          ForEach(packages) { package in packageCard(package).frame(width: min(150, (geometry.size.width - 10) / 2)).frame(maxWidth: .infinity, alignment: .leading) }
+        }
+      }.frame(height: CGFloat((packages.count + 1) / 2) * 174 - 10).padding(.horizontal, 10)
     } else {
-      ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 10) { ForEach(packages) { package in packageCard(package).frame(width: 120) } } }
+      ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 14) { ForEach(packages) { package in packageCard(package).frame(width: 100) } }.padding(.horizontal, 20) }
     }
   }
   private func packageCard(_ package: QQRecord) -> some View {
-    Button { selected = package } label: {
-      VStack(spacing: 8) {
-        if coinMode {
-          QQRemoteImage(address: package.first("image_url", "image", "img_url"), contentMode: .fit).frame(height: 62)
-          HStack(spacing: 4) { Text(package["coin"]).font(.system(size: 18, weight: .bold)); QQArtwork(name: "vip_ico_diamond").frame(width: 14, height: 14) }
-          Text("¥ " + package["price"]).font(.system(size: 14, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 30).background(purchaseGradient, in: Capsule())
-        } else {
-          Text(package.name).font(.system(size: 14, weight: .bold)).lineLimit(1)
-          Text(package.first("price_text1", "price")).font(.system(size: 24, weight: .bold))
-          Text(package.first("price_text2", "desc")).font(.system(size: 12)).foregroundStyle(.gray)
-          if !package["coin"].isEmpty { Text("赠送 💎 " + package["coin"]).font(.system(size: 12, weight: .bold)) }
-        }
-      }.padding(10).frame(maxWidth: .infinity).frame(height: coinMode ? 164 : 120).background(coinMode ? .white : Color(white: 0.96), in: RoundedRectangle(cornerRadius: coinMode ? 20 : 12)).overlay { RoundedRectangle(cornerRadius: coinMode ? 20 : 12).stroke(selected?.id == package.id ? purchaseGradient : LinearGradient(colors: [.clear], startPoint: .leading, endPoint: .trailing), lineWidth: selected?.id == package.id ? 2 : 0) }
-    }.buttonStyle(.plain)
+    let active = selected?.id == package.id
+    let timed = (Double(package["over_time"]) ?? 0) > 0
+    return Button { selected = package } label: {
+      if coinMode {
+        VStack(spacing: 0) {
+          QQArtwork(name: QQMemberCatalog.diamondArtwork(coin: package["coin"])).frame(height: 62).padding(.top, 28)
+          HStack(spacing: 3) { Text(package["coin"]).font(.system(size: 18, weight: .bold)); QQArtwork(name: "vip_ico_diamond").frame(width: 14, height: 14) }.padding(.top, 2)
+          Spacer(minLength: 0)
+          Text("¥ " + package["price"]).font(.system(size: 14, weight: .bold)).foregroundStyle(.white).frame(maxWidth: 120).frame(height: 30).background(purchaseGradient, in: Capsule()).padding(.horizontal, 10).padding(.bottom, 12)
+        }.frame(maxWidth: .infinity).frame(height: 164).background(.white, in: RoundedRectangle(cornerRadius: 20))
+          .overlay { RoundedRectangle(cornerRadius: 20).stroke(active ? coinSelectionGradient : LinearGradient(colors: [.clear], startPoint: .leading, endPoint: .trailing), lineWidth: 2).allowsHitTesting(false) }
+          .overlay(alignment: .topTrailing) {
+            if !package["sc_desc"].isEmpty { Text(package["sc_desc"]).font(.system(size: 10)).foregroundStyle(.white).padding(.horizontal, 8).frame(height: 22).background(vipSelectionGradient, in: UnevenRoundedRectangle(topLeadingRadius: 2, bottomLeadingRadius: 10, bottomTrailingRadius: 2, topTrailingRadius: 20)) }
+          }.overlay(alignment: .bottomTrailing) {
+            if timed { countdown(package).padding(.trailing, 15).padding(.bottom, 36) }
+            else if !package["desc1"].isEmpty { Text(package["desc1"]).font(.system(size: 10)).foregroundStyle(.white).padding(.horizontal, 6).frame(height: 18).background(LinearGradient(colors: [.orange, Color(red: 1, green: 104.0/255, blue: 44.0/255)], startPoint: .leading, endPoint: .trailing), in: Capsule()).padding(.trailing, 15).padding(.bottom, 32) }
+          }
+      } else {
+        VStack(spacing: 0) {
+          Text(package.name).font(.system(size: 12, weight: .bold)).foregroundStyle(Color(white: 101.0/255)).lineLimit(1).padding(.top, 15)
+          HStack(alignment: .firstTextBaseline, spacing: 0) { Text("¥").font(.system(size: 12, weight: .bold)); Text(package.first("price_text1", "price")).font(.system(size: 26, weight: .bold)); Text(package["price_text2"]).font(.system(size: 12, weight: .bold)) }.lineLimit(1).minimumScaleFactor(0.6).padding(.top, 2)
+          Text("总价¥" + package["price"]).font(.system(size: 12)).foregroundStyle(QQStyle.ink.opacity(0.3)).padding(.top, 2)
+          Spacer(minLength: 2)
+          if !package["coin"].isEmpty {
+            HStack(spacing: 3) { Text("赠送"); QQArtwork(name: "vip_ico_diamond").frame(width: 12, height: 13); Text(package["coin"]) }.font(.system(size: 12, weight: .bold)).foregroundStyle(active || timed ? .white : QQStyle.ink).frame(maxWidth: .infinity).frame(height: 22).background(active ? vipSelectionGradient : timed ? LinearGradient(colors: [Color(red: 119.0/255, green: 148.0/255, blue: 1), Color(red: 200.0/255, green: 102.0/255, blue: 1)], startPoint: .leading, endPoint: .trailing) : LinearGradient(colors: [Color(white: 231.0/255)], startPoint: .leading, endPoint: .trailing))
+          }
+        }.frame(maxWidth: .infinity).frame(height: 120).background(active ? Color(red: 1, green: 240.0/255, blue: 254.0/255) : Color(white: 245.0/255)).clipShape(RoundedRectangle(cornerRadius: 12))
+          .overlay { RoundedRectangle(cornerRadius: 12).stroke(active ? vipSelectionGradient : LinearGradient(colors: [.clear], startPoint: .leading, endPoint: .trailing), lineWidth: 3).allowsHitTesting(false) }
+          .overlay(alignment: .topLeading) {
+            if timed { countdown(package).offset(y: -10) }
+            else if !package["ty_text"].isEmpty { Text(package["ty_text"]).font(.system(size: 10)).foregroundStyle(.white).padding(.horizontal, 6).frame(height: 20).background(Color(red: 1, green: 76.0/255, blue: 245.0/255), in: UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 0, bottomTrailingRadius: 10, topTrailingRadius: 10)).offset(y: -10) }
+          }.padding(.top, 10)
+      }
+    }.buttonStyle(.plain).foregroundStyle(QQStyle.ink).accessibilityIdentifier("qingqing.member.package." + package.id).accessibilityAddTraits(active ? .isSelected : [])
+  }
+  private func countdown(_ package: QQRecord) -> some View {
+    TimelineView(.periodic(from: .now, by: 1)) { context in
+      let remaining = max(0, Int((Double(package["over_time"]) ?? 0) - context.date.timeIntervalSince(catalogLoadedAt)))
+      Text(remaining > 0 ? "限时" + String(format: "%02d : %02d : %02d", remaining / 3600, remaining / 60 % 60, remaining % 60) : "活动已结束").font(.system(size: 10)).monospacedDigit().foregroundStyle(.white).padding(.horizontal, 5).frame(height: 20).background(Color(red: 1, green: 78.0/255, blue: 77.0/255), in: RoundedRectangle(cornerRadius: 8))
+    }
   }
   private var paymentWays: some View {
-    VStack(spacing: 14) { ForEach(payWays) { way in
-      Button { selectedWay = way } label: { HStack(spacing: 10) { Image(systemName: way["code"].contains("wechat") ? "message.fill" : "a.circle.fill").font(.system(size: 26)).foregroundStyle(way["code"].contains("wechat") ? .green : .cyan); Text(way.name.components(separatedBy: "（").first ?? way.name).font(.system(size: 16)); Text(way["desc"]).font(.system(size: 14)).foregroundStyle(.gray); Spacer(minLength: 0); Image(systemName: selectedWay?.id == way.id ? "checkmark.circle.fill" : "circle").foregroundStyle(selectedWay?.id == way.id ? .cyan : Color(white: 0.85)) }.frame(height: 32) }.buttonStyle(.plain)
-    } }
+    VStack(spacing: 15) { ForEach(payWays) { way in
+      Button { selectedWay = way } label: {
+        HStack(spacing: 0) {
+          QQArtwork(name: way["type"] == "2" || way["code"].lowercased().contains("wechat") || way.name.contains("微信") ? "vip_ico_wechat" : "vip_ico_alipay").frame(width: 31, height: 31)
+          Text(way.first("name2", "name").components(separatedBy: "（").first ?? way.name).font(.system(size: 14)).padding(.leading, 12)
+          Text(way["desc"]).font(.system(size: 14)).foregroundStyle(Color(white: 153.0/255)).lineLimit(1).minimumScaleFactor(0.7)
+          if way["priority"] == "1" { QQArtwork(name: "vip_zfb_tj").frame(width: 24, height: 14).padding(.leading, 4) }
+          Spacer(minLength: 4)
+          QQArtwork(name: selectedWay?.id == way.id ? "profile_ico_select02" : "profile_ico_select01").frame(width: 18, height: 18)
+        }.frame(minHeight: 31).padding(.vertical, 5).contentShape(Rectangle())
+      }.accessibilityIdentifier("qingqing.member.way." + way["code"]).accessibilityAddTraits(selectedWay?.id == way.id ? .isSelected : [])
+    } }.buttonStyle(.plain).padding(.bottom, payWays.isEmpty ? 0 : 15)
+  }
+  private var validSelection: Bool {
+    guard store.loggedIn, !loading, error == nil, let selected, let selectedWay, QQMemberCatalog.valid(package: selected, way: selectedWay, packages: packages, ways: payWays) else { return false }
+    let duration = Double(selected["over_time"]) ?? 0
+    return duration <= 0 || Date().timeIntervalSince(catalogLoadedAt) < duration
+  }
+  private func switchTab(_ next: Int) {
+    guard next != tab else { return }
+    tabSelections[tab] = selected?.id; tabPaymentWays[tab] = selectedWay?["code"]
+    tab = next
+    selected = packages.first(where: { $0.id == tabSelections[next] }) ?? packages.first
+    selectedWay = payWays.first(where: { $0["code"] == tabPaymentWays[next] }) ?? QQMemberCatalog.initialWay(payWays)
+    paying = nil
   }
   private var memoryOffers: QQMemoryOffers { QQMemoryOffers(kind: memoryKind, payload: data, information: memoryInformation) }
   private var packages: [QQRecord] {
     let records: [QQRecord]
     if memoryRoleID != nil { records = memoryOffers.owned ? [] : memoryOffers.packages }
     else { records = data[coinMode ? "coin" : "package"].records }
-    return records.filter { !$0.id.isEmpty }
+    return records.filter { memoryRoleID != nil ? !$0.id.isEmpty : !$0["id"].isEmpty }
   }
   private func load() async {
     defer { loading = false }
@@ -331,15 +423,17 @@ struct QQMemberView: View {
         selectedWay = memoryOffers.initialWay
       } else {
         data = try await store.api.request("order/packageV2")
+        catalogLoadedAt = Date()
         totals = try await store.api.request("member/getCoinTotal")
         payWays = try await store.api.request("order/payWay").records
-        selectedWay = payWays.first
+        selectedWay = QQMemberCatalog.initialWay(payWays)
       }
       selected = packages.first
     } catch { self.error = error.localizedDescription }
   }
   private func createOrder(package: QQRecord, way: QQRecord) async {
     guard orderID == nil, !orderOutcomeUnknown, !busy else { statusText = "已有待确认订单，请先查询或联系服务方核实"; return }
+    guard memoryRoleID != nil || (validSelection && selected?.id == package.id && selectedWay?["code"] == way["code"]) else { statusText = "所选套餐或支付方式已失效，请重新加载后再试"; return }
     busy = true; error = nil
     orderOutcomeUnknown = true
     UserDefaults.standard.set(["intent": UUID().uuidString, "package_id": package.id, "price": package["price"], "created_at": ISO8601DateFormatter().string(from: Date())], forKey: pendingOrderKey)

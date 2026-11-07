@@ -122,6 +122,120 @@ final class QingqingPreviewUITests: XCTestCase {
     capture(app, "failed-chat-keeps-both-drafts-fixture")
   }
 
+  func testComposerInputExpansionBracketsAndDarkSendArtwork() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    for mode in ["chat-draft-fixture", "chat-input-dark-fixture"] {
+      app.launchArguments = ["--qq=" + mode]; app.launch()
+      let input = app.textViews["qingqing.chat.input"]
+      XCTAssertTrue(input.waitForExistence(timeout: 10))
+      XCTAssertFalse(app.buttons["发送消息"].exists)
+      app.buttons["更多功能"].tap()
+      XCTAssertTrue(app.buttons["重启会话"].exists)
+      input.tap()
+      XCTAssertFalse(app.buttons["重启会话"].exists)
+      XCTAssertTrue(app.buttons["插入括号"].exists)
+      input.typeText("hello")
+      let send = app.buttons["发送消息"]
+      XCTAssertTrue(send.isEnabled && send.isHittable)
+      XCTAssertFalse(app.buttons["回复灵感"].exists)
+      app.buttons["插入括号"].tap()
+      input.typeText("inside")
+      XCTAssertEqual(input.value as? String, "hello（inside）")
+      input.typeText("\nsecond line\nthird line")
+      XCTAssertGreaterThan(input.frame.height, 40)
+      capture(app, mode + "-expanded-send")
+      input.typeText("\n4\n5\n6")
+      XCTAssertTrue((input.value as? String ?? "").contains("third line\n4\n5\n6"))
+      XCTAssertLessThanOrEqual(input.frame.height, 85)
+      XCTAssertTrue(send.isHittable)
+      capture(app, mode + "-four-line-scroll-limit")
+      app.terminate()
+    }
+    app.launchArguments = ["--qq=chat-draft-fixture"]; app.launch()
+    let input = app.textViews["qingqing.chat.input"]
+    XCTAssertTrue(input.waitForExistence(timeout: 10)); input.tap(); input.typeText("   ")
+    XCTAssertFalse(app.buttons["发送消息"].isEnabled)
+  }
+
+  func testReplyIdeasAndMorePanelAreExclusive() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=chat-draft-fixture"]; app.launch()
+    let input = app.textViews["qingqing.chat.input"]
+    XCTAssertTrue(input.waitForExistence(timeout: 10))
+    app.buttons["回复灵感"].tap()
+    let idea = app.buttons["合成回复灵感一"]
+    app.buttons["更多功能"].tap()
+    let completed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: app.buttons["回复灵感"])
+    XCTAssertEqual(XCTWaiter.wait(for: [completed], timeout: 6), .completed)
+    XCTAssertFalse(idea.exists)
+    XCTAssertTrue(app.buttons["重启会话"].exists)
+    app.buttons["回复灵感"].tap()
+    XCTAssertTrue(idea.waitForExistence(timeout: 10))
+    app.buttons["更多功能"].tap()
+    XCTAssertFalse(idea.exists)
+    app.buttons["回复灵感"].tap()
+    XCTAssertTrue(idea.waitForExistence(timeout: 10))
+    XCTAssertFalse(app.buttons["重启会话"].exists)
+    app.buttons["查看回复灵感1全文"].tap()
+    XCTAssertTrue(app.buttons["关闭灵感全文"].waitForExistence(timeout: 5))
+    app.buttons["关闭灵感全文"].tap()
+    capture(app, "reply-ideas-original-card-panel")
+    app.buttons["填入回复灵感1"].tap()
+    XCTAssertEqual(input.value as? String, "合成回复灵感一")
+    XCTAssertTrue(app.buttons["插入括号"].exists)
+  }
+
+  func testMemberSelectionIsPreservedAcrossVipAndDiamondTabs() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    for mode in ["member-purchase-fixture", "compact-member-purchase-fixture"] {
+      app.launchArguments = ["--qq=" + mode]; app.launch()
+      let vip = app.buttons["qingqing.member.package.qa-vip-long"]
+      XCTAssertTrue(vip.waitForExistence(timeout: 10)); capture(app, mode + "-vip-default"); vip.tap()
+      let ali = app.buttons["qingqing.member.way.qa-alipay"]
+      if !ali.isHittable { app.swipeUp() }
+      ali.tap(); XCTAssertTrue(ali.isSelected)
+      app.buttons["qingqing.member.tab.1"].tap()
+      let coin = app.buttons["qingqing.member.package.qa-coin-1"]
+      XCTAssertTrue(coin.waitForExistence(timeout: 10)); capture(app, mode + "-diamond-default"); coin.tap()
+      XCTAssertTrue(app.buttons["qingqing.member.way.qa-wechat"].isSelected)
+      capture(app, mode + "-diamond-selected")
+      app.buttons["qingqing.member.tab.0"].tap()
+      XCTAssertTrue(vip.isSelected); XCTAssertTrue(ali.isSelected)
+      let purchase = app.buttons["qingqing.member.purchase"]
+      for _ in 0..<8 { if purchase.isHittable { break }; app.swipeUp() }
+      XCTAssertTrue(purchase.isEnabled && purchase.isHittable)
+      capture(app, mode + "-vip-selected")
+      purchase.tap()
+      XCTAssertTrue(app.buttons["确认支付 ¥500"].waitForExistence(timeout: 5))
+      // Do not confirm: no order, payment or web checkout is executed.
+      app.terminate()
+    }
+  }
+
+  func testEmptyMemberCatalogCannotStartPurchase() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=member-empty-fixture"]; app.launch()
+    XCTAssertTrue(app.staticTexts["当前暂无可购买的套餐"].waitForExistence(timeout: 10))
+    let purchase = app.buttons["qingqing.member.purchase"]
+    XCTAssertTrue(purchase.exists); XCTAssertFalse(purchase.isEnabled)
+    app.buttons["qingqing.member.tab.1"].tap()
+    XCTAssertFalse(purchase.isEnabled)
+    capture(app, "empty-member-catalog-no-purchase")
+  }
+
+  func testExpiredMemberOfferCannotStartPurchase() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=member-expiring-fixture"]; app.launch()
+    let offer = app.buttons["qingqing.member.package.qa-vip-trial"]
+    XCTAssertTrue(offer.waitForExistence(timeout: 10))
+    let purchase = app.buttons["qingqing.member.purchase"]
+    XCTAssertTrue(purchase.isEnabled)
+    let expired = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == false"), object: purchase)
+    XCTAssertEqual(XCTWaiter.wait(for: [expired], timeout: 10), .completed)
+    XCTAssertTrue(app.buttons["重新加载套餐"].exists)
+    capture(app, "expired-member-offer-no-purchase")
+  }
+
   func testLongPageTitleLeavesBackButtonReachable() {
     let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
     app.launchArguments = ["--qq=long-header-fixture"]

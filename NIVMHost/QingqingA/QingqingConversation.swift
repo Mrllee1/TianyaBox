@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct QQRoleDetailView: View {
   @EnvironmentObject private var store: QingqingStore
@@ -79,8 +80,12 @@ final class QQChatModel: ObservableObject {
   @Published var busy = false
   @Published var error: String?
   @Published var suggestions: [String] = []
+  @Published private(set) var suggestionsLoading = false
   @Published var panel: [QQRecord] = []
   @Published var draftAfterFailure: String?
+  private var suggestionRequestID = UUID()
+
+  func dismissSuggestions() { suggestionRequestID = UUID(); suggestions = [] }
 
   func history(store: QingqingStore, roleID: String, kind: QQConversationKind) async {
     busy = true; error = nil
@@ -99,7 +104,7 @@ final class QQChatModel: ObservableObject {
 
   func send(_ text: String, store: QingqingStore, roleID: String, model: String, kind: QQConversationKind) async -> Bool {
     guard !busy, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
-    busy = true; error = nil; suggestions = []
+    busy = true; error = nil; dismissSuggestions()
     defer { busy = false }
     let pendingID = UUID().uuidString
     messages.append(QQMessage(id: pendingID, text: text, isUser: true))
@@ -124,15 +129,18 @@ final class QQChatModel: ObservableObject {
   }
 
   func candidateReplies(store: QingqingStore, roleID: String, kind: QQConversationKind) async {
-    guard !busy else { return }
-    busy = true; error = nil
-    defer { busy = false }
+    guard !busy, !suggestionsLoading else { return }
+    let ticket = UUID(); suggestionRequestID = ticket
+    suggestionsLoading = true; error = nil
+    defer { suggestionsLoading = false }
     do {
       let path = kind == .single ? "ai/chatReply" : kind == .multi ? "ai/chatManyReply" : "simulator/chatReply"
       var params = kind == .simulator ? ["game_id": roleID] : ["role_id": roleID]
       params["msg"] = messages.last?.text ?? ""
-      suggestions = try await store.api.request(path, method: "POST", parameters: params).list.map(\.text)
-    } catch { self.error = error.localizedDescription }
+      let result = try await store.api.request(path, method: "POST", parameters: params).list.map(\.text)
+      guard suggestionRequestID == ticket else { return }
+      suggestions = result
+    } catch { if suggestionRequestID == ticket { self.error = error.localizedDescription } }
   }
 
   private func decode(_ data: QQValue) -> [QQMessage] {
@@ -151,12 +159,15 @@ struct QQChatView: View {
   @State private var showBackground = false
   @State private var showActions = false
   @State private var backgroundChoice = ""
-  @FocusState private var inputFocused: Bool
+  @State private var inputFocused = false
   @State private var detail: QQRecord?
   private var current: QQRecord { detail ?? role }
   var kind: QQConversationKind = .single
   @StateObject private var chat = QQChatModel()
   @State private var input = ""
+  @State private var inputSelection = NSRange(location: 0, length: 0)
+  @State private var submitting = false
+  @State private var replyDetails: String?
   @State private var modelCode = "L1"
   @State private var memoryPresented = false
   @State private var memoryCapacityPresented = false
@@ -195,19 +206,20 @@ struct QQChatView: View {
                 }.foregroundStyle(.white).padding(14).frame(maxWidth: .infinity).background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
               }
               if let failed = chat.draftAfterFailure {
-                Button("恢复未发送内容") { input = QQChatDraft.recovering(failed, alongside: input); chat.draftAfterFailure = nil }
+                Button("恢复未发送内容") { input = QQChatDraft.recovering(failed, alongside: input); inputSelection = NSRange(location: (input as NSString).length, length: 0); chat.draftAfterFailure = nil; inputFocused = true }
                   .font(.system(size: 13)).foregroundStyle(.white).padding(12).background(.black.opacity(0.35), in: Capsule())
               }
               Color.clear.frame(height: 2).id("bottom")
             }.padding(16)
-          }.mask { GeometryReader { geometry in
+          }.scrollDismissesKeyboard(.interactively).mask { GeometryReader { geometry in
             let fadeHeight = halfScreen && !inputFocused ? max(80, geometry.size.height / 2 - 20) : 80
             VStack(spacing: 0) { Color.clear.frame(height: max(0, fadeHeight - 80)); LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom).frame(height: 80); Color.black }
           } }.animation(.easeInOut(duration: 0.15), value: halfScreen).onChange(of: chat.messages.count) { _, _ in withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo("bottom", anchor: .bottom) } }
         }
         inputBar
-      }
-    }.toolbar(.hidden, for: .navigationBar)
+      }.accessibilityHidden(replyDetails != nil)
+    }.toolbar(.hidden, for: .navigationBar).buttonStyle(.plain)
+      .onChange(of: inputFocused) { _, focused in if focused { showActions = false; chat.dismissSuggestions() } }
       .overlay(alignment: .topTrailing) {
         if kind == .single && !intimacy.isNull {
           let progress = QQIntimacyProgress(value: Int(intimacy["intimacy"].text) ?? 0, configuration: intimacyConfiguration)
@@ -238,6 +250,17 @@ struct QQChatView: View {
       .sheet(isPresented: $memoryPresented) { NavigationStack { QQMemoryView(role: current) }.environmentObject(store) }
       .sheet(isPresented: $memoryCapacityPresented) { NavigationStack { QQMemberView(memoryRoleID: roleID) }.environmentObject(store) }
       .sheet(isPresented: $giftPresented) { NavigationStack { QQGiftView(role: current) }.environmentObject(store) }
+      .overlay {
+        if let replyDetails {
+          ZStack {
+            Color.black.opacity(0.85).ignoresSafeArea()
+            VStack(spacing: 10) {
+              ScrollView { Text(replyDetails).font(.system(size: 14)).lineSpacing(5).foregroundStyle(.white).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 28) }
+              Button { self.replyDetails = nil } label: { QQArtwork(name: "jj_ico_close").frame(width: 24, height: 24).frame(width: 44, height: 44) }.accessibilityLabel("关闭灵感全文")
+            }.padding(.top, 100).padding(.bottom, 58)
+          }.accessibilityElement(children: .contain)
+        }
+      }
       .confirmationDialog("重启会话后，将重新开始当前角色的剧情。", isPresented: $restart, titleVisibility: .visible) {
         Button("重启会话", role: .destructive) {
           Task {
@@ -266,11 +289,6 @@ struct QQChatView: View {
 
   private var inputBar: some View {
     VStack(spacing: 10) {
-      if !chat.suggestions.isEmpty {
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack { ForEach(Array(chat.suggestions.enumerated()), id: \.offset) { _, text in Button(text) { input = text }.font(.system(size: 12)).padding(10).background(.white.opacity(0.15), in: Capsule()).foregroundStyle(.white) } }
-        }
-      }
       ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 8) {
           quickAction("对话模式", icon: "chat_ico_func02") { showModels = true }
@@ -281,15 +299,46 @@ struct QQChatView: View {
           }
         }
       }
-      HStack(alignment: .bottom, spacing: 5) {
-        TextField("自由输入…", text: $input, axis: .vertical).accessibilityIdentifier("qingqing.chat.input").focused($inputFocused).lineLimit(1...2).font(.system(size: 14)).foregroundStyle(.white).tint(.white).padding(.vertical, 13).padding(.leading, 15)
-        if input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-          Button { Task { await chat.candidateReplies(store: store, roleID: roleID, kind: kind) } } label: { QQArtwork(name: "chat_ico_ai01").frame(width: 24, height: 24).frame(height: 50) }.accessibilityLabel("回复灵感").disabled(chat.busy)
-          Button { showActions.toggle() } label: { QQArtwork(name: "chat_ico_more").frame(width: 24, height: 24).frame(height: 50) }.accessibilityLabel("更多功能")
-        } else {
-          Button { send() } label: { QQArtwork(name: "chat_ico_send").frame(width: 24, height: 24).frame(height: 50) }.disabled(chat.busy).accessibilityLabel("发送消息")
-        }
-      }.padding(.trailing, 14).background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
+      VStack(spacing: 0) {
+        QQChatTextInput(text: $input, selection: $inputSelection, focused: Binding(get: { inputFocused }, set: { inputFocused = $0 }))
+          .padding(.leading, 18).padding(.trailing, inputFocused ? 18 : 82)
+        if inputFocused { Color.clear.frame(height: 37) }
+      }.overlay(alignment: .topLeading) {
+        if input.isEmpty { Text("自由输入…").font(.system(size: 14)).foregroundStyle(.white.opacity(0.6)).padding(.leading, 18).padding(.top, inputFocused ? 6 : 16).allowsHitTesting(false).accessibilityHidden(true) }
+      }.overlay(alignment: .bottomTrailing) {
+        HStack(spacing: 0) {
+          if inputFocused {
+            Button {
+              let result = QQChatDraft.insertingParentheses(in: input, selection: inputSelection)
+              input = result.0; inputSelection = result.1
+            } label: { QQArtwork(name: darkMode ? "chat_ico_parentheses02" : "chat_ico_parentheses01").frame(width: 24, height: 24).frame(width: 34, height: 37, alignment: .top) }.accessibilityLabel("插入括号")
+          }
+          if input.isEmpty {
+            Button {
+              inputFocused = false; showActions = false
+              if !chat.suggestions.isEmpty { chat.dismissSuggestions() }
+              else { Task { await chat.candidateReplies(store: store, roleID: roleID, kind: kind) } }
+            } label: { QQArtwork(name: !chat.suggestions.isEmpty ? (darkMode ? "chat_ico_ai002" : "chat_ico_ai001") : (darkMode ? "chat_ico_ai02" : "chat_ico_ai01")).frame(width: 24, height: 24).frame(width: 34, height: 37, alignment: .top) }.accessibilityLabel("回复灵感").disabled(chat.busy || chat.suggestionsLoading || submitting)
+            Button { inputFocused = false; chat.dismissSuggestions(); showActions.toggle() } label: { QQArtwork(name: darkMode ? "chat_ico_add_more02" : "chat_ico_add_more01").frame(width: 24, height: 24).frame(width: 34, height: 37, alignment: .top) }.accessibilityLabel("更多功能")
+          } else {
+            Button { send() } label: { QQArtwork(name: darkMode ? "chat_ico_send02" : "chat_ico_send01").frame(width: 24, height: 24).frame(width: 34, height: 37, alignment: .top) }.disabled(chat.busy || submitting || input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty).accessibilityLabel("发送消息")
+          }
+        }.padding(.trailing, 12)
+      }.background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
+      if chat.suggestionsLoading && !inputFocused && !showActions && input.isEmpty {
+        VStack(spacing: 8) { ForEach(0..<3) { _ in ProgressView().tint(.white).frame(maxWidth: .infinity).frame(height: 60).background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 16)) } }.accessibilityIdentifier("qingqing.chat.ideas.loading")
+      }
+      if !chat.suggestions.isEmpty {
+        VStack(spacing: 8) {
+          ForEach(Array(chat.suggestions.prefix(3).enumerated()), id: \.offset) { index, text in
+            HStack(spacing: 0) {
+              Button { input = text; inputSelection = NSRange(location: (text as NSString).length, length: 0); chat.dismissSuggestions(); inputFocused = true } label: { QQArtwork(name: "chat_ico_input01").frame(width: 24, height: 24).frame(width: 40, height: 60) }.accessibilityLabel("填入回复灵感\(index + 1)")
+              Button { input = text; send() } label: { Text(text).font(.system(size: 14)).foregroundStyle(.white).lineSpacing(3).lineLimit(3).frame(maxWidth: .infinity, minHeight: 60, alignment: .leading) }.disabled(chat.busy || submitting)
+              Button { replyDetails = text } label: { QQArtwork(name: "chat_ico_input02").frame(width: 24, height: 24).frame(width: 44, height: 60) }.accessibilityLabel("查看回复灵感\(index + 1)全文")
+            }.background(.black.opacity(darkMode ? 0.5 : 0), in: RoundedRectangle(cornerRadius: 16)).overlay { RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(darkMode ? 0.1 : 0.25), lineWidth: 2).allowsHitTesting(false) }
+          }
+        }.padding(.top, 3).padding(.bottom, 10)
+      }
       if showActions {
         HStack(spacing: 11) {
           moreAction("重启会话", icon: "chat_ico_more01") { restart = true }
@@ -304,20 +353,76 @@ struct QQChatView: View {
     if let actor = current.value["characters"].records.first(where: { $0["roleId"] == message.senderRoleID || (!message.sender.isEmpty && $0.name == message.sender) }) { return actor.first("avatar", "avatarUrl") }
     return current.image
   }
-  private func quickAction(_ title: String, icon: String, action: @escaping () -> Void) -> some View { Button(action: action) { HStack(spacing: 5) { QQArtwork(name: icon).frame(width: 16, height: 16); Text(title).font(.system(size: 12)) }.padding(.horizontal, 12).frame(height: 34).foregroundStyle(.white).background(.black.opacity(0.5), in: Capsule()) } }
-  private func moreAction(_ title: String, icon: String, action: @escaping () -> Void) -> some View { Button(action: action) { VStack(spacing: 10) { QQArtwork(name: icon).frame(width: 30, height: 30); Text(title).font(.system(size: 12)) }.frame(maxWidth: .infinity).frame(height: 86).foregroundStyle(.white).background(.white.opacity(0.25), in: RoundedRectangle(cornerRadius: 16)) } }
+  private func quickAction(_ title: String, icon: String, action: @escaping () -> Void) -> some View { Button { inputFocused = false; action() } label: { HStack(spacing: 5) { QQArtwork(name: darkMode ? icon.replacingOccurrences(of: "chat_", with: "chat02_") : icon).frame(width: 16, height: 16); Text(title).font(.system(size: 12)) }.padding(.horizontal, 12).frame(height: 34).foregroundStyle(.white).background(.black.opacity(0.5), in: Capsule()) } }
+  private func moreAction(_ title: String, icon: String, action: @escaping () -> Void) -> some View { Button { showActions = false; action() } label: { VStack(spacing: 10) { QQArtwork(name: darkMode ? icon.replacingOccurrences(of: "chat_", with: "chat02_") : icon).frame(width: 30, height: 30); Text(title).font(.system(size: 12)) }.frame(maxWidth: .infinity).frame(height: 86).foregroundStyle(.white).background(.white.opacity(darkMode ? 0.1 : 0.25), in: RoundedRectangle(cornerRadius: 16)) } }
 
   private func send() {
     store.requireLogin {
-      guard !chat.busy, !input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+      guard !chat.busy, !submitting, !input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
       let message = input
-      input = ""
+      submitting = true; input = ""; inputSelection = NSRange(location: 0, length: 0)
       Task {
+        defer { submitting = false }
         if !(await chat.send(message, store: store, roleID: roleID, model: modelCode, kind: kind)) {
-          if input.isEmpty { input = message }
+          if input.isEmpty { input = message; inputSelection = NSRange(location: (message as NSString).length, length: 0) }
           else { chat.draftAfterFailure = QQChatDraft.recovering(chat.draftAfterFailure ?? "", alongside: message) }
         }
       }
     }
+  }
+}
+
+/// Retains selection and marked text while the keyboard expands the original
+/// two-line composer to four lines. Return inserts a newline; only Send submits.
+private struct QQChatTextInput: UIViewRepresentable {
+  @Binding var text: String
+  @Binding var selection: NSRange
+  @Binding var focused: Bool
+  func makeCoordinator() -> Coordinator { Coordinator(self) }
+  func makeUIView(context: Context) -> UITextView {
+    let view = UITextView()
+    view.delegate = context.coordinator; view.backgroundColor = .clear
+    view.font = .systemFont(ofSize: 14); view.textColor = .white; view.tintColor = .white
+    view.textContainer.lineFragmentPadding = 0
+    view.accessibilityIdentifier = "qingqing.chat.input"; view.accessibilityLabel = "自由输入…"
+    view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    return view
+  }
+  func updateUIView(_ view: UITextView, context: Context) {
+    context.coordinator.parent = self
+    context.coordinator.updating = true
+    defer { context.coordinator.updating = false }
+    if view.markedTextRange == nil {
+      if view.text != text { view.text = text }
+      let length = (text as NSString).length
+      let safe = NSRange(location: min(selection.location, length), length: min(selection.length, max(0, length - min(selection.location, length))))
+      if view.selectedRange != safe { view.selectedRange = safe }
+    }
+    view.textContainerInset = UIEdgeInsets(top: focused ? 6 : 15, left: 0, bottom: focused ? 6 : 15, right: 0)
+    if focused && !view.isFirstResponder { view.becomeFirstResponder() }
+    else if !focused && view.isFirstResponder { view.resignFirstResponder() }
+  }
+  func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
+    guard let width = proposal.width else { return nil }
+    let natural = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height
+    let maximum = (uiView.font?.lineHeight ?? 17) * (focused ? 4 : 2) + (focused ? 12 : 30)
+    uiView.isScrollEnabled = natural > maximum
+    return CGSize(width: width, height: max(focused ? 29 : 50, min(ceil(natural), maximum)))
+  }
+  final class Coordinator: NSObject, UITextViewDelegate {
+    var parent: QQChatTextInput
+    var updating = false
+    init(_ parent: QQChatTextInput) { self.parent = parent }
+    private func synchronize(_ view: UITextView) {
+      guard !updating else { return }
+      // UIKit may report the new selection before textViewDidChange. Publish
+      // both together so a selection render cannot restore the previous text.
+      if parent.text != view.text { parent.text = view.text }
+      if view.markedTextRange == nil, parent.selection != view.selectedRange { parent.selection = view.selectedRange }
+    }
+    func textViewDidChange(_ view: UITextView) { synchronize(view); view.invalidateIntrinsicContentSize() }
+    func textViewDidChangeSelection(_ view: UITextView) { synchronize(view) }
+    func textViewDidBeginEditing(_ view: UITextView) { if !parent.focused { parent.focused = true } }
+    func textViewDidEndEditing(_ view: UITextView) { if parent.focused { parent.focused = false } }
   }
 }
