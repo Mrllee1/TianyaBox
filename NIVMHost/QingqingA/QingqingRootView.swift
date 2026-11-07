@@ -35,11 +35,11 @@ struct QingqingRootView: View {
       tab(0, selected: "tab001", normal: "tab01", title: "首页")
       tab(1, selected: "tab002", normal: "tab02", title: "发现")
       Button { store.requireLogin { store.creatorPresented = true } } label: {
-        QQArtwork(name: "tab_ico00").frame(width: 52, height: 48).frame(maxWidth: .infinity)
+        QQArtwork(name: "tab_ico00").frame(width: 48, height: 40).frame(maxWidth: .infinity)
       }.accessibilityLabel("创建智能体")
       tab(2, selected: "tab004", normal: "tab04", title: "消息")
       tab(3, selected: "tab005", normal: "tab05", title: "我的")
-    }.frame(height: 56).background(.white)
+    }.frame(height: 64).background(.white)
       .overlay(alignment: .top) { Color.black.opacity(0.04).frame(height: 0.5) }
       .buttonStyle(.plain)
   }
@@ -49,7 +49,7 @@ struct QingqingRootView: View {
       else { store.selectedTab = index }
     } label: {
       QQArtwork(name: store.selectedTab == index ? selected : normal)
-        .frame(width: 38, height: 44).frame(maxWidth: .infinity)
+        .frame(width: 24, height: 24).frame(maxWidth: .infinity)
     }.accessibilityLabel(title).accessibilityAddTraits(store.selectedTab == index ? .isSelected : [])
   }
 }
@@ -66,7 +66,7 @@ private struct QQHomeView: View {
           Button { focused = 0; store.homeSection = index } label: {
             VStack(spacing: 4) {
               QQArtwork(name: "home_tittle_" + (darkBackdrop ? "white" : "black") + suffix)
-                .frame(width: index > 1 ? 58 : 40, height: 24)
+                .frame(width: [34.0, 34, 48, 64][index], height: 20)
                 .opacity(store.homeSection == index ? 1 : 0.45)
               Capsule().fill(store.homeSection == index ? Color.cyan : .clear).frame(width: 12, height: 4)
             }
@@ -90,9 +90,11 @@ private struct QQHomeView: View {
                 .padding(.horizontal, 20).padding(.bottom, 14).tag(index)
             }
           }.tabViewStyle(.page(indexDisplayMode: .never))
+        } else if store.homeSection == 3 {
+          QQTheaterCarousel(items: items, selection: $focused)
         } else {
           ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
               ForEach(items) { record in
                 if store.homeSection == 2 {
                   NavigationLink { QQSimulatorDetailView(scenario: record) } label: { sceneCard(record) }
@@ -100,7 +102,7 @@ private struct QQHomeView: View {
                   NavigationLink { QQTheaterView(script: record) } label: { sceneCard(record) }
                 }
               }
-            }.padding(.horizontal, 16).padding(.bottom, 18)
+            }.padding(.horizontal, 10).padding(.bottom, 18)
           }.refreshable { await store.loadSection(store.homeSection) }
         }
       }.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -115,17 +117,8 @@ private struct QQHomeView: View {
   private var items: [QQRecord] {
     switch store.homeSection { case 1: return store.groups; case 2: return store.simulators; case 3: return store.theaters; default: return store.recommended }
   }
-  private func sceneCard(_ record: QQRecord) -> some View {
-    QQRemoteImage(address: record.image).frame(height: 280)
-      .overlay(alignment: .bottomLeading) {
-        VStack(alignment: .leading, spacing: 10) {
-          Text(record.name).font(.system(size: 23, weight: .bold))
-          QQTags(tags: record.tags, dark: true)
-          Text(record.intro).font(.system(size: 12)).lineLimit(2)
-        }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
-          .background(LinearGradient(colors: [.clear, .black.opacity(0.8)], startPoint: .top, endPoint: .bottom))
-      }.foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 16))
-  }
+  private func sceneCard(_ record: QQRecord) -> some View { QQSceneTile(record: record) }
+
 }
 
 private struct QQHeroCard: View {
@@ -139,10 +132,14 @@ private struct QQHeroCard: View {
         QQRemoteImage(address: role.image)
         LinearGradient(stops: [.init(color: .clear, location: 0.25), .init(color: .black.opacity(0.15), location: 0.45), .init(color: .black.opacity(0.9), location: 1)], startPoint: .top, endPoint: .bottom)
         VStack(alignment: .leading, spacing: 12) {
-          NavigationLink(value: role) {
-            HStack { Text(role.name).font(.system(size: 26, weight: .bold)); Spacer(); Image(systemName: "chevron.right").font(.system(size: 14)) }
+          NavigationLink { QQRoleDetailView(role: role, kind: kind) } label: {
+            Text(role.first("title", "name")).font(.system(size: 24, weight: .bold))
           }.foregroundStyle(.white)
-          QQTags(tags: role.tags, dark: true)
+          QQWrapLayout(spacing: 6) {
+            if !role["uid"].isEmpty { NavigationLink { QQAuthorCenterView(authorID: role["uid"]) } label: { QQAuthorBadge(role: role) } }
+            if !role["msg_num"].isEmpty { HStack(spacing: 3) { Image(systemName: "flame.fill"); Text(role["msg_num"]) }.font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) }
+            ForEach(role.tags, id: \.self) { tag in Text(tag).font(.system(size: 12)).padding(.horizontal, 9).frame(height: 24).background(.white.opacity(0.25), in: Capsule()) }
+          }
           Text(role.intro).font(.system(size: 14)).lineSpacing(5).lineLimit(4).foregroundStyle(.white.opacity(0.9))
           QQPrimaryButton(title: "聊天") { store.requireLogin { talking = true } }.padding(.top, 8)
         }.padding(20)
@@ -152,63 +149,125 @@ private struct QQHeroCard: View {
   }
 }
 
-private struct QQLibraryView: View {
+struct QQLibraryView: View {
   @EnvironmentObject private var store: QingqingStore
-  @State private var query = ""
   @State private var category = "all"
   @State private var ranking = false
   @State private var ranked: [QQRecord] = []
+  @State private var rankLabels: [QQRecord] = []
+  @State private var rankType = ""
   @State private var page = 1
   @State private var exhausted = false
+  @State private var rankError: String?
+  @State private var rankRequestID = UUID()
+  init(initialRanking: Bool = false) { _ranking = State(initialValue: initialRanking) }
   var body: some View {
-    VStack(spacing: 16) {
-      HStack {
-        Image(systemName: "magnifyingglass").foregroundStyle(QQStyle.secondary)
-        TextField("搜索你喜欢的角色", text: $query).font(.system(size: 14)).submitLabel(.search)
-          .onSubmit { refresh() }
-        if !query.isEmpty { Button { query = ""; refresh() } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.gray) } }
-      }.padding(12).background(Color.black.opacity(0.035), in: Capsule()).padding(.horizontal, 16).padding(.top, 8)
-      HStack(spacing: 0) {
-        segment("热门标签", active: !ranking) { ranking = false }
+    VStack(spacing: 0) {
+      HStack(spacing: 12) {
+        QQArtwork(name: "list_ico_tittle").frame(width: 40, height: 24)
+        Spacer()
+        NavigationLink { QQSearchView() } label: { QQArtwork(name: "list_ico_search").frame(width: 24, height: 24) }.accessibilityLabel("搜索角色")
+        NavigationLink { QQMemberView() } label: { QQArtwork(name: "home_ico_vip").frame(width: 30, height: 30) }.accessibilityLabel("会员中心")
+      }.padding(.leading, 20).padding(.trailing, 10).frame(height: 54)
+      HStack(spacing: 8) {
+        segment("热门标签", active: !ranking) { ranking = false; refresh() }
         segment("排行榜", active: ranking) { ranking = true; refresh() }
-      }.padding(4).background(Color.black.opacity(0.04), in: Capsule()).padding(.horizontal, 50)
-      ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 10) {
-          ForEach(store.categories) { item in
-            Button { category = item["code"]; refresh() } label: {
-              Text(item.name).font(.system(size: 13, weight: category == item["code"] ? .semibold : .regular))
-                .padding(.horizontal, 15).padding(.vertical, 9)
-                .background(category == item["code"] ? Color.black : Color.black.opacity(0.04), in: Capsule())
-                .foregroundStyle(category == item["code"] ? .white : QQStyle.ink)
-            }
-          }
-        }.padding(.horizontal, 16)
+        Spacer()
+      }.padding(.horizontal, 10).padding(.top, 8)
+      if ranking && !rankLabels.isEmpty {
+        ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 24) { ForEach(rankLabels) { label in Button { rankType = label["type"]; refresh() } label: { Text(label.name).font(.system(size: 14, weight: rankType == label["type"] ? .bold : .regular)).foregroundStyle(rankType == label["type"] ? QQStyle.ink : .gray) } } }.padding(.horizontal, 15) }.frame(height: 42)
       }
+      if !ranking { ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: 24) {
+          ForEach(store.categories) { item in Button { category = item["code"]; refresh() } label: { Text(item.name).font(.system(size: 14, weight: category == item["code"] ? .bold : .regular)).foregroundStyle(category == item["code"] ? QQStyle.ink : .gray) } }
+        }.padding(.horizontal, 15)
+      }.frame(height: 45) }
       ScrollView {
-        if let error = store.error, store.roles.isEmpty { QQEmptyState(text: error, action: refresh) }
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 18) {
-          ForEach(ranking ? ranked : store.roles) { role in NavigationLink(value: role) { QQRoleTile(role: role) }.buttonStyle(.plain) }
-        }.padding(.horizontal, 16)
+        if ranking {
+          LazyVStack(spacing: 0) { ForEach(Array(ranked.enumerated()), id: \.element.id) { index, role in QQRoleChatLink(role: role.conversationRole) { QQRankingRow(role: role, index: index) }.buttonStyle(.plain) } }
+          if let rankError { QQEmptyState(text: rankError, action: refresh) }
+        } else {
+          if let error = store.error, store.roles.isEmpty { QQEmptyState(text: error, action: refresh) }
+          LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { ForEach(store.roles) { role in QQRoleChatLink(role: role) { QQRoleTile(role: role) }.buttonStyle(.plain) } }.padding(.horizontal, 10)
+        }
         if store.loading { ProgressView().padding() }
         else if !ranking && !store.roles.isEmpty && !exhausted {
-          Button("加载更多") {
-            page += 1
-            Task { let count = store.roles.count; await store.loadRoles(category: category, keyword: query, page: page); exhausted = store.roles.count == count }
-          }.padding(20).font(.system(size: 13))
+          Button("加载更多") { page += 1; Task { let count = store.roles.count; await store.loadRoles(category: category, page: page); exhausted = store.roles.count == count } }.padding(20).font(.system(size: 13))
         } else if (ranking ? ranked : store.roles).isEmpty && !store.loading { QQEmptyState() }
-      }.refreshable { await store.loadRoles(category: category, keyword: query) }
-    }.background(.white).task { if store.roles.isEmpty { refresh() } }
+      }.refreshable { refresh() }
+    }.background(.white).task { refresh() }
   }
   private func segment(_ title: String, active: Bool, action: @escaping () -> Void) -> some View {
-    Button(action: action) { Text(title).font(.system(size: 14, weight: active ? .semibold : .regular)).frame(maxWidth: .infinity).padding(.vertical, 10).background(active ? .white : .clear, in: Capsule()) }
+    Button(action: action) { Text(title).font(.system(size: 14, weight: .bold)).foregroundStyle(active ? Color(red: 0, green: 0.65, blue: 0.85) : Color(white: 0.55)).padding(.horizontal, 15).frame(height: 32).background(active ? Color(red: 0.88, green: 0.98, blue: 1) : Color(white: 0.97), in: Capsule()) }
   }
   private func refresh() {
     page = 1; exhausted = false
+    let requestID = UUID(); rankRequestID = requestID
+    let requestedRanking = ranking, requestedCategory = category
     Task {
-      if ranking {
-        do { ranked = try await store.api.request("home/roleRank", parameters: ["type": "1", "category": category]).records }
-        catch { store.error = error.localizedDescription }
-      } else { await store.loadRoles(category: category, keyword: query) }
+      if requestedRanking {
+        rankError = nil
+        do {
+          if rankLabels.isEmpty {
+            let labels = try await store.api.request("home/roleRankLabel").records
+            guard rankRequestID == requestID else { return }
+            rankLabels = labels; rankType = rankLabels.first?["type"] ?? ""
+          }
+          guard !rankType.isEmpty else { return }
+          let result = try await store.api.request("home/roleRank", parameters: ["type": rankType, "category": requestedCategory]).records
+          guard rankRequestID == requestID else { return }
+          ranked = result
+        } catch { if rankRequestID == requestID { rankError = error.localizedDescription } }
+      } else { await store.loadRoles(category: requestedCategory) }
+    }
+  }
+}
+
+struct QQRankingRow: View {
+  let role: QQRecord
+  let index: Int
+  var body: some View {
+    HStack(spacing: 8) {
+      Group { if index < 3 { QQArtwork(name: String(format: "list_ico_no%02d", index + 1)).frame(width: 24, height: 28) } else { Text(String(index + 1)).font(.system(size: 13, weight: .bold)).frame(width: 24) } }
+      QQRemoteImage(address: role.image).frame(width: 60, height: 80).clipShape(RoundedRectangle(cornerRadius: 9))
+      VStack(alignment: .leading, spacing: 7) {
+        Text(role.name).font(.system(size: 18, weight: .bold)).lineLimit(1)
+        Text("@" + role.first("member_name", "author", "member_nick", "nick")).font(.system(size: 12, weight: .bold)).foregroundStyle(.gray)
+        HStack(spacing: 14) { stat(role.first("follow_num", "fans_num"), "role_ico_people"); stat(role["chat_num"], "role_ico_comment"); stat(role.first("hot", "hot_num"), "role_ico_hot") }.font(.system(size: 12, weight: .bold)).foregroundStyle(.gray)
+      }
+      Spacer(minLength: 0)
+    }.padding(.horizontal, 15).padding(.vertical, 15).background { if index < 3 { Image(String(format: "qq_list_bg2_no%02d", index + 1)).resizable() } else { Color.white } }.overlay(alignment: .bottom) { if index >= 3 { Color.black.opacity(0.06).frame(height: 1).padding(.horizontal, 15) } }
+  }
+  private func stat(_ value: String, _ icon: String) -> some View { HStack(spacing: 1) { QQArtwork(name: icon).frame(width: 12, height: 12); Text(value.isEmpty ? "0" : value) } }
+}
+
+struct QQSearchView: View {
+  @EnvironmentObject private var store: QingqingStore
+  @Environment(\.dismiss) private var dismiss
+  @State private var query = ""
+  @State private var records: [QQRecord] = []
+  @State private var loading = false
+  @State private var error: String?
+  @FocusState private var searchFocused: Bool
+  var body: some View {
+    VStack(spacing: 10) {
+      HStack(spacing: 4) {
+        HStack(spacing: 5) { QQArtwork(name: "list_ico_search").frame(width: 24, height: 24); TextField("在此处搜索", text: $query).focused($searchFocused).font(.system(size: 14)).submitLabel(.search).autocorrectionDisabled().onSubmit { searchFocused = false }; if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark").foregroundStyle(.black) } } }.padding(.horizontal, 13).frame(height: 48).background(Color(white: 242.0/255), in: RoundedRectangle(cornerRadius: 18))
+        Button("取消") { dismiss() }.font(.system(size: 15)).padding(.horizontal, 15).frame(height: 50)
+      }.padding(.leading, 15).padding(.top, 10)
+      ScrollView {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) { ForEach(records) { role in QQRoleChatLink(role: role) { QQRoleTile(role: role, compact: true) } } }.padding(.horizontal, 4)
+        if loading { ProgressView().padding(20) }
+        else if let error { QQEmptyState(text: error) }
+        else if !query.isEmpty && records.isEmpty { VStack(spacing: 10) { QQArtwork(name: "invite_pic_null").frame(width: 150, height: 150); Text("暂时没有内容～").font(.system(size: 14)) }.padding(.top, 175).frame(maxWidth: .infinity) }
+      }
+    }.background(.white).toolbar(.hidden, for: .navigationBar).onAppear { searchFocused = true }.task(id: query) {
+      guard !query.trimmingCharacters(in: .whitespaces).isEmpty else { records = []; error = nil; loading = false; return }
+      do {
+        try await Task.sleep(for: .milliseconds(350)); loading = true; error = nil
+        let result = try await store.api.request("home/searchRole", method: "POST", parameters: ["keyword": query, "page": "1", "pageSize": "30"]).records
+        guard !Task.isCancelled else { return }; records = result; loading = false
+      } catch is CancellationError {} catch { if !Task.isCancelled { self.error = error.localizedDescription; loading = false } }
     }
   }
 }

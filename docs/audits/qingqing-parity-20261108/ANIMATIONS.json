@@ -1,0 +1,57 @@
+{
+  "renderer": "Tencent libpag web 4.1.8",
+  "source": "https://github.com/Tencent/libpag/blob/main/web/README.md",
+  "conversion": "PAG rendered frame-by-frame to PNG; lossless APNG, original frame rate and duration",
+  "animations": [
+    {
+      "name": "library_vip_entry",
+      "source_pag_sha256": "26d61704d1fdaed550c9e58a6d9ff5ddb31658f14d6ce3b28e104ddec27fc66a",
+      "apng_sha256": "7573be796b4cdd0c8758464bdfe2e93d67e5bd1c00f365e33c09d4e217407803",
+      "fps": 30,
+      "duration": 3,
+      "count": 90,
+      "width": 120,
+      "height": 150
+    },
+    {
+      "name": "mine_pic_vip",
+      "source_pag_sha256": "7792d3eb85290a7eb110826c26e4a83209e1d63124f6f8ecef28ae2823f7d8ac",
+      "apng_sha256": "079f0eea41e43a97aa3214dabf08a77b98cbd82f568eb86e4141a2993b51ede6",
+      "fps": 25,
+      "duration": 2,
+      "count": 50,
+      "width": 261,
+      "height": 240
+    },
+    {
+      "name": "tv_normal_button_bg_forver",
+      "source_pag_sha256": "09fd6dd9dcd30cdb9383b03b105879ae23b463733db8b399a66138858be39a0c",
+      "apng_sha256": "5c2b4120c0aa12fabd1c102f8cf8522e26c3348d35573faf5827151897f8d71f",
+      "fps": 25,
+      "duration": 2,
+      "count": 50,
+      "width": 360,
+      "height": 90
+    },
+    {
+      "name": "tv_normal_button_bg_trial",
+      "source_pag_sha256": "418de60189478763728cae7477d0a8a215aa8a75cde06cedaf4607c2006980ff",
+      "apng_sha256": "a4e319ee9a12f5c961f7f2080b905727eea74f69b672c2cff7c3cc08b4b8c6ec",
+      "fps": 25,
+      "duration": 2,
+      "count": 50,
+      "width": 360,
+      "height": 90
+    },
+    {
+      "name": "tv_normal_button_bg_vip",
+      "source_pag_sha256": "d255c865adb7374139c789c9dfc8d548cf2b0520f4e18bd15ddf4f2fb2491da2",
+      "apng_sha256": "69193be5a619082c7a7934b21b27ee26adaf08b936b6d4c0e11069dbd4828ec3",
+      "fps": 25,
+      "duration": 2,
+      "count": 50,
+      "width": 360,
+      "height": 90
+    }
+  ]
+}

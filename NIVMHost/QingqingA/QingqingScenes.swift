@@ -8,61 +8,81 @@ import ZIPFoundation
 
 struct QQSimulatorDetailView: View {
   @EnvironmentObject private var store: QingqingStore
+  @Environment(\.dismiss) private var dismiss
   let scenario: QQRecord
   @State private var detail: QQValue = .null
-  @State private var selectedRole = ""
   @State private var playerRole = ""
+  @State private var agents: [String: QQRecord] = [:]
   @State private var game: QQRecord?
   @State private var busy = false
   @State private var error: String?
-  private var roles: [QQRecord] { (detail.isNull ? scenario.value : detail)["roles"].records }
+  @State private var castPresented = false
+  @State private var galleryPresented = false
+  @State private var galleryIndex = 0
+  @State private var backdrop = Color(white: 0.25)
+  @State private var outcomeUnknown = false
+  private var current: QQRecord { detail.isNull ? scenario : QQRecord(detail) }
+  private var roles: [QQRecord] { current.value["roles"].records }
+  private var pendingKey: String { "qingqing.simulator.pending." + (store.user?.id ?? "anonymous") + "." + scenario.id }
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 22) {
-        QQRemoteImage(address: scenario.image).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 20))
-        Text(scenario.name).font(.system(size: 26, weight: .bold))
-        QQTags(tags: scenario.tags)
-        Text(scenario.intro).font(.system(size: 14)).lineSpacing(6)
-        Text("选择与你互动的角色").font(.system(size: 17, weight: .semibold))
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack(spacing: 12) {
-            ForEach(roles) { role in
-              Button { selectedRole = role.id } label: {
-                VStack(spacing: 8) {
-                  QQRemoteImage(address: role.first("avatar", "image", "img_url", "roleImage")).frame(width: 95, height: 128).clipShape(RoundedRectangle(cornerRadius: 12))
-                  Text(role.name).font(.system(size: 13)).lineLimit(1)
-                }.padding(6).background(selectedRole == role.id ? Color.purple.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 14))
-              }
-            }
-          }
-        }
-        Text("我的身份").font(.system(size: 17, weight: .semibold))
-        Picker("我的身份", selection: $playerRole) {
-          Text("请选择身份").tag("")
-          ForEach(roles) { role in Text(role.name).tag(role.id) }
-        }.pickerStyle(.menu)
-        if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-        QQPrimaryButton(title: "开始故事", busy: busy) {
-          store.requireLogin {
-            guard !selectedRole.isEmpty, !playerRole.isEmpty else { error = "请选择互动角色和你的身份"; return }
-            busy = true
-            Task {
-              defer { busy = false }
-              do {
-                let result = try await store.api.request("simulator/create", method: "POST", parameters: ["scenario_id": scenario.id, "select_role_id": selectedRole, "player_role_id": playerRole])
-                guard !result["id"].text.isEmpty else { throw QQAPIError.invalidResponse }
-                game = QQRecord(.object(["game_id": result["id"], "name": .string(scenario.name), "img_url": .string(scenario.image)]))
-              } catch { self.error = error.localizedDescription }
-            }
-          }
-        }
-      }.padding(20)
-    }.navigationTitle("模拟器").navigationBarTitleDisplayMode(.inline)
-      .navigationDestination(item: $game) { QQChatView(role: $0, kind: .simulator) }
-      .task {
-        do { detail = try await store.api.request("simulator/detail", parameters: ["id": scenario.id]) }
-        catch { self.error = error.localizedDescription }
+      VStack(spacing: 0) {
+        VStack(spacing: 0) {
+          Color.clear.frame(height: 321)
+          Text(current.name).font(.system(size: 16, weight: .bold)).frame(height: 23)
+          Text(current.tags.map { "#" + $0 }.joined(separator: " ")).font(.system(size: 12)).foregroundStyle(.white.opacity(0.6)).lineLimit(1).padding(.top, 14)
+          HStack { metric(current["fansNum"], icon: "person.fill", color: .mint); Spacer(); metric(current["chatNum"], icon: "bubble.left.fill", color: .blue); Spacer(); metric(current["msgNum"], icon: "flame.fill", color: .pink) }.padding(.horizontal, 48).padding(.top, 14)
+          Divider().overlay(.white.opacity(0.12)).padding(.horizontal, 20).padding(.top, 14)
+          VStack(alignment: .leading, spacing: 8) { Text("简介").font(.system(size: 14)); Text(current.intro).font(.system(size: 12)).foregroundStyle(.white.opacity(0.6)).lineLimit(1) }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20).padding(.top, 14)
+          HStack(spacing: 6) { Text("身份玩法").font(.system(size: 14)); Text("可邀请喜欢的角色扮演").font(.system(size: 12)).foregroundStyle(.white.opacity(0.6)); Spacer() }.padding(.horizontal, 20).padding(.top, 24)
+          ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 12) { ForEach(Array(roles.enumerated()), id: \.element.id) { index, role in Button { galleryIndex = index; galleryPresented = true } label: { HStack(spacing: 16) { QQRemoteImage(address: role["avatar"]).frame(width: 100, height: 136).clipShape(RoundedRectangle(cornerRadius: 15)); VStack(alignment: .leading, spacing: 12) { Text(role.name).font(.system(size: 16, weight: .bold)); Text(role["description"]).font(.system(size: 13)).foregroundStyle(.white.opacity(0.6)).lineLimit(3) } }.padding(16).frame(width: 350, height: 160).background(.black.opacity(0.25), in: RoundedRectangle(cornerRadius: 18)) } } }.padding(.horizontal, 30) }.padding(.top, 14).padding(.bottom, 8)
+        }.foregroundStyle(.white).background { VStack(spacing: 0) { Color.clear.frame(height: 260); LinearGradient(colors: [.clear, backdrop], startPoint: .top, endPoint: .bottom).frame(height: 300); backdrop } }
+        VStack(spacing: 16) {
+          sceneSection("简介", text: current.intro)
+          sceneSection("背景剧情", text: current["storyBackground"])
+          sceneSection(current["openingLabel"].isEmpty ? "开场剧情" : current["openingLabel"], text: current["openingScene"])
+          ForEach(roles) { role in sceneSection(role.name, text: role.first("detailedIntro", "description")) }
+          if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red); if outcomeUnknown { Button("查询已有房间") { Task { await load() } } } }
+        }.padding(16).padding(.top, 10).frame(maxWidth: .infinity, alignment: .leading).background(.white, in: UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
       }
+    }.background(alignment: .top) { QQRemoteImage(address: current.image).frame(height: 700).ignoresSafeArea(edges: .top) }.background(backdrop).overlay(alignment: .topLeading) { Button { dismiss() } label: { QQArtwork(name: "character_ico_close").frame(width: 20, height: 20).frame(width: 50, height: 50) }.accessibilityLabel("关闭") }
+      .safeAreaInset(edge: .bottom) { HStack(spacing: 10) { if !current["gameId"].isEmpty { Button("创建新房间") { castPresented = true }.font(.system(size: 16, weight: .bold)).foregroundStyle(.cyan).frame(maxWidth: .infinity).frame(height: 56).background(.cyan.opacity(0.1), in: Capsule()); QQPrimaryButton(title: "继续玩") { continueGame(current["gameId"]) } } else { QQPrimaryButton(title: "开始游戏") { store.requireLogin { castPresented = true } } } }.padding(.horizontal, 20).padding(.vertical, 10).background(.white) }
+      .toolbar(.hidden, for: .navigationBar).buttonStyle(.plain).navigationDestination(item: $game) { QQChatView(role: $0, kind: .simulator) }
+      .sheet(isPresented: $castPresented) { QQSimulatorCastView(title: current.name, scenarioID: scenario.id, roles: roles, playerRoleID: $playerRole, agents: $agents, busy: busy || outcomeUnknown, submissionError: error) { createRoom() }.presentationDetents([.large]).presentationCornerRadius(30) }
+      .sheet(isPresented: $galleryPresented) { QQRoleGalleryView(roles: roles, initialIndex: galleryIndex) }
+      .task { await load() }
+      .task(id: current.image) { if let palette = await QQImagePalette.backdrop(current.image), !Task.isCancelled { backdrop = palette.0 } }
+  }
+  private func metric(_ value: String, icon: String, color: Color) -> some View { HStack(spacing: 4) { Image(systemName: icon).foregroundStyle(color); Text(value) }.font(.system(size: 12, weight: .bold)) }
+  private func sceneSection(_ title: String, text: String) -> some View { VStack(alignment: .leading, spacing: 10) { Text(title).font(.system(size: 18, weight: .bold)); Text(text).font(.system(size: 14)).foregroundStyle(.gray).lineSpacing(8).frame(maxWidth: .infinity, alignment: .leading) }.padding(16).background(Color(red: 241.0/255, green: 248.0/255, blue: 1), in: RoundedRectangle(cornerRadius: 16)) }
+  private func load() async {
+    do {
+      detail = try await store.api.request("simulator/detail", parameters: ["id": scenario.id])
+      if playerRole.isEmpty { playerRole = roles.first(where: { $0["playable"] == "1" })?.id ?? "" }
+      outcomeUnknown = UserDefaults.standard.bool(forKey: pendingKey)
+      if outcomeUnknown && !current["gameId"].isEmpty { outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey) }
+      if outcomeUnknown { error = "上次创建结果尚未确认，请先查询已有房间，避免重复创建。" }
+    } catch { self.error = error.localizedDescription }
+  }
+  private func continueGame(_ id: String) { store.requireLogin { game = QQRecord(.object(["game_id": .string(id), "name": .string(current.name), "img_url": .string(current.image)])) } }
+  private func createRoom() {
+    guard !busy, !outcomeUnknown else { return }
+    let parameters: [String: String]
+    do { parameters = try QQSimulatorCast(playerRoleID: playerRole, agentsByRole: agents).parameters(scenarioID: scenario.id, roles: roles) }
+    catch { self.error = error.localizedDescription; return }
+    busy = true; error = nil; outcomeUnknown = true; UserDefaults.standard.set(true, forKey: pendingKey)
+    Task {
+      defer { busy = false }
+      do {
+        let result = try await store.api.request("simulator/create", method: "POST", parameters: parameters)
+        guard !result["id"].text.isEmpty else { throw QQAPIError.invalidResponse }
+        outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey); castPresented = false
+        await store.refreshUser(); continueGame(result["id"].text)
+      } catch {
+        if case QQAPIError.service = error { outcomeUnknown = false; UserDefaults.standard.removeObject(forKey: pendingKey) }
+        self.error = error.localizedDescription
+      }
+    }
   }
 }
 
@@ -74,33 +94,19 @@ struct QQTheaterView: View {
   @State private var error: String?
   @State private var member = false
   var body: some View {
-    Group {
-      if let folder {
-        QQTheaterWebView(folder: folder, scriptID: script.id, api: store.api,
-          onLogin: { store.loginPresented = true }, onPay: { member = true })
-      } else {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 20) {
-            QQRemoteImage(address: script.image).frame(height: 360).clipShape(RoundedRectangle(cornerRadius: 22))
-            Text(script.name).font(.system(size: 26, weight: .bold))
-            QQTags(tags: script.tags)
-            Text(script.intro).font(.system(size: 15)).lineSpacing(7)
-            if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-            QQPrimaryButton(title: loading ? "正在加载剧情…" : "进入剧情", busy: loading) {
-              store.requireLogin {
-                loading = true; error = nil
-                Task {
-                  defer { loading = false }
-                  do { folder = try await QQTheaterPackage.prepare(script) }
-                  catch { self.error = error.localizedDescription }
-                }
-              }
-            }
-          }.padding(20)
-        }
+    QQPage(title: script.name) {
+      Group {
+        if let folder { QQTheaterWebView(folder: folder, scriptID: script.id, api: store.api, onLogin: { store.loginPresented = true }, onPay: { member = true }) }
+        else if let error { QQEmptyState(text: error) { Task { await prepare() } } }
+        else { ProgressView("正在加载剧情…").font(.system(size: 14)).frame(maxWidth: .infinity, maxHeight: .infinity) }
       }
-    }.navigationTitle(script.name).navigationBarTitleDisplayMode(.inline)
+    }.task(id: store.loggedIn) { if store.loggedIn { await prepare() } else { store.loginPresented = true } }
       .sheet(isPresented: $member) { NavigationStack { QQMemberView() }.environmentObject(store) }
+  }
+  private func prepare() async {
+    guard !loading, folder == nil else { return }; loading = true; error = nil
+    defer { loading = false }
+    do { folder = try await QQTheaterPackage.prepare(script) } catch { self.error = error.localizedDescription }
   }
 }
 

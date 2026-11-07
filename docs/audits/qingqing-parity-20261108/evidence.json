@@ -1,0 +1,580 @@
+{
+  "directory": "NIVMHost/Build/QA/qingqing-parity (ignored, local only)",
+  "captures": [
+    {
+      "file": "android-about.png",
+      "sha256": "eb0a4aeaf4e2f2f93eeaf4c86a5d1d89b9f642eb6a0b7258c8d7acd8a238717c",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-after-retention-close.png",
+      "sha256": "370db89c88e58563775a515a49e3f56603e1dd351e4dcbbd73bb0603b1576b70",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-author-reference.png",
+      "sha256": "ec034d800a3330608abca0cd1bae1c5c23a1adca12ddc60ea9f400b32d96ac72",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-before-creator.png",
+      "sha256": "b783d3f059fcdeb32ab42df2db96fdf380bb09a5d878b19ff71ab524283a7624",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-cancellation.png",
+      "sha256": "cd304c45fa09dca8cfc235dbf48304e5cb2ca3f5e9f79fdd958ea0afbbf0d641",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-chat-back-root.png",
+      "sha256": "5b74647a035f3f413a3975c70887612160b813fd65adeca88647960a0447b750",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-chat-for-intimacy.png",
+      "sha256": "6bf10bab83f8e502298aa8eedf220d9f9b3414cd39227a4f6cdd7aab1bf5e9e5",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-chat-more-reference.png",
+      "sha256": "2c3dce3dcadca3d306949ec3d2388c8655ba98cc233c4ef12a72711823a11cb3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-chat-reference.png",
+      "sha256": "87c56aa26adc81bd80f24a1d80a50120166f243e62217ec47e5ed9e58b051a4d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-coin-tab-check.png",
+      "sha256": "49953ba8a248dde8e10eb39465d97d94317f0ccc01da2578a16d2c2941647f96",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-creator-bottom-reference.png",
+      "sha256": "6bdf514c7f8a68b945606ad44bb28a66a47c1b0c09fccbe07706f6eb616c86c8",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-creator-exit.png",
+      "sha256": "1a37dfce373b688b3fb21bf9f892dbbfab3b5b1f5335c85a27f46995e0ad4869",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-creator-middle-reference.png",
+      "sha256": "427ed9037e507914b68827d9bbefe15c1312d73a281ca221a6e7435cc3da7494",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-creator-notice-reference.png",
+      "sha256": "efa6e43275bd0940234c4f58bf03390da8fac6794ac51b0b948da85e8035a3d9",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-creator-reference.png",
+      "sha256": "b3b57d10f22ffadfaadd90b5b7d0f17892520a4ca678924a35b20911ac8355a1",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-current.png",
+      "sha256": "6ea146cc7be781fabcef806a964f9c1fc0875021a45f3bef4746a1c834b29f92",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-diamond-detail.png",
+      "sha256": "49953ba8a248dde8e10eb39465d97d94317f0ccc01da2578a16d2c2941647f96",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-diamond-ledger.png",
+      "sha256": "a78715bbc27eff6c8730b5f75ec685792a359c01c200c675bd857835c7dccfb2",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-diamond.png",
+      "sha256": "0c5156bbbbac25f4ea7ce89ac730bb0dbc9d680f75e78c2131b6286dd80a56b3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-discovery-reference.png",
+      "sha256": "0e4515077128b01c34179da9f86653eb08df6ed2fbc803487d6f922aa3ba973f",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-feedback.png",
+      "sha256": "5de793b38138e06232718dda1725145c86d24df7182ab830fef62fee102eb13d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-gift-wall-reference.png",
+      "sha256": "e6a74e3a4f03d034df2b7ba330fb94c1c1ca8a333b63fc4d77a3373a15d282f1",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-group-detail-reference.png",
+      "sha256": "1f7eb87841589fbd50b6f9f0ac8e3a7f42ffc2f50421f78081adb058030981d7",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-group-home-reference.png",
+      "sha256": "1013f3a9a351a7c5e215c9ed0a04c919ceffa9e48578eaa113ee337cb3912ea5",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-group-info-actual.png",
+      "sha256": "bb27a4b6ed4fdb8ed7cd0c64bcff3c34b2e7af711e3268497a222ddca79e5f0d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-group-info-reference.png",
+      "sha256": "eafa6b65a665cc3c6adfcb5fbd7167e46271bd2536daf7c1a27fc5dc59148cc7",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-home-reference.png",
+      "sha256": "8b4afd39c1e6de75c24e543aa5ae69902bf702467954556a182936ebf5aeb70f",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-intimacy-boost-reference.png",
+      "sha256": "4bd3c2e79b6519237b60c64a3ca6e2f2a80cf6e287871778c50535995579363b",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-intimacy-reference.png",
+      "sha256": "1f5bfaeee69e19bbedc9addfeb617c54b9f8641a1c1687ebb24fc80bb63aacec",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-intimacy-rules-actual.png",
+      "sha256": "97ac1826bf18d302d3155d8bc7341704036277fa88c578a457c8a863bf32b5c3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-intimacy-rules-reference.png",
+      "sha256": "4181aaed9c127cd04a30874bb207561f94d94813cb2f9305944849abf4062c94",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-invite-card-tap.png",
+      "sha256": "91f31a7c16df5aa7cb41910be5b0fd5a8911108db5e3fac872388f6db5e680fc",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-invite-code.png",
+      "sha256": "8cfd01305971b785ef1bb4542f5e206411bb8f545762fa5397abaefb29c663e0",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-invite-share-reference.png",
+      "sha256": "2f3d525754c5f14d7259607566548b2c1e0f100696b4bb2e1e88b85816c275ca",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-invite-share.png",
+      "sha256": "ff5c5b1575944c48e9a68fe907b11d785ae3c4a4f899f4330981809227f00892",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-invited-friends-reference.png",
+      "sha256": "a6b53f42d98d7e0117c6debc8094e19fd65d4d1d1f86a764fbcf72aceb6ab675",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-ledger-back.png",
+      "sha256": "2f7d8f38496a9d88a9258d849957a97503428c860952d7f23016c872c422eff2",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-login.png",
+      "sha256": "fa9266196c757e0cac4fc44001eefc74bf5613ccdaa9cf8a6b5df90a6e7378f4",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-member-back.png",
+      "sha256": "abfeaeedf78a5d603bd8566082e088c2818c96070c3918fd3a4a88454d53e1a1",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-member-diamond.png",
+      "sha256": "282fedf1415337e32f1cc5e14591ea914fb720ca0db109285610284a60d3a912",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-member-exit.png",
+      "sha256": "9c9745a8c37544f97938dda300e4559e28356f7f28ed17feef3f0ff444b17379",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-member-vip.png",
+      "sha256": "a068dc6c72ff9f35c7ec4dd033f54ca2e9d7e1b6e152e6383c0219acf550fce1",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-messages-reference.png",
+      "sha256": "c35bacdb98b522206335afa5b9baffd2e4e3352a40749bb747e469cd403af514",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-mine-reference.png",
+      "sha256": "b16c9da843a13dc9aab03c6dcda22b9d7bc4d9b64ee2481c518fb8fb7ddf250a",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-mine-stable.png",
+      "sha256": "74a2f80a388f56c5f54dd619d56abe673ed0e196886494e0a32e623d26b857b3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-mine.png",
+      "sha256": "9ff1282b40774da80a6f33bf3bcf9005297cfa7bcaffced0679c4d5214e7b71d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-model-header-tap.png",
+      "sha256": "8b24b01d7543c0eb6cc8a027f335dc3934f949ffcb901c10d16cd92b68eb15ea",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-models-reference.png",
+      "sha256": "1b107b3702adfb7aa21ed46e48126be86710dc15b5272a3743eaa41db305f331",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-nav-check.png",
+      "sha256": "9f9d7248ece3992c3dd01c04d06c0dbda9f0f19dce817210f291408ad0a978f6",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-played-reference.png",
+      "sha256": "f0d51fc4ce4ea755d32b4eaadb999e89c6e50585cef322eeff2a7e98fa505ee3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-profile.png",
+      "sha256": "4cae82b8d82810a15dd037aad536725a044b526e0deb8c363bcb8f81d84fc1a4",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-questions-reference.png",
+      "sha256": "690f913130b6579007b0c4ddbd619bc329ac9f7e8983477282a0fc1c2e333434",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-ranking-reference.png",
+      "sha256": "c444d093567f94d99df34b33aed82439b4505cff2577f2d192609fe8527c8e9f",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-role-detail-reference.png",
+      "sha256": "c271518df42aa41468427080529d9084054cf0fd587094ad761997bb793348a3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-script-detail-reference.png",
+      "sha256": "5a3a842681ae83193ed8ea9c3f6a231aa780dfa3c4016648c692a23f5569d5a8",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-search-empty-reference.png",
+      "sha256": "4cfc7811fbd1e26aad496b784488d4ea3f634e691cc38a6c43ec998b6cae51b9",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-search-results-live.png",
+      "sha256": "83a42fd49b5160e9f2242924c96f07d23372bcc5812b6ddf1ead05407371b93a",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-search-results-reference.png",
+      "sha256": "e6c0ba6783c423c63e0578cc0fd4b708a663565452e02e0e3d2d1367d82597df",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-settings.png",
+      "sha256": "5d0f5a9a1c77cf6b361f16e2cae1fed67fc4feee27b5fda43ff46943c878b080",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-share-poster-reference.png",
+      "sha256": "2aa8636cc994c27e60ee3f699c17b38101841e6c9ab545e566a7dee0e56aaa34",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-sign-in.png",
+      "sha256": "04c3d314c85c4be14a7f5bda2cfe5da4ae86b9c1fe2b0a02a8d819db928ff5b7",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-simulator-detail-reference.png",
+      "sha256": "b41a4f28b3af36ae02e556056e48dfc7ecda28365b883fb9c116bc2d414b17bf",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-simulator-identities-reference.png",
+      "sha256": "9427278f9b2b87ac488aceb81db32f2ec7a6c033d77db92d42ec83ada2c29bfb",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-simulator-list-reference.png",
+      "sha256": "52e8ce033fa7ec92781d3920202ce51abf8d493110e51404ec6811e92659a5d6",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-simulator-role-reference.png",
+      "sha256": "9361af6c6265f1924dab84b36770dd6505a53b33b08d9ecbc49c6007706fefb4",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-tag-custom-reference.png",
+      "sha256": "b87ef192afb1b36bf029fc752d26a3bb6f6e2e560509b34aa078128b9ee589df",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-tag-picker-reference.png",
+      "sha256": "155c71e29760cc8c51f2299755b3090b9ce3f04c70c01eb3262b68ea9b1c6f50",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-talk-settings-panel.png",
+      "sha256": "41a64b58e3773ea66c01e2d2296719b0b3cf5053b7c2f512de0f509cc2e7da37",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-talk-settings-reference.png",
+      "sha256": "93da273e56d06a71cd850cf941b8d09b7677c5ef945786b573996086cf400fb4",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-theater-list-reference.png",
+      "sha256": "d8a2b49f343585b2548f3139108c312425b2ba33801950d0a70a3e4fbfe671f1",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-theater-more-reference.png",
+      "sha256": "88d78ef7e25ec4a4a4eff032632ef1e070088a6d8d3c744c82305f3456040f6f",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "android-vip-retention-current.png",
+      "sha256": "5164858897d2d6dc89303b78d1d862308f2fef9136b686fad4737635e0fc9a0d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-about.png",
+      "sha256": "731feda9f10a3f1461e8d5c99f6b2838c9ab2dc52c08c035f187bfb8fad3d370",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-author.png",
+      "sha256": "c3f11dcf64d43997584d0cf4c0086223aee05b66f88334d25bada0a0a80962e3",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-background.png",
+      "sha256": "0cc1f17914509aa8ec8f73f209733f31bcfd660b226005a16bb6414116b37864",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-cancellation.png",
+      "sha256": "0f628a37e0b6d0807b99978b80ae785783a9200c2691f576aa222fc0edb9b153",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-chat-settings.png",
+      "sha256": "e2d42269948cf5b9aaa9028fd6b7a9a0a3a38947afa51cc013983ab94d2dec3d",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-chat.png",
+      "sha256": "3e7b6fe463dd1f6b4300927f9c5167a18f305ab2714c30ffb10838de6480df28",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-creator-notice.png",
+      "sha256": "5bf91f633a7f44f424e8f7292a53dc56897b9ba971b87f5a998abace56b24901",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-creator.png",
+      "sha256": "bf02c65fa44c7e038a557c6c67ae224fc6c476a740ce31949f6140d936bc937e",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-diamond-store.png",
+      "sha256": "7c3c826b57902859ed84b11640fc0d1114f59db2cf704358791cecbd83f5735a",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-diamond.png",
+      "sha256": "01359a80d233af3894e227874779db97cedad453993416428091513ddc5f9a26",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-feedback.png",
+      "sha256": "c0f8d89b1957dabc549615fcd5a373a7bec9bccedb5130048cd9ee67b8113d32",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-gift.png",
+      "sha256": "ce2a8a4ec8c2f3486011b7dfe9a60f387a11045526fb54687843927bc6480b65",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-group-detail.png",
+      "sha256": "b93ff3f749652652e79191ada1cfb7285c8c30797bf083ff5a72f2bb3cfa507e",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-group.png",
+      "sha256": "3c84ba66c2f63150c66d1bc76d2912890d370fc8b51872d18fe67181d5ed38d0",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-home.png",
+      "sha256": "239548300e920e3f13ac128856a5eec3061fe35495d91b1564d36af12df6dd49",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-identity.png",
+      "sha256": "7d4aafd54c2664fe32bb8f3ab9cc26f623176e615b6f63e39bfeff40597e1197",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-intimacy.png",
+      "sha256": "130e73dc015be27be8804b9d0505997ffcf2f3f3e45a1bf5cb66c4fc692157b2",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-invite-code.png",
+      "sha256": "004e72688c6c8df6834bad5374d7bec50ddf1d601270d6849b6b3808b52256bc",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-invite-rules.png",
+      "sha256": "a4bc74831442b592aeec679fd3755541f20f2e04e0ad66b2a82798523d3d6164",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-invited-friends.png",
+      "sha256": "3b735e614100cf4777a9af141d6738caaa9d2d6639e272eb6429d97dc939a9c7",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-library.png",
+      "sha256": "88e6e7a0de417e90d0af4caae0d8d66c256a63ab969343e5ea878f604d0f3975",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-live-identity.png",
+      "sha256": "6f9cc8f02e5c1f22637aecd13276d23d89a6a5726f02112202fb1eb2d99f0b43",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-live-memory.png",
+      "sha256": "450d740e41ad7f797613dba3832774ed3f5155c4c309a91a3a76c2ddc1e839df",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-login.png",
+      "sha256": "0b84586ebb103ac5342100c478967c87046420687cdca9d6681254983fd43a5a",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-member.png",
+      "sha256": "befce4dd4c669c28500277646074e532501b7c1ec1840384ae01aaa6badf385f",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-memory.png",
+      "sha256": "a6165205a1695df0307e766b0ded00d81bab539ed6ceee65f60494d196ca688b",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-messages.png",
+      "sha256": "3650e411957e9491b49a06bbb4a643e76334bff5898d950c424be0adf08f0eb8",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-mine-later.png",
+      "sha256": "b16a0f32e2c7d7a1bbcd80cc783289ea82dddd14df03ee9e4954db86c6138aaf",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-mine.png",
+      "sha256": "4e570cb17b434809901e467b1b61f05fcc00d5a08ff320ee9fec25fc1021074a",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-models.png",
+      "sha256": "4c428d2441f6d4c38660e6d38915d1adbc0f4c6bc21790974402f1a223f1a48c",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-notifications.png",
+      "sha256": "cf22e942c3daf65c6251bac1e172a06b03e76b9e75bbcf918024cad565e18a30",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-profile.png",
+      "sha256": "0a43a29f4ef6f50e553cd954dceb0e3709e4420299f1fdb53ee6c71bb8c08d86",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-questions.png",
+      "sha256": "968fe80fd06d652bff2f17e735ea8a09e467f113a7c0225ab2089f976a834329",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-ranking.png",
+      "sha256": "7f6e02d0936c95c0a388c1977967a260891b837b8ce0ea2cf54fcfb0d08303db",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-role.png",
+      "sha256": "922dcb312363b4928468554cb9b4bbe6340491806a032f4c19a16ae9f02b0945",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-settings.png",
+      "sha256": "9a15b03eb525f4fd531a6611274e14b4349322b564842163d6aa8b8fcb4bc287",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-share.png",
+      "sha256": "33d231b552819222c6edb96657e67755151eedcdb784774fe694d218dc0c5430",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-sign-in.png",
+      "sha256": "ecd209e3742f30237c7c75df579edd43b012fe3246af199728b530e4747d8910",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-simulator-cast.png",
+      "sha256": "f678ec42c81f2cb8ab5fc29741e0bf5dde754a6cc3e50f36ad18d09b3f7d5e23",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-simulator-detail.png",
+      "sha256": "e9791ab122cabd87506511a1fd6624148c03ef00434dd57378478347dc101ff6",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-simulator.png",
+      "sha256": "fabe5e9168d73de2a303f03ec3f6892c67d018719f4143e0a38b769d24da6b08",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-tag-picker.png",
+      "sha256": "c0685176e03e51852e2ea05aa8b139d9e2dd62c8bb24ac2c87599a507ca2f803",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    },
+    {
+      "file": "ios-theater.png",
+      "sha256": "0c5825c753d559a5ebf26e9427417aeb81f03c8075fe4dfa6374b6e89142485c",
+      "scope": "local-only QA capture; visual acceptance is determined by PAGES.csv, not existence"
+    }
+  ]
+}

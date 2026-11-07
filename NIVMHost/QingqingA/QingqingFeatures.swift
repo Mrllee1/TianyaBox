@@ -1,5 +1,7 @@
 import SwiftUI
 import SafariServices
+import Photos
+import CoreImage
 
 struct QQAPIListView: View {
   @EnvironmentObject private var store: QingqingStore
@@ -11,30 +13,44 @@ struct QQAPIListView: View {
   @State private var records: [QQRecord] = []
   @State private var loading = true
   @State private var error: String?
+  @State private var rulesPresented = false
   var body: some View {
+    Group {
+      if embedded { content }
+      else { QQPage(title: title, color: path == "member/getInviteList" ? QQStyle.background : .white) { content }.overlay(alignment: .topTrailing) { if path == "member/getInviteList" { Button { rulesPresented = true } label: { QQArtwork(name: "invite_ico_question").frame(width: 20, height: 20).frame(width: 50, height: 50) }.accessibilityLabel("邀请规则") } } }
+    }.task(id: store.loggedIn) { await load() }.sheet(isPresented: $rulesPresented) { QQInviteRulesView() }
+  }
+  private var content: some View {
     Group {
       if requiresLogin && !store.loggedIn {
         VStack(spacing: 16) { QQEmptyState(text: "登录后查看"); Button("立即登录") { store.loginPresented = true }; Spacer() }
       } else if loading { ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity) }
       else if let error { QQEmptyState(text: error) { Task { await load() } } }
-      else if records.isEmpty { QQEmptyState() }
+      else if records.isEmpty {
+        if path == "member/getInviteList" { VStack(spacing: 10) { QQArtwork(name: "invite_pic_null").frame(width: 150, height: 150); Text("您暂时还没有邀请好友～").font(.system(size: 14)); Spacer() }.padding(.top, 166).frame(maxWidth: .infinity) }
+        else { QQEmptyState() }
+      }
       else {
-        List(records) { record in
+        ScrollView { LazyVStack(spacing: 0) { ForEach(records) { record in
           if path == "ai/systemMsg" {
             NavigationLink { QQSystemMessageView(message: record) } label: { row(record) }
+          } else if record["type"] == "system" {
+            NavigationLink { QQAPIListView(title: "系统通知", path: "ai/systemMsg", requiresLogin: true) } label: { row(record) }
           } else if path.contains("Coin") || path.contains("feedback") {
             row(record)
           } else if record["type"] == "simulator" {
             NavigationLink { QQChatView(role: record, kind: .simulator) } label: { row(record) }
           } else {
-            NavigationLink(value: record) { row(record) }
+            QQRoleChatLink(role: record.conversationRole, kind: ["group", "roleMany"].contains(record["type"]) ? .multi : .single) { row(record) }
           }
-        }.listStyle(.plain).refreshable { await load() }
+        } } }.buttonStyle(.plain).refreshable { await load() }
       }
-    }.navigationTitle(title).navigationBarTitleDisplayMode(.inline)
-      .task(id: store.loggedIn) { await load() }
+    }
   }
-  private func row(_ record: QQRecord) -> some View {
+  @ViewBuilder private func row(_ record: QQRecord) -> some View {
+    if path == "ai/roleList" { messageRow(record) }
+    else if path == "ai/systemMsg" { notificationRow(record) }
+    else {
     HStack(spacing: 12) {
       if !record.image.isEmpty { QQRemoteImage(address: record.image).frame(width: 52, height: 64).clipShape(RoundedRectangle(cornerRadius: 12)) }
       VStack(alignment: .leading, spacing: 8) {
@@ -43,7 +59,33 @@ struct QQAPIListView: View {
       }
       Spacer()
       if !record["coin"].isEmpty { Text(record["coin"]).font(.system(size: 14, weight: .medium)) }
-    }.padding(.vertical, 8)
+    }.padding(.vertical, 8).padding(.horizontal, 15)
+    }
+  }
+  private func messageRow(_ record: QQRecord) -> some View {
+    HStack(alignment: .top, spacing: 13) {
+      Group { if record["type"] == "system" { QQArtwork(name: "message_ico_notice") } else { QQRemoteImage(address: record.image) } }.frame(width: 68, height: 68).clipShape(RoundedRectangle(cornerRadius: 12))
+      VStack(alignment: .leading, spacing: 7) {
+        HStack { Text(record.name).font(.system(size: 15, weight: .bold)).lineLimit(1); Spacer(); Text(messageDate(record["time"])).font(.system(size: 12)).foregroundStyle(.gray) }.padding(.top, 5)
+        Text(record["msg"]).font(.system(size: 12)).foregroundStyle(.black).lineLimit(record["type"] == "roleMany" ? 1 : 2)
+        if record["type"] == "roleMany" {
+          HStack(spacing: 3) { ForEach(Array(record.value["story_role"].records.prefix(5).enumerated()), id: \.offset) { _, actor in QQRemoteImage(address: actor.first("avatar", "avatarUrl")).frame(width: 18, height: 18).clipShape(Circle()) }; Text("\(record.value["story_role"].list.count)人").font(.system(size: 12)).foregroundStyle(.gray) }
+        }
+      }.frame(maxWidth: .infinity, alignment: .leading)
+    }.padding(.horizontal, 15).padding(.vertical, 7.5).contentShape(Rectangle())
+  }
+  private func notificationRow(_ record: QQRecord) -> some View {
+    VStack(alignment: .leading, spacing: 15) {
+      HStack(spacing: 12) { QQArtwork(name: "res_logo").frame(width: 54, height: 54).clipShape(RoundedRectangle(cornerRadius: 10)); VStack(alignment: .leading, spacing: 6) { HStack { Text("卿卿我我AI").font(.system(size: 15, weight: .bold)); Spacer(); Text(record["created_at"]).font(.system(size: 12)).foregroundStyle(.gray) }; Text(record["title"]).font(.system(size: 12)).foregroundStyle(.gray).lineLimit(1) } }
+      if !record.image.isEmpty { QQRemoteImage(address: record.image, contentMode: .fit).aspectRatio(2, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 20)) }
+      QQServiceRichText(value: record["content"]).font(.system(size: 12)).foregroundStyle(.gray)
+      Divider().opacity(0.2)
+    }.padding(.horizontal, 15).padding(.top, 22).padding(.bottom, 12)
+  }
+  private func messageDate(_ value: String) -> String {
+    guard let timestamp = Double(value), timestamp > 0 else { return "" }
+    let date = Date(timeIntervalSince1970: timestamp > 100_000_000_000 ? timestamp / 1000 : timestamp)
+    return date.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
   }
   private func load() async {
     guard !requiresLogin || store.loggedIn else { loading = false; return }
@@ -60,13 +102,15 @@ private struct QQSystemMessageView: View {
   @State private var content: QQRecord?
   @State private var error: String?
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 20) {
-        Text((content ?? message).name).font(.system(size: 22, weight: .bold))
-        Text((content ?? message).first("content", "body", "msg", "intro")).font(.system(size: 15)).lineSpacing(7)
+    QQPage(title: "系统消息", color: .white) { ScrollView {
+      VStack(alignment: .leading, spacing: 6) {
+        if !(content ?? message).image.isEmpty { QQRemoteImage(address: (content ?? message).image, contentMode: .fit).aspectRatio(2, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 10)).padding(.bottom, 4) }
+        Text((content ?? message).name).font(.system(size: 14))
+        QQServiceRichText(value: (content ?? message).first("content", "body", "msg", "intro")).font(.system(size: 14)).lineSpacing(7)
+        Text((content ?? message)["created_at"]).font(.system(size: 12)).foregroundStyle(.gray).frame(maxWidth: .infinity, alignment: .trailing).padding(.top, 14).padding(.bottom, 30)
         if let error { Text(error).foregroundStyle(.red) }
       }.padding(20)
-    }.navigationTitle("消息详情").navigationBarTitleDisplayMode(.inline).task {
+    } }.task {
       do { content = QQRecord(try await store.api.request("ai/systemMsgDetail", parameters: ["id": message.id])) }
       catch { self.error = error.localizedDescription }
     }
@@ -84,39 +128,49 @@ struct QQMemoryView: View {
   @State private var error: String?
   @State private var busy = false
   var body: some View {
-    List {
-      Section {
-        HStack { Text("\(role.name)的记忆"); Spacer(); Text("\(home["home_used_memory_count"].text)/\(home["max_size"].text)").foregroundStyle(.secondary) }
-        NavigationLink("扩展记忆容量") { QQMemberView(memoryRoleID: role.id) }
-      }
-      Section("记忆簿") {
-        ForEach(memories) { memory in
-          Button {
-            editing = memory; content = memory.first("text", "memory_content", "content"); editor = true
-          } label: { VStack(alignment: .leading, spacing: 8) { Text(memory.first("text", "memory_content", "content")).font(.system(size: 14)); Text(memory.first("date", "created_at")).font(.system(size: 11)).foregroundStyle(.secondary) }.padding(.vertical, 8) }
-        }
-        Button("＋ 新增记忆") { editing = nil; content = ""; editor = true }
-      }
-      if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-    }.navigationTitle("记忆簿").navigationBarTitleDisplayMode(.inline)
-      .task { await load() }
-      .sheet(isPresented: $editor) {
-        NavigationStack {
-          VStack(spacing: 20) {
-            TextEditor(text: $content).padding(12).background(QQStyle.background, in: RoundedRectangle(cornerRadius: 16))
-            if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-            QQPrimaryButton(title: "保存记忆", busy: busy) {
-              busy = true; error = nil
-              Task {
-                defer { busy = false }
-                do { _ = try await store.api.request("ai/saveMemoryContent", method: "POST", parameters: ["role_id": role.id, "memory_content": content, "id": editing?.id ?? ""]); editor = false; await load() }
-                catch { self.error = error.localizedDescription }
+    QQPage(title: "记忆簿") {
+      ScrollView {
+        VStack(spacing: 16) {
+          HStack { Text("\(home["home_used_memory_count"].text)/\(home["max_size"].text)").font(.system(size: 13)); Spacer(); NavigationLink { QQMemberView(memoryRoleID: role.id) } label: { Text("扩展记忆容量 ›").font(.system(size: 13)) } }.padding(.horizontal, 20).padding(.top, 10)
+          if memories.isEmpty {
+            QQArtwork(name: "memory_ico_null").frame(width: 150, height: 150).padding(.top, 130)
+            Text("暂无记忆").font(.system(size: 18, weight: .bold)).padding(.top, 6)
+            Text("您可以自主创建新的记忆哦～").font(.system(size: 14)).foregroundStyle(.gray)
+            QQPrimaryButton(title: "创建记忆") { editing = nil; content = ""; editor = true }.frame(width: 200).padding(.top, 6)
+          } else {
+            ForEach(memories) { memory in
+              Button { editing = memory; content = memory.first("text", "memory_content", "content"); editor = true } label: {
+                VStack(alignment: .leading, spacing: 12) {
+                  HStack { QQArtwork(name: "memory_ico_note").frame(width: 20, height: 17); Text(memory.first("date", "created_at")).font(.system(size: 12)).foregroundStyle(.gray); Spacer(); QQArtwork(name: "memory_ico_more").frame(width: 20, height: 20) }
+                  Text(memory.first("text", "memory_content", "content")).font(.system(size: 14)).lineSpacing(5).frame(maxWidth: .infinity, alignment: .leading)
+                }.padding(20).background(.white, in: RoundedRectangle(cornerRadius: 20)).padding(.horizontal, 15)
               }
-            }.disabled(content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-          }.padding(20).navigationTitle("编辑记忆").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarLeading) { Button("取消") { editor = false } } }
-        }
+            }
+            QQPrimaryButton(title: "创建记忆") { editing = nil; content = ""; editor = true }.padding(.horizontal, 30)
+          }
+          if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red).padding(15) }
+        }.padding(.bottom, 30)
+      }.background(alignment: .top) { QQArtwork(name: "memory_pic_background").frame(height: 300) }
+    }.task { await load() }
+      .sheet(isPresented: $editor) {
+        VStack(spacing: 15) {
+          ZStack {
+            Text(editing == nil ? "添加记忆簿" : "编辑记忆簿").font(.system(size: 18, weight: .bold))
+            HStack { Button("取消") { editor = false }.foregroundStyle(.gray); Spacer(); Button(busy ? "保存中" : "保存") { saveMemory() }.disabled(busy || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) }.font(.system(size: 14))
+          }.padding(.top, 13)
+          TextEditor(text: $content).font(.system(size: 14)).scrollContentBackground(.hidden).padding(12).background(QQStyle.background, in: RoundedRectangle(cornerRadius: 15))
+          Text("*为确保记忆效果，请选择明确姓名来编辑").font(.system(size: 12)).foregroundStyle(.gray).frame(maxWidth: .infinity, alignment: .leading)
+          if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
+        }.padding(13).presentationDetents([.height(350)]).presentationCornerRadius(30)
       }
+  }
+  private func saveMemory() {
+    busy = true; error = nil
+    Task {
+      defer { busy = false }
+      do { _ = try await store.api.request("ai/saveMemoryContent", method: "POST", parameters: ["role_id": role.id, "memory_content": content, "id": editing?.id ?? ""]); editor = false; await load() }
+      catch { self.error = error.localizedDescription }
+    }
   }
   private func load() async {
     do {
@@ -126,78 +180,17 @@ struct QQMemoryView: View {
   }
 }
 
-struct QQGiftView: View {
-  @EnvironmentObject private var store: QingqingStore
-  let role: QQRecord
-  @State private var gifts: [QQRecord] = []
-  @State private var selected: QQRecord?
-  @State private var error: String?
-  @State private var busy = false
-  var body: some View {
-    ScrollView {
-      VStack(spacing: 18) {
-        NavigationLink { QQIntimacyView(role: role) } label: { Label("查看与\(role.name)的亲密度", systemImage: "heart.fill").padding(16).frame(maxWidth: .infinity).background(.pink.opacity(0.08), in: RoundedRectangle(cornerRadius: 16)) }
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 20) {
-          ForEach(gifts) { gift in
-            Button { selected = gift } label: {
-              VStack(spacing: 10) {
-                QQRemoteImage(address: gift.first("image", "img_url", "image_url")).frame(height: 80)
-                Text(gift.name).font(.system(size: 14))
-                Text(gift.first("coin", "price") + " 钻石").font(.system(size: 12)).foregroundStyle(.secondary)
-              }.padding(12).background(.white, in: RoundedRectangle(cornerRadius: 16))
-            }.disabled(busy)
-          }
-        }
-        if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-      }.padding(20)
-    }.background(QQStyle.background).navigationTitle("送礼物").navigationBarTitleDisplayMode(.inline)
-      .task { do { gifts = try await store.api.request("role/getGift").records } catch { self.error = error.localizedDescription } }
-      .confirmationDialog("赠送礼物将消耗钻石", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } }), titleVisibility: .visible) {
-        if let selected {
-          Button("赠送\(selected.name)（\(selected.first("coin", "price"))钻石）") {
-            busy = true
-            Task {
-              defer { busy = false; self.selected = nil }
-              do { _ = try await store.api.request("role/sendGift", method: "POST", parameters: ["gift_id": selected.id, "role_id": role.id]); await store.refreshUser() }
-              catch { self.error = error.localizedDescription }
-            }
-          }
-        }
-      }
-  }
-}
-
-struct QQIntimacyView: View {
-  @EnvironmentObject private var store: QingqingStore
-  let role: QQRecord
-  @State private var info: QQValue = .null
-  @State private var error: String?
-  var body: some View {
-    ScrollView {
-      VStack(spacing: 24) {
-        QQRemoteImage(address: role.image).frame(width: 100, height: 100).clipShape(Circle())
-        Text(role.name).font(.system(size: 24, weight: .bold))
-        Image(systemName: "heart.fill").font(.system(size: 48)).foregroundStyle(.pink.opacity(0.7))
-        Text(info["text_top"]["title"].text).font(.system(size: 22, weight: .bold))
-        Text(info["text_top"]["intro"].text).font(.system(size: 14))
-        Text("亲密度 " + info["intimacy"].text).font(.system(size: 17, weight: .semibold))
-        ForEach(Array(info["middle_text"].list.enumerated()), id: \.offset) { _, value in Text(value.text).font(.system(size: 14)) }
-        Text(info["next_stage_intro"].text).font(.system(size: 13)).foregroundStyle(.secondary)
-        Text(info["bottom_text"].text).font(.system(size: 13)).foregroundStyle(.secondary)
-        if let error { Text(error).foregroundStyle(.red) }
-      }.padding(28).frame(maxWidth: .infinity)
-    }.background(.pink.opacity(0.035)).navigationTitle("亲密度").navigationBarTitleDisplayMode(.inline)
-      .task { do { info = try await store.api.request("role/getMemberRole", parameters: ["role_id": role.id]) } catch { self.error = error.localizedDescription } }
-  }
-}
-
 struct QQMemberView: View {
   @EnvironmentObject private var store: QingqingStore
   var memoryRoleID: String? = nil
+  @State private var tab: Int
   @State private var data: QQValue = .null
+  @State private var totals: QQValue = .null
   @State private var error: String?
+  @State private var loading = true
   @State private var busy = false
   @State private var selected: QQRecord?
+  @State private var selectedWay: QQRecord?
   @State private var payWays: [QQRecord] = []
   @State private var paying: QQRecord?
   @State private var paymentURL: URL?
@@ -205,64 +198,115 @@ struct QQMemberView: View {
   @State private var orderOutcomeUnknown = false
   @State private var statusText: String?
   @Environment(\.scenePhase) private var scenePhase
+  init(memoryRoleID: String? = nil, initialTab: Int = 0) {
+    self.memoryRoleID = memoryRoleID
+    _tab = State(initialValue: initialTab)
+  }
+  private var coinMode: Bool { memoryRoleID == nil && tab == 1 }
+  private var coinBackground: Color { Color(red: 209.0/255, green: 248.0/255, blue: 254.0/255) }
+  private var purchaseGradient: LinearGradient { LinearGradient(colors: coinMode ? [Color(red: 119.0/255, green: 148.0/255, blue: 1), Color(red: 200.0/255, green: 102.0/255, blue: 1), Color(red: 231.0/255, green: 74.0/255, blue: 1)] : [Color(red: 1, green: 101.0/255, blue: 117.0/255), Color(red: 1, green: 15.0/255, blue: 190.0/255), Color(red: 1, green: 74.0/255, blue: 1)], startPoint: .leading, endPoint: .trailing) }
   var body: some View {
-    ScrollView {
-      VStack(spacing: 22) {
-        Image(systemName: memoryRoleID == nil ? "crown.fill" : "book.fill").font(.system(size: 44)).foregroundStyle(Color(red: 0.68, green: 0.50, blue: 0.27))
-        Text(memoryRoleID == nil ? "卿卿会员" : "记忆扩容").font(.system(size: 30, weight: .bold))
-        Text("更多陪伴，更多心动").font(.system(size: 14)).foregroundStyle(.secondary)
-        if !store.loggedIn { QQPrimaryButton(title: "登录查看专属权益") { store.loginPresented = true } }
-        ForEach(packages) { package in
-          Button { selected = package } label: {
-            HStack {
-              VStack(alignment: .leading, spacing: 9) { Text(package.name).font(.system(size: 18, weight: .semibold)); Text(package.first("desc", "info", "day")).font(.system(size: 13)).foregroundStyle(.secondary) }
-              Spacer()
-              Text(package["price"].isEmpty ? "" : "¥" + package["price"]).font(.system(size: 23, weight: .bold))
-              if selected?.id == package.id { Image(systemName: "checkmark.circle.fill") }
-            }.padding(20).background(selected?.id == package.id ? Color.orange.opacity(0.10) : .white, in: RoundedRectangle(cornerRadius: 18))
-              .overlay { RoundedRectangle(cornerRadius: 18).stroke(selected?.id == package.id ? .orange.opacity(0.55) : .black.opacity(0.06)) }
-          }
+    QQPage(title: memoryRoleID == nil ? "" : "记忆扩容", color: coinMode ? Color(red: 241.0/255, green: 253.0/255, blue: 1) : Color(red: 1, green: 0.94, blue: 0.98)) {
+      GeometryReader { geometry in
+        ScrollView {
+          VStack(spacing: 0) {
+            if coinMode {
+              QQDiamondBalance(totals: totals).padding(.horizontal, 15).padding(.top, 5)
+              HStack { Text("购买钻石：").font(.system(size: 15, weight: .bold)); Spacer(); NavigationLink { QQDiamondDetailView() } label: { Text("钻石明细▸").font(.system(size: 12)).foregroundStyle(.gray).padding(.horizontal, 7).padding(.vertical, 4).background(.cyan.opacity(0.06), in: Capsule()) } }.padding(.horizontal, 15).padding(.vertical, 17)
+            } else if memoryRoleID == nil { benefits.padding(.horizontal, 16).padding(.top, 5); Spacer(minLength: 20) }
+            VStack(spacing: 20) {
+              catalog
+              if !packages.isEmpty { paymentWays }
+              if !store.loggedIn { QQPrimaryButton(title: "登录查看套餐") { store.loginPresented = true } }
+              else {
+                Button { paying = selectedWay } label: { Text(memoryRoleID != nil ? "立即扩容" : coinMode ? "立即充值" : "立即开通").font(.system(size: 18, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 56).background(purchaseGradient, in: Capsule()) }.disabled(selected == nil || selectedWay == nil || busy || orderID != nil || orderOutcomeUnknown).opacity(selected == nil ? 0.4 : 1)
+              }
+              if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
+              if let statusText { Text(statusText).font(.system(size: 13)).foregroundStyle(.secondary) }
+              if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy) }
+            }.padding(coinMode ? 10 : 15).padding(.bottom, 10).background(coinMode ? coinBackground : .white, in: UnevenRoundedRectangle(topLeadingRadius: 22, bottomLeadingRadius: coinMode ? 22 : 0, bottomTrailingRadius: coinMode ? 22 : 0, topTrailingRadius: 22)).padding(.horizontal, coinMode ? 15 : 0).padding(.bottom, coinMode ? 10 : 0)
+          }.frame(minHeight: geometry.size.height, alignment: .top)
         }
-        if let selected {
-          ForEach(payWays) { way in
-            QQPrimaryButton(title: "\(way.name)支付 ¥\(selected["price"])", busy: busy) { paying = way }
-          }
-        }
-        if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
-        if let statusText { Text(statusText).font(.system(size: 14)).foregroundStyle(.secondary) }
-        if orderID != nil { Button("查询支付结果") { Task { await checkOrder() } }.disabled(busy) }
-      }.padding(24)
-    }.background(LinearGradient(colors: [Color(red: 0.99, green: 0.94, blue: 0.84), .white], startPoint: .top, endPoint: .bottom))
-      .navigationTitle(memoryRoleID == nil ? "会员中心" : "记忆套餐").navigationBarTitleDisplayMode(.inline)
-      .task(id: store.loggedIn) {
-        let pending = UserDefaults.standard.dictionary(forKey: pendingOrderKey) as? [String: String]
-        orderID = pending?["rid"]
-        orderOutcomeUnknown = pending != nil && orderID == nil
-        if orderOutcomeUnknown { statusText = "上次订单的提交结果尚未确认，请先联系服务方核实。" }
-        await load()
       }
-      .sheet(isPresented: Binding(get: { paymentURL != nil }, set: { if !$0 { paymentURL = nil } })) {
-        if let paymentURL { QQSafariView(url: paymentURL) }
+    }.overlay(alignment: .top) {
+      if memoryRoleID == nil {
+        HStack(spacing: 24) { ForEach(0..<2) { index in Button { tab = index; selected = packages.first } label: { VStack(spacing: 7) { Text(index == 0 ? "开通VIP" : "钻石充值").font(.system(size: tab == index ? 18 : 16, weight: tab == index ? .bold : .regular)).foregroundStyle(tab == index ? QQStyle.ink : .gray); Capsule().fill(tab == index ? .cyan : .clear).frame(width: 12, height: 4) } } } }.frame(height: 50)
       }
+    }.task(id: store.loggedIn) {
+      let pending = UserDefaults.standard.dictionary(forKey: pendingOrderKey) as? [String: String]
+      orderID = pending?["rid"]; orderOutcomeUnknown = pending != nil && orderID == nil
+      if orderOutcomeUnknown { statusText = "上次订单的提交结果尚未确认，请先联系服务方核实。" }
+      await load()
+    }.sheet(isPresented: Binding(get: { paymentURL != nil }, set: { if !$0 { paymentURL = nil } })) { if let paymentURL { QQSafariView(url: paymentURL) } }
       .confirmationDialog("确认购买所选套餐？", isPresented: Binding(get: { paying != nil }, set: { if !$0 { paying = nil } }), titleVisibility: .visible) {
         if let paying, let selected { Button("确认支付 ¥\(selected["price"])") { Task { await createOrder(package: selected, way: paying) } } }
-      }
-      .onChange(of: scenePhase) { _, phase in if phase == .active && orderID != nil { Task { await checkOrder() } } }
+      }.onChange(of: scenePhase) { _, phase in if phase == .active && orderID != nil { Task { await checkOrder() } } }
+  }
+  private var benefits: some View {
+    GeometryReader { geometry in
+      let titleWidth = geometry.size.width * 0.36
+      let valueWidth = geometry.size.width * 0.64 / 3
+      VStack(spacing: 0) {
+        HStack(spacing: 0) { Text("权益").frame(width: titleWidth); ForEach(["正式会员", "体验会员", "普通用户"], id: \.self) { Text($0).frame(width: valueWidth) } }.font(.system(size: 14, weight: .bold)).frame(height: 40)
+        ForEach(Array(data["tips"].list.enumerated()), id: \.offset) { _, tip in
+          HStack(spacing: 0) {
+            Text(tip["title"].text).font(.system(size: 14, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8).frame(width: titleWidth)
+            ForEach(["lv2", "lv1", "lv0"], id: \.self) { key in
+              Group { if tip[key].text == "1" { Image(systemName: "checkmark").font(.system(size: 13, weight: .bold)).foregroundStyle(Color(red: 1, green: 0.35, blue: 0.92)) } else if tip[key].text == "0" { Text("−").font(.system(size: 16, weight: .bold)).foregroundStyle(Color(white: 0.8)) } else { Text(tip[key].text).font(.system(size: 13)) } }.frame(width: valueWidth)
+            }
+          }.frame(height: 40)
+        }
+      }.background(.white.opacity(0.65), in: RoundedRectangle(cornerRadius: 15))
+        .overlay(alignment: .leading) { RoundedRectangle(cornerRadius: 12).stroke(LinearGradient(colors: [.pink.opacity(0.35), Color(red: 1, green: 0.3, blue: 0.94)], startPoint: .leading, endPoint: .trailing), lineWidth: 3).frame(width: valueWidth).offset(x: titleWidth) }
+    }.frame(height: CGFloat(data["tips"].list.count + 1) * 40)
+  }
+  @ViewBuilder private var catalog: some View {
+    if loading { ProgressView().frame(height: 120).frame(maxWidth: .infinity) }
+    else if packages.isEmpty { Text("当前暂无可购买的套餐").font(.system(size: 14)).foregroundStyle(.gray).frame(height: 120).frame(maxWidth: .infinity) }
+    else if coinMode {
+      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) { ForEach(packages) { package in packageCard(package) } }
+    } else {
+      ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 10) { ForEach(packages) { package in packageCard(package).frame(width: 120) } } }
+    }
+  }
+  private func packageCard(_ package: QQRecord) -> some View {
+    Button { selected = package } label: {
+      VStack(spacing: 8) {
+        if coinMode {
+          QQRemoteImage(address: package.first("image_url", "image", "img_url"), contentMode: .fit).frame(height: 62)
+          HStack(spacing: 4) { Text(package["coin"]).font(.system(size: 18, weight: .bold)); QQArtwork(name: "vip_ico_diamond").frame(width: 14, height: 14) }
+          Text("¥ " + package["price"]).font(.system(size: 14, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 30).background(purchaseGradient, in: Capsule())
+        } else {
+          Text(package.name).font(.system(size: 14, weight: .bold)).lineLimit(1)
+          Text(package.first("price_text1", "price")).font(.system(size: 24, weight: .bold))
+          Text(package.first("price_text2", "desc")).font(.system(size: 12)).foregroundStyle(.gray)
+          if !package["coin"].isEmpty { Text("赠送 💎 " + package["coin"]).font(.system(size: 12, weight: .bold)) }
+        }
+      }.padding(10).frame(maxWidth: .infinity).frame(height: coinMode ? 164 : 120).background(coinMode ? .white : Color(white: 0.96), in: RoundedRectangle(cornerRadius: coinMode ? 20 : 12)).overlay { RoundedRectangle(cornerRadius: coinMode ? 20 : 12).stroke(selected?.id == package.id ? purchaseGradient : LinearGradient(colors: [.clear], startPoint: .leading, endPoint: .trailing), lineWidth: selected?.id == package.id ? 2 : 0) }
+    }.buttonStyle(.plain)
+  }
+  private var paymentWays: some View {
+    VStack(spacing: 14) { ForEach(payWays) { way in
+      Button { selectedWay = way } label: { HStack(spacing: 10) { Image(systemName: way["code"].contains("wechat") ? "message.fill" : "a.circle.fill").font(.system(size: 26)).foregroundStyle(way["code"].contains("wechat") ? .green : .cyan); Text(way.name.components(separatedBy: "（").first ?? way.name).font(.system(size: 16)); Text(way["desc"]).font(.system(size: 14)).foregroundStyle(.gray); Spacer(minLength: 0); Image(systemName: selectedWay?.id == way.id ? "checkmark.circle.fill" : "circle").foregroundStyle(selectedWay?.id == way.id ? .cyan : Color(white: 0.85)) }.frame(height: 32) }.buttonStyle(.plain)
+    } }
   }
   private var packages: [QQRecord] {
-    if !data.records.isEmpty { return data.records }
-    let keys = memoryRoleID == nil ? ["packageList", "coin", "member", "vip", "member_list", "member_package", "memberPackage", "coinPackage", "list"] : ["package", "list", "role", "global"]
-    return keys.flatMap { data[$0].records }.filter { !$0.id.isEmpty }
+    let records: [QQRecord]
+    if memoryRoleID != nil { records = data.records.isEmpty ? ["package", "list", "role", "global"].flatMap { data[$0].records } : data.records }
+    else { records = data[coinMode ? "coin" : "package"].records }
+    return records.filter { !$0.id.isEmpty }
   }
   private func load() async {
+    defer { loading = false }
     guard store.loggedIn else { return }
     error = nil
     do {
       if store.user == nil { await store.refreshUser() }
       guard let user = store.user, !user.id.isEmpty else { throw QQAPIError.authentication }
       data = try await store.api.request(memoryRoleID == nil ? "order/packageV2" : "ai/getMemoryPackage", parameters: memoryRoleID.map { ["role_id": $0] } ?? [:])
+      totals = try await store.api.request("member/getCoinTotal")
       payWays = try await store.api.request("order/payWay").records
-      if packages.isEmpty { error = "当前暂无可购买的套餐" }
+      selected = packages.first; selectedWay = payWays.first
     } catch { self.error = error.localizedDescription }
   }
   private func createOrder(package: QQRecord, way: QQRecord) async {
@@ -307,70 +351,79 @@ struct QQSafariView: UIViewControllerRepresentable {
   func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }
 
+struct QQInviteRulesView: View {
+  @EnvironmentObject private var store: QingqingStore
+  @Environment(\.dismiss) private var dismiss
+  @State private var info: QQValue = .null
+  @State private var error: String?
+  var body: some View {
+    NavigationStack {
+      ScrollView {
+        VStack(spacing: 0) {
+          QQArtwork(name: "invite_pic_banner").frame(height: 200)
+          VStack(spacing: 18) {
+            ForEach(Array(info["invite_note"].text.components(separatedBy: "<br>").filter { !$0.isEmpty }.enumerated()), id: \.offset) { _, rule in
+              HStack(alignment: .top, spacing: 5) { Image(systemName: "star.fill").foregroundStyle(Color(red: 1, green: 0.78, blue: 0.2)); Text(rule).font(.system(size: 13)).lineSpacing(7).frame(maxWidth: .infinity, alignment: .leading) }
+            }
+            if let error { Text(error).font(.system(size: 13)).foregroundStyle(.red) }
+            NavigationLink { QQInviteView() } label: { Text("立即邀请").font(.system(size: 14, weight: .bold)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 50).background(LinearGradient(colors: [Color(red: 0.5, green: 0.55, blue: 1), Color(red: 0.95, green: 0.2, blue: 1)], startPoint: .leading, endPoint: .trailing), in: Capsule()) }
+            Button("下次再说") { dismiss() }.font(.system(size: 14)).foregroundStyle(.gray).frame(height: 30)
+          }.padding(20).background(.white, in: RoundedRectangle(cornerRadius: 22)).padding(.horizontal, 10).padding(.bottom, 11).padding(.top, -53)
+        }.background(LinearGradient(colors: [Color(red: 0.56, green: 0.32, blue: 0.93), Color(red: 0.81, green: 0.37, blue: 1), Color(red: 0.97, green: 0.89, blue: 1)], startPoint: .top, endPoint: .bottom), in: RoundedRectangle(cornerRadius: 22)).padding(.horizontal, 30).padding(.vertical, 20)
+      }.background(.clear).toolbar(.hidden, for: .navigationBar)
+        .task { do { info = try await store.api.request("member/getInvite") } catch { self.error = error.localizedDescription } }
+    }
+  }
+}
+
 struct QQInviteView: View {
   @EnvironmentObject private var store: QingqingStore
   @State private var info: QQValue = .null
-  @State private var code = ""
-  @State private var error: String?
-  var body: some View {
-    Form {
-      Section("我的邀请") {
-        LabeledContent("邀请码", value: info["invite_code"].text)
-        Text(info["invite_note"].text).font(.system(size: 13))
-        if !info["appshare_url"].text.isEmpty { ShareLink("邀请好友", item: info["appshare_url"].text) }
-        else if !info["invite_code"].text.isEmpty { ShareLink("分享邀请码", item: info["invite_code"].text) }
-      }
-      Section("填写邀请码") {
-        TextField("好友的邀请码", text: $code).textInputAutocapitalization(.never)
-        Button("绑定邀请码") {
-          store.requireLogin {
-            Task { do { _ = try await store.api.request("member/bindInvite", method: "POST", parameters: ["invite_code": code]); code = "" } catch { self.error = error.localizedDescription } }
-          }
-        }.disabled(code.isEmpty)
-      }
-      NavigationLink("已邀请的好友") { QQAPIListView(title: "邀请记录", path: "member/getInviteList", requiresLogin: true) }
-      if let error { Text(error).foregroundStyle(.red) }
-    }.navigationTitle("邀请有奖").navigationBarTitleDisplayMode(.inline)
-      .task { do { info = try await store.api.request("member/getInvite") } catch { self.error = error.localizedDescription } }
-  }
-}
-
-struct QQSettingsView: View {
-  @EnvironmentObject private var store: QingqingStore
-  @State private var logout = false
-  var body: some View {
-    List {
-      Section("账号") {
-        if !store.loggedIn { Button("登录账号") { store.loginPresented = true } }
-        else { LabeledContent("当前账号", value: store.user?.first("email", "nick", "id") ?? "") }
-        if store.loggedIn { Button(store.hasBoundAccount ? "切换邮箱账号" : "绑定邮箱") { store.loginPresented = true } }
-      }
-      Section {
-        NavigationLink("意见反馈") { QQFeedbackView() }
-        LabeledContent("应用名称", value: "TianyaBox")
-        LabeledContent("版本", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")
-      }
-      if store.loggedIn { Button("退出登录", role: .destructive) { logout = true } }
-    }.navigationTitle("设置").navigationBarTitleDisplayMode(.inline)
-      .confirmationDialog("确认退出当前账号？", isPresented: $logout) { Button("退出登录", role: .destructive) { Task { await store.logout() } } }
-  }
-}
-
-private struct QQFeedbackView: View {
-  @EnvironmentObject private var store: QingqingStore
-  @State private var text = ""
-  @State private var contact = ""
-  @State private var busy = false
   @State private var result: String?
+  @State private var busy = false
   var body: some View {
-    Form {
-      Section("反馈内容") { TextEditor(text: $text).frame(height: 180) }
-      Section("联系方式（选填）") { TextField("邮箱或手机号", text: $contact).textInputAutocapitalization(.never) }
-      Button(busy ? "提交中…" : "提交反馈") {
-        busy = true
-        Task { defer { busy = false }; do { _ = try await store.api.request("feedback/create", method: "POST", parameters: ["content": text, "mobile": contact], json: true); text = ""; result = "感谢你的反馈" } catch { result = error.localizedDescription } }
-      }.disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || busy)
-      if let result { Text(result).font(.system(size: 13)) }
-    }.navigationTitle("意见反馈").navigationBarTitleDisplayMode(.inline)
+    QQPage(title: "分享", color: Color(red: 1, green: 0.91, blue: 0.97)) {
+      GeometryReader { geometry in
+        ScrollView {
+          poster.frame(width: geometry.size.width - 30).padding(.top, 11)
+          Button { savePoster(width: geometry.size.width - 30) } label: { HStack(spacing: 4) { QQArtwork(name: "post_ico_download").frame(width: 15, height: 18); Text(busy ? "保存中" : "保存图片") }.font(.system(size: 14)).foregroundStyle(.white).frame(maxWidth: .infinity).frame(height: 56).background(LinearGradient(colors: [Color(red: 0.5, green: 0.55, blue: 1), Color(red: 0.95, green: 0.2, blue: 1)], startPoint: .leading, endPoint: .trailing), in: Capsule()) }.disabled(busy || info["code"].text.isEmpty).padding(.horizontal, 15).padding(.top, 34)
+          if let result { Text(result).font(.system(size: 13)).padding(15) }
+        }.frame(maxWidth: .infinity)
+      }
+    }.task { do { info = try await store.api.request("member/getInvite") } catch { result = error.localizedDescription } }
+  }
+  private var poster: some View {
+    QQArtwork(name: "post_pic_role").aspectRatio(contentMode: .fit).overlay(alignment: .bottom) {
+      VStack(alignment: .leading, spacing: 5) {
+        Button { UIPasteboard.general.string = info["code"].text; result = "邀请码已复制" } label: { HStack(spacing: 3) { Text("邀请码："); Text(info["code"].text).bold(); QQArtwork(name: "yq_fx_ico_copy").frame(width: 15, height: 15) }.font(.system(size: 15)) }
+        HStack(spacing: 5) { Text("输入邀请码奖励：").foregroundStyle(.gray); QQArtwork(name: "register_ico_diamond").frame(width: 15, height: 16); Text(info["bind_reward"].text.replacingOccurrences(of: "钻石", with: "") + "钻石").foregroundStyle(.pink) }.font(.system(size: 14))
+        Rectangle().fill(.clear).frame(height: 2).overlay { Rectangle().stroke(.gray.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [3, 2])) }.padding(.vertical, 5)
+        HStack(spacing: 8) {
+          QQArtwork(name: "res_logo").frame(width: 50, height: 50)
+          Text("扫描二维码\n即可开启与他的专属故事").font(.system(size: 12)).lineSpacing(3)
+          Spacer(minLength: 0)
+          if let qr = qrImage { Image(uiImage: qr).interpolation(.none).resizable().frame(width: 76, height: 76).padding(1).overlay { RoundedRectangle(cornerRadius: 6).stroke(QQStyle.gradient, lineWidth: 1) } }
+        }
+      }.padding(.horizontal, 15).padding(.vertical, 20).background(.white, in: UnevenRoundedRectangle(topLeadingRadius: 20, bottomLeadingRadius: 10, bottomTrailingRadius: 10, topTrailingRadius: 20)).padding(4)
+    }
+  }
+  private var qrImage: UIImage? {
+    let address = info["appshare_url"].text
+    guard !address.isEmpty, let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+    filter.setValue(Data(address.utf8), forKey: "inputMessage")
+    guard let output = filter.outputImage, let image = CIContext().createCGImage(output.transformed(by: CGAffineTransform(scaleX: 8, y: 8)), from: output.extent.applying(CGAffineTransform(scaleX: 8, y: 8))) else { return nil }
+    return UIImage(cgImage: image)
+  }
+  private func savePoster(width: CGFloat) {
+    guard !busy else { return }; busy = true; result = nil
+    Task { @MainActor in
+      defer { busy = false }
+      let renderer = ImageRenderer(content: poster.frame(width: width)); renderer.scale = 3
+      guard let image = renderer.uiImage else { result = "图片生成失败，请稍后重试"; return }
+      let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+      guard status == .authorized || status == .limited else { result = "请在系统设置中允许保存图片"; return }
+      do { try await PHPhotoLibrary.shared().performChanges { PHAssetChangeRequest.creationRequestForAsset(from: image) }; result = "已保存到相册" }
+      catch { result = "保存失败，请稍后重试" }
+    }
   }
 }

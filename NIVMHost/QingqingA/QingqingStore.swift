@@ -18,6 +18,7 @@ final class QingqingStore: ObservableObject {
   @Published var loginPresented = false
   @Published var creatorPresented = false
   private var started = false
+  private var rolesRequestID = UUID()
 
   var loggedIn: Bool { api.isLoggedIn }
   var hasBoundAccount: Bool { !(user?.first("email", "mobile", "bind_mobile") ?? "").isEmpty }
@@ -57,8 +58,9 @@ final class QingqingStore: ObservableObject {
   }
 
   func loadRoles(category: String = "all", keyword: String = "", page: Int = 1) async {
+    let requestID = UUID(); rolesRequestID = requestID
     loading = true; error = nil
-    defer { loading = false }
+    defer { if rolesRequestID == requestID { loading = false } }
     do {
       let result: [QQRecord]
       if keyword.isEmpty {
@@ -66,8 +68,9 @@ final class QingqingStore: ObservableObject {
       } else {
         result = try await api.request("home/searchRole", method: "POST", parameters: ["keyword": keyword, "page": String(page), "pageSize": "20"]).records
       }
+      guard rolesRequestID == requestID, !Task.isCancelled else { return }
       if page == 1 { roles = result } else { roles += result.filter { item in !roles.contains(where: { $0.id == item.id }) } }
-    } catch is CancellationError {} catch { self.error = error.localizedDescription }
+    } catch is CancellationError {} catch { if rolesRequestID == requestID { self.error = error.localizedDescription } }
   }
 
   func refreshUser() async {

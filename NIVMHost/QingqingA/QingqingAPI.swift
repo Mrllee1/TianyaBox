@@ -37,6 +37,14 @@ final class QingqingAPI {
     }
   }
 
+  func documentURL(privacy: Bool) -> URL? {
+    guard baseURL.scheme == "https" else { return nil }
+    var components = URLComponents(url: baseURL.appendingPathComponent(privacy ? "page/private" : "page/agreement"), resolvingAgainstBaseURL: false)
+    components?.queryItems = [URLQueryItem(name: "appid", value: serviceConfiguration["appID"] ?? "1")]
+    if let salt = serviceConfiguration["signatureSalt"] { components?.queryItems?.append(URLQueryItem(name: "s", value: salt)) }
+    return components?.url
+  }
+
   func setToken(_ token: String) { self.token = token; if usesKeychain { QQKeychain.write(token, key: "session") } }
   var isLoggedIn: Bool { !token.isEmpty }
 
@@ -109,7 +117,7 @@ final class QingqingAPI {
     }
     guard let response = response as? HTTPURLResponse else { throw QQAPIError.invalidResponse }
     if response.statusCode == 401 { throw QQAPIError.authentication }
-    guard (200..<300).contains(response.statusCode) else { throw QQAPIError.service(response.statusCode, "网络请求失败（\(response.statusCode)）") }
+    guard (200..<300).contains(response.statusCode) else { throw QQAPIError.httpStatus(response.statusCode) }
     guard let payload = try? JSONDecoder().decode(QQValue.self, from: data) else { throw QQAPIError.invalidResponse }
     let code = Int(payload["code"].text) ?? -1
     if usesKeychain {

@@ -1,0 +1,1230 @@
+{
+  "apk": "qingqing.apk 1.5.5 (10505)",
+  "source": "decompiled/resources/res/mipmap-xxhdpi",
+  "artwork": [
+    {
+      "name": "character_ico_chat",
+      "source_sha256": "a5e2699ddb5e69a164c87d61d106955c804685cdb9e5cecf8b29b0cb87aaadcf",
+      "png_sha256": "5de18960e4c6f0b38459e7c0824309b9e110ce46b6d457a7392cb59ba60f4c94",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "character_ico_close",
+      "source_sha256": "3d9db4815554b556511e87c3bf4e049adbc4ce32671fd311933a542f939cf6d7",
+      "png_sha256": "5d0311491a25c6782152aad95c96fb924a63859b4932452fb5f4fd6fdcd17ad3",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "character_ico_collect01",
+      "source_sha256": "fde2a93d2620dafc571d2adda4d26fce414912ebd70d118ea42c107415ce758f",
+      "png_sha256": "b80254ed57a7c30885471ad125aee287a2c012258a20c4f37e1c283e9c6338cb",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "character_ico_collect02",
+      "source_sha256": "0b4deb2984f533a647c5e87fd128b9a75b7fc39d76e60f4ad3182db2ca6cc613",
+      "png_sha256": "8912103187c220b55dfceed6e348cc816ddc576116da91e074b915a36c17987e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat02_ico_add",
+      "source_sha256": "d2b504659dbe5e919a7754eed4a2f606ea4b4855b22c69cf991c207c2bf17638",
+      "png_sha256": "76edbe0b5251181c047a6c1d251d84831c7c871a8404d38e42658d46739c1532",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat02_ico_func02",
+      "source_sha256": "af35103c9183e162a6e6548cac5b037567996c74a605b43b253bb7fe1a3a4757",
+      "png_sha256": "5fbfc78fc17c53db196bb7e38476d8c5afa95b7890b5ed8c270a845f147b2344",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat02_ico_func03",
+      "source_sha256": "055e8c4c95c46d8e403ed5084d47a5baffc931afefc82d09be88870508e8c085",
+      "png_sha256": "914d4f0d91da753bcb0788e2f074542ed1b02ce667b5c5c145e3564a255a1136",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat02_ico_func04",
+      "source_sha256": "81aa73095251e22914a4a2d30e10f3e9a5c4b8dd98b40342184a5c33c041539a",
+      "png_sha256": "5253bf4f0ac075d83b3c26565389bfd2fb84b1586470ea6c34a253cb8aa0892e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat02_ico_func05",
+      "source_sha256": "e0a3eaf7202f3d9a1d7ebb7709349a7af2b3207d6de672f4eb49f6391eff78d9",
+      "png_sha256": "33e2ec046064e7bee27713b44712cd5faff7715d4c83483bad75e08388205f1f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_ai01",
+      "source_sha256": "8ad891d1a645b304fbe38718eceac13e0e437e510c1f9e54c490e341d0c032da",
+      "png_sha256": "1477e8546931e6af0c3eb0f2f4a9aaa7cd687feee5d03d4acdf2356fc8ea9f76",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_back",
+      "source_sha256": "d6fe86022e5c6a2f1cac12a784ed4aaaf34f8967dda074972d84b7ed68538872",
+      "png_sha256": "f163e853143429d635443bfd1afe0ac7afcd05edf2917169b4e9a6d032e7e7ba",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_diamond",
+      "source_sha256": "461b6dd8eb8b8d22e2f15a159a762b3255171f4b6555ca018317070e0d8331c7",
+      "png_sha256": "bc5e66371c9caaedfa97b91b72f537028c950e1f342915ea8209340fb9df9cd3",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_diamond_add",
+      "source_sha256": "ba93c8aec857217e961676399a7955396ae50ab3caa6b87ef5ff94fdc9a01de0",
+      "png_sha256": "9424c420eccc6b0a038f70848b9856fb0dafed3bdeba6606321b030eb26905dc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_follow1",
+      "source_sha256": "b4787bea284b8cd8378b956335a6df2264dcdb9be6b88f3bc384a29b6eaeebb6",
+      "png_sha256": "f1a44fa24764b995ca8651d0ceda067ae3e58b7d9434ce1c8133c54965824d32",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_follow2",
+      "source_sha256": "3cd743d938052042d8db8ce34b9ce8c372ef9ad23fbb17b428210320cb7bc3a7",
+      "png_sha256": "e83c3dcc31bf6148ae5aad1c7058376bc8a69b7f857bae81d459f6368897caac",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_func02",
+      "source_sha256": "a24d419a31279a46f57ca160d9d2f7cbf8957814b02b26bef5e6d0e2b872e936",
+      "png_sha256": "7f02d09dce450f52a8ff4cc0987a8befa0c64c91f4e5962f3ac2b17c43c7dfff",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_func03",
+      "source_sha256": "2ecc8e511301fbf53ce7808082c83239df6bef6a3de17bc21db61fd00bf9642f",
+      "png_sha256": "22c81117c8c734faf362bebac9b25d524240cd566bf10c727ede2db61cded9b0",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_func04",
+      "source_sha256": "3f547ab7d5173ff48fbd5378dedaf6f96f707193637c04ad3d1b43afe0317c9b",
+      "png_sha256": "3d1486a4d776aacc94c1bd0604096fca64e9027584e2d31233afc965bdf40e41",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_func05",
+      "source_sha256": "e0ef3e8ab47d8d9f5a4bc0ab56549b26cdb8d9629d76ea0cffe200bf7d002c9e",
+      "png_sha256": "41a00d39ffffcbf818f4982ea7992b2fb4085acbd2f53687e4d34e26fbf56508",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_more",
+      "source_sha256": "3b6b2ed5b33eafd2955d5c5c71cfa7ec25a6b5ac79c15d957b8003c56c4a5560",
+      "png_sha256": "b351582b0f39053c63bb3bc7a3da8a53d8f233716de1e929ebd2261a40b24bb8",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_more01",
+      "source_sha256": "683d3d8521de84bea035f8d991d6da60c3b3b32808def16c63c6dff18a20958d",
+      "png_sha256": "d7258ca5277076af3e6cb9c0e7399ac012b1b38a8459ccbc7a32c168c28f0d27",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_more02",
+      "source_sha256": "62bdd47e30f7216784d469f3e256ead4d22b1224d59e6234572617462330dc5e",
+      "png_sha256": "6b500b4fcaa315638a6d2817969db5648a371bae7ab15ffa293f26ff28c52ab7",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_more03",
+      "source_sha256": "2b703746cdb9e1b88691006ec1d2da5f6667acb6e374645891a84ec53dfeb961",
+      "png_sha256": "321f823659dbfffb64db6b40c374936c221dbae7371afd543a8e40e6fc6e9d6b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_msg1",
+      "source_sha256": "dbde6a92bc72c30f3b7a41abe2c838318863500d75c27829c9e820fb48709cb8",
+      "png_sha256": "05e963aa19a99f07b1b8aed190f7cafed5068b107917b04bb3d799a93c41cf86",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_msg2",
+      "source_sha256": "92b81845902002acc07bb4eaf7a2de6118d9721d9513afc2b3e819fd56f7365a",
+      "png_sha256": "b5f5396c24ea21867e5ca217a3ec327ac3efe7d88be2935b0ae1a478db2114fa",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_send",
+      "source_sha256": "85a6daf674ca24df4171197c5449ae270edc854aacc28bb19f1e5bb8c48f3abd",
+      "png_sha256": "02a85ddc469b2288e09b598f372f4d78c13f4437741298fa1e1b3f00e2092394",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_ico_set",
+      "source_sha256": "38bb91d8c3d663444906f8b155191e4b05d24d4a88925f42abafbd6573eb073e",
+      "png_sha256": "390bf1395adca956c2e3308cdbf72f53bf751c00a0ba6d457781fc6a99511ca3",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chat_set_bg",
+      "source_sha256": "e6f447ff40209a45bdb7541ce4ceef8196897adfa8cf88805151233e2fc8349a",
+      "png_sha256": "f89bf6738727607293df3636728f675438781e1e8c15270936ead12683e945a6",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "chatset_ico_diamond",
+      "source_sha256": "92417bc1cf8044a5868aa2bfa4f65749d80a6e7d0e79292230579fcb9433b8f4",
+      "png_sha256": "8ae9101b124930c9152306b553e1fd793474a572a0c8dd94b2dabb9c2234c736",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gif_ico_diamond",
+      "source_sha256": "b7e8f03791f867448e49ab76bd2ea8379752e760241ee087ff9003eb78f4098d",
+      "png_sha256": "6b0438770a9392f708b49e4fff55845da92ca068624c75c419bc39a1a54b2a07",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic01",
+      "source_sha256": "e2b24880b5bceb189b2838995940630cfa7205bd55239450ed90363776ceee81",
+      "png_sha256": "763da3e83d9f9c26f86a279ef4bcf96cc7cff5eb73e01103dae3d3179bb1a97d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic02",
+      "source_sha256": "639373e87078ea45cd5c558a17a36e45bf45feb17fc8e7413a541577c1d57c17",
+      "png_sha256": "455c97e68d1636ad95e85abd17bb365d98cd95e4b07514125d1ffd601ce955b5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic03",
+      "source_sha256": "784b0a3935f5e2233a4a274a093dd7fdb91f8b1a832c4df58200e00d205072cc",
+      "png_sha256": "66ac3d332995ee946ae4da57e45e9830f0ad54013c46cf6932fbaf852558709c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic04",
+      "source_sha256": "0532894180f90889db1cbd7ba258dd52c0ccfc2fac4b2f2e075d40d61be04d14",
+      "png_sha256": "51d7c89ec8c696dbfa4ef3227ffc35092949e34ce1624364a80f6e79e821f383",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic05",
+      "source_sha256": "899a720baff9d7ca63e29929a226c6583555be91cce7fffe86da3e14e2177f89",
+      "png_sha256": "a1ae32c39d146f15dfd908c6b887ce929137c2a6aadbc750108dca5f71b05a9d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic06",
+      "source_sha256": "5c1bafd1df38185af035b184e1da33f3a29e93b803c254de8cd10c36d558929b",
+      "png_sha256": "a41404132e72038eb4ccbee43cd0360445e8f4bb06c74f903e966b36096ba4ea",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic07",
+      "source_sha256": "dfe30ed004f5f98f8f9eff2745e6db85b69e1729e0ac34ffbe6ea654e373486c",
+      "png_sha256": "1e55887b82386845b38c0267161e5481a64c93d391f3f646882a0730267a5eff",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic08",
+      "source_sha256": "23f944ad9501533fa8175c8e017121cd03c7aa415a8697c4c6c41426b73625f6",
+      "png_sha256": "52fad185b5df13b400d14fb1ed2c3598b032035f77707d4dc3a1b38522d660bf",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic09",
+      "source_sha256": "6697eefedc76b8e2985e6a59b5b4c18465c06966200b8a8f668787915f01d0cf",
+      "png_sha256": "8e02cbe6235abe51f1bdc6aaa0df640a100bd212425c556f291895e1be40b206",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic10",
+      "source_sha256": "9cc737a4fbbe3d52769744b509efe0801a2c8aab7f681884264ebe1ca51a61bb",
+      "png_sha256": "ecedfccc750df806dbe622ac919fa23fdcf7026daa58f6539eb9f2ab99c97abf",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic11",
+      "source_sha256": "efbaa27262a1bbc7a524aab8f1c8e014a13e3457f2677cc43792d2fea93301ac",
+      "png_sha256": "f1eae4a59a5c0bfc316f21fb6fc8bd306008696fffc4f9e2124991ebc8d9a25a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic12",
+      "source_sha256": "532788b3b96a1c09f0464e81d8ada37d17bad44214fb761c52b771054a0a6641",
+      "png_sha256": "c5c1d338965f1ef5a60493edcd2e2bec5a54faebd9fb08e2aece8627c9cb3a6f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic13",
+      "source_sha256": "74c66280b780069456dfd070de7ffa8b81a87266cf9e516dc8656b8ade6638a5",
+      "png_sha256": "b061952da27e0805a00656307dd9378ee39af084f9fc3fdf35b6ca95cdbf6909",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic14",
+      "source_sha256": "3ed8eb839d12938d35b929915cab4bc34b44d83be27b4f1a0e6840f2bc520fb7",
+      "png_sha256": "4500cd71e83e3647c70fae51d182df44ba01fe8f7c3ff6dce6ae18be0cb2a98f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic15",
+      "source_sha256": "5ffbd55d06c557bec47726daa7c5876f972824b3dce4c7800c7b3e8bf5e434ad",
+      "png_sha256": "d48e3d4255eb78b85fd76d79a737276435066ba880beb417d7ea58cdba28658c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic16",
+      "source_sha256": "0d66e01a653c3719a61d21c019b5bce9d780dcc4beb2096aaaf519a1386ef434",
+      "png_sha256": "9bcb86f0e5127c822d95789bc0734deb20c9cf3b3f3886443e6281fb34b9196e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic17",
+      "source_sha256": "d10cb40d2b093a776eab76ca033d13a5df0eaa192542c5a93a2781cd6fc55ad4",
+      "png_sha256": "59bbbd4086656a8c7d18067e438c05f446f5e2f730e6a0c8a8a7582d4b37fe39",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic18",
+      "source_sha256": "a8d4c71aad3dd67d12f2e79886ecb5100350d3a09e437f2ae0574d7710d92119",
+      "png_sha256": "69a9af1d2d97352a67a5e3fc251a1fcd0d29b8d98008bee2cc998f3cd33bd29a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic19",
+      "source_sha256": "9f10cf2502660de24c5cfad719d2b279cedf3548b2b38ca4fddc3395889e1a52",
+      "png_sha256": "d6ee19a063d025b9bc8a7baaac61ab211792d9aedbb2249756bb3aced55d6bfb",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic20",
+      "source_sha256": "26e38d5f07ecd866d8c96b58340054798c9717ef1008c6de4a344d1efcde7531",
+      "png_sha256": "55d6494e747b3d72fce6133ceec72daf349b0421b5a3b257bf6f51e46a1aeea7",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic21",
+      "source_sha256": "b091d646a8f85608a19f3f5269f2c2acf52d2e7ceac30082aa59400cbeda760d",
+      "png_sha256": "7901a0e97a720440e1b3967809e9d999a4c1b44beae0aac56902f68426fb9569",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic22",
+      "source_sha256": "fe8849626533382ab154d31ede1fea09571638ecee723deb83ed948871cbf9c0",
+      "png_sha256": "5c665e26376f6f60807d89e8eb98c78c9587acc4bc81539ec3bbb304891bb141",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic23",
+      "source_sha256": "cf661ecd3423be40c066f4328f02d7241ad0bdbb2fdfa76ed6af7b35bc2d8c98",
+      "png_sha256": "91000641a58b126482523c26f5dd06e3a3b11a892c05ca8580ee6a77816bf300",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic24",
+      "source_sha256": "9ac30420823c46f9a9f33dde57b935cdb2b288220ad907eff7ff657414e2dc28",
+      "png_sha256": "975e614404395d5c5665939902f0fddb9535765383eaa92126830fb330b284b7",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic25",
+      "source_sha256": "659fb395b7396dd46cb7d89dc42ca2f6d96a3477ec2abadac2a7385b787f18c8",
+      "png_sha256": "ab3a17232c975fb53d23155c2b5cfe17a72254c2dee527ad226fab812bb4f254",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic26",
+      "source_sha256": "69ce8acb73226e001715885213417076b6f8cdd643f6a7f4300c8700aa3e26ec",
+      "png_sha256": "920f3322c25e4c9efec74cfddc264e90c569440b93676a04d61d6b6320cbd45a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic27",
+      "source_sha256": "2abe2bd0a57cf312c751e5527fe6a1e4c88b42fa57e90d276bbd4d20fa4eb2f3",
+      "png_sha256": "a3a01bad9f4d30c7e198a63b4c57c4fc281053226693c8448d1f5c15d3c8ffbc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic28",
+      "source_sha256": "01cbeabb5488b0346f85d66e9aaf148300945ddd82c197dee95a9648f957dd2d",
+      "png_sha256": "7a4e8ac7bc899ce773229b647a33088639f06d65e8d8ac546aac12fd23b48a12",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic29",
+      "source_sha256": "1620ca1c33f2e12b6e8ce07ab97b5f19877b0356fafee5120e87858cf3fb2088",
+      "png_sha256": "e5e486bd0ebf60468795e8aa108972806ead9955f0b2f977bca1af81a6083be2",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic30",
+      "source_sha256": "911b26743b8c725454f5a48cdfab377a1abc943711cda0b5012ff0473c3dc53b",
+      "png_sha256": "ae9015ec9d2e9b4ee2279fa5e228274989dfb0e2ab2a760250561dd54bd90aef",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic31",
+      "source_sha256": "04f80d4d8dca41f267a762928bcdd866b5ecd3d951866544d4b99030c51cde09",
+      "png_sha256": "fbafa19e44a2dd3358a756c1150b345285e1ce82dcf5ccd646d082cd55d851b2",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic32",
+      "source_sha256": "ac0a0a95677ded2c297963495b4cf5421aababce8eef9abebe35f57e1e32cb05",
+      "png_sha256": "4fa62608ad7323e2fab796507dbe649d4b933e035226898bb2d052edab48adcf",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic33",
+      "source_sha256": "7af4194e5b5fd03b6895dd54b4baec1b94d58227f57d5b633aeffcd1bc4a1327",
+      "png_sha256": "1fbb2bf7f1834a034514cec58fd7c1f7fe4d49725f4663434415c80a7cdb7389",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic34",
+      "source_sha256": "510d8bf2bf45d59cc1a9b12523339c24a5b409a3aa06cad23369a84226b07ff8",
+      "png_sha256": "50b180269e76af08ab16552b2d6dd85bc455e8e3eeda90f9a8c4103179025163",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic35",
+      "source_sha256": "534200b3f218826b7cfb35aec124f34ba01a6c3e29e314dd5b4c506e9fc1502c",
+      "png_sha256": "d28517a1010b877234ed4a79047a705cb8e40b1bbd16351b7acd0ad3eb7dc167",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic36",
+      "source_sha256": "3e585d02051d48689947edf5ceab8ba8fb3819a3e0c97b1b704fc997b5b77a11",
+      "png_sha256": "081e10287de57684e65b115e0d4ac8594a215a2641d89762d2f144ccb6c19289",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic37",
+      "source_sha256": "944147bb49dc3a311e511c7f0d44ef772de206b0034ff9e79bd4ca53efd2fba3",
+      "png_sha256": "068e914e33a04efe92b9cbf50a318f038b069a0cd6d14dec8b65a09fc155576c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic38",
+      "source_sha256": "0fa251662ed0359d380b6609f0ba1e7e5609882392bb8f22f7d4806bd1f6fd9f",
+      "png_sha256": "a038544b11a2c22f6f372bb888d112f5557b3e258e10429b4abb9915605c283e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic39",
+      "source_sha256": "d1309a57cf31a8393a159cc81275e28477e27d463c215fc0a0a877b9bfdca1ea",
+      "png_sha256": "0cc82d79a81ce2fed1570fc1a956339a3c4edc0478710c4081749c3cf15cca07",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic40",
+      "source_sha256": "2197b279b65c0f0f2cce86a87986dd3a19bd9ec92a806e70f9d92f8fc12b2ef0",
+      "png_sha256": "9eccf66a5cebf90a22fbc24c07d23c4a4f2da69bb7f345231ff6169f6a45d774",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic41",
+      "source_sha256": "1ea6482f22a526fd6373db9911506da8b0fc3b253c90ac5ca1f1338041efc8b4",
+      "png_sha256": "860b1107e6de92c4de90c7718d12b626310cc2730b059e6e5307b43347ece534",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "gift_pic42",
+      "source_sha256": "642b36652989f4c80122be97361aa7408586d1669a80ef24574bb6a0273de2ce",
+      "png_sha256": "5d6673f2507a57a8c166f51efc58770a9e41e50f8abe975be9f02e64d2da8eb3",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_all01",
+      "source_sha256": "84b03e61ed342df042ff71059007dc840549de7ea29eace15d9ff9698376a519",
+      "png_sha256": "82b79bbc3caf1d9667d5e9b9957770c8eda370ff8cc228192f7a191a84ab357f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_all02",
+      "source_sha256": "0f18507647b200aab11e00f2b8337bd65f6acab935b2d039596ab36823daca3a",
+      "png_sha256": "89a3342582b6367799133187d8cf82fbe5cb34e739a04d61fb1746cd00be3a26",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_comments",
+      "source_sha256": "ae30a105be2147623054c8445b6a086a0c01793d1e1cd3f7acd8c15c3dea9594",
+      "png_sha256": "59bfc47dc425e633584458cb827786662c453c5b2e990384a2bc1efd43e696bc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_female",
+      "source_sha256": "08f51454b3b9ed70092313c0b7e3bbd3fbae96460eedf703aa6c02ba13fd1ed4",
+      "png_sha256": "1e597e788e36ba8d6a2ddc2962eb924817b1817e70ad0b80eb61614ac0f1cbc9",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_hot",
+      "source_sha256": "c3c8ad1a060946b92d13c186d406d41c1a7d45918a8bf99035939a7d85dbcd8f",
+      "png_sha256": "8edb61ad0af7375bdf467db190683de1ae0bd6b8ca3e9750f2c6fab7bececbcc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_male",
+      "source_sha256": "feb888981a8f49b01e1df48277c5fbcac7b1e95370e055912b44fd069847889a",
+      "png_sha256": "ed171be20c7790909b2a154f3dadd1588c4ff9cc48175222b7a95e13cc164e99",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_new",
+      "source_sha256": "168632fb50faa988ff2523d7bb75fbb5cc2aae6433aba5cf25c73e6c433fd1e1",
+      "png_sha256": "11b314725fd36ba7c3456531cd7a79b83ae4f8c0d9deb018fade54b094cc2072",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_next",
+      "source_sha256": "7ea1f14a0e8512dfb7fa6e024bc897468b9fc8f40adce7f2c308f8afdfd4c767",
+      "png_sha256": "7caab7ad9be12f315a24aec2a4aa804de48e4c22461469c730a739d0d722d52c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_ico_vip",
+      "source_sha256": "cc5ee8c227da5cf8404e5e52a40a2d33de1b0fc8d23491203b754997942609ac",
+      "png_sha256": "1f415e8b97daf66ffb27602244eee245ce04c45adf43c33ca53edb2fc223e63f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_theater_line",
+      "source_sha256": "a5f8620775db54cef42dd98c035216c1689722a962ebbb3be6bea4c27d308e7e",
+      "png_sha256": "69cae772d83a8bb8f36a9089f2bd80ae9acecf4452171904a0ea63c764f05f07",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_theater_more",
+      "source_sha256": "96c67109d0291c0aac5f0ef9d64a0b9be33a210df96cb1edb50cbadc91352901",
+      "png_sha256": "f2d2d78ee0669876480da8a2dd434511c623be18d78c2996f56faf6745f24300",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_theater_pointer",
+      "source_sha256": "4fa626d8f9c8fac1f022e08d4d9dbf6b70de862290a9ee30aa5053ae9f6721ed",
+      "png_sha256": "741e3b1de21d18896f9f3313a5b299eeac5ec32c924f705a216e710fad1840c0",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black01",
+      "source_sha256": "6b891b24fba5899babd31df4825005fec05194426aaf4eeb44210ca1097e3873",
+      "png_sha256": "3b8375277ed7bfb045ab084cddb1d5f494051e9170cc5edfa026833fff627037",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black02",
+      "source_sha256": "1c81e8d7fd5c58ef6cb1accafd52197e08321fa89a6fdd311e31e2cf1e3287f7",
+      "png_sha256": "ceed99658b1ac30a776bc0a0f9136f9e0c9756498a1f29225e454359e774bf89",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black03",
+      "source_sha256": "145b46f1bcfc3b7242ead30dd5b06d4520f73ea140226370124e79b02bfd3540",
+      "png_sha256": "de015440fd13a28502c315f85ebad9b585481846305a5653e208b7b83f0d1d25",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black04",
+      "source_sha256": "d2c69c321c726563400f9cee42231a6133ccc4e0bf4af6622a3b61097d489dfa",
+      "png_sha256": "8ad975a24aa4f96a4db64a43f8f66ba18c0119119c91604d9551575ce1ef45f4",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black05",
+      "source_sha256": "abb1d10371b47b526423e2bcd3a38a2d2b1129d5670b254a0aab156c469e2d70",
+      "png_sha256": "8d3f918efa5f28e43ea17cb9f87e30d6de04cf2d84b42c2d794237bd1cd2e968",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black06",
+      "source_sha256": "7fec439fa0ab7d801786df2f550b729131602e3a848377ff3ff87474906c5900",
+      "png_sha256": "b692572804fe92ef327275c283d82f50737e56b022efc656a14798aba3d60dae",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black07",
+      "source_sha256": "e2262513134fd197967fe668ca1a922a2cf58ee7d9c1f7943580994d781355a3",
+      "png_sha256": "8496fa1cfb47670fe58958543fd23b7ee7136e9472fae15ef2497262d4f0501b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_black08",
+      "source_sha256": "57982e7c3896bfb14aad0267ba954e23fcb3027a90a24b005d5483b39378f298",
+      "png_sha256": "206bfc00b9ef4e4caa453ff8095c35fd523dd548ab57ba45c46752ee7f672e5d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white01",
+      "source_sha256": "61c08850cf0ec7c19698af8d31f87a87a4c8913979e3ba723f465a6d6e78cc91",
+      "png_sha256": "0c749c342c942a7cac22fe952812d1faeff3f5e31bef8e699433d97cbb87faee",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white02",
+      "source_sha256": "8fe4b353049ad2c08d6ab8f0817553fe2db593461cdf9270ea50be1b7f2fe456",
+      "png_sha256": "26cafda92b7fe4b59b85e5fb726846c9560300ec50e5a965b3739960162c13ec",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white03",
+      "source_sha256": "237c72f1fc1e97f6b21b95c4880d08a5e9516a4c431f10745a981de2d114bcea",
+      "png_sha256": "f0bdd2ed85598f3429407dd085c872dc7c1be6d936f92c2ef5272331751668b5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white04",
+      "source_sha256": "701546ddca4f51df68163fdead2c268345d6257356eb7cba1a55693b769799c4",
+      "png_sha256": "ceba1251bd58d4bf1abe61e0d86f67ecbae91e33c13d210799068c8829981ccf",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white05",
+      "source_sha256": "0747ff8e8cc36672470882b8232b70bf6511d072ce0ad8a004163455bf065fd7",
+      "png_sha256": "fafefe8d490776dc95685c2920264cec6c29fdb515581c0ae5a4e005c2b37680",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white06",
+      "source_sha256": "db87588bbc07e3c4fe0dd7f8308fa213be1d929c8392712c3726eaa82837defd",
+      "png_sha256": "ece9005c568a8dbc2b7385fe0935e85907960e58d6f208f2e833da94dd6635e4",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white07",
+      "source_sha256": "1db1b9ca4cf1dcfb14fb74d798eb39336ae415aa988959c0db4950df4624e90d",
+      "png_sha256": "c31fc01af68000ffe036920e0ba0999800a657d0d31a774e6839c9fc02e0e119",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "home_tittle_white08",
+      "source_sha256": "60eac308fe211a06bc6fc60ec0e8682b110de7de9e1d2aed425e9b1c4a7807bf",
+      "png_sha256": "4d1371dba5082ab63f81c9019874fb6cbaa71c720a068ebeb8d8f4ebc6a47629",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "ico_back",
+      "source_sha256": "d04145d0b14a36a36658c8ba1310342c0470a0d71aa3dd60f00015c9d05e1902",
+      "png_sha256": "67c75f0b5d62a756b60712c6112f25ef0db934139e3060ee6ff6147a44d80d10",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "ico_off",
+      "source_sha256": "6e871bba7703ee16c2ccb4a66bfe3bbeb44bde3521e8c6e1b470f9fdacbd2842",
+      "png_sha256": "1035d962f0e7609bbce4098017e1b0d6c0e27e528ded4b37b744f6a906792932",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "ico_on",
+      "source_sha256": "8a5ee6feb085ac8f51cef31e6ae2d0ccc5324a22ac38aabe3b4598478f24821c",
+      "png_sha256": "adbd6d3e7057507f92bdce5b758c1fbad2f87925be72334677b698967b6a4c50",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "ico_setting_next",
+      "source_sha256": "590ec7110f207eded051efaf047a7345d8ea007389abfbfac88aca5598c1ef41",
+      "png_sha256": "e55d2cf0d2b360dfae8684dc0f2666440936ebd6fa7edc8b447f0dbdd63e571e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "invite_ico_question",
+      "source_sha256": "6e9124ce237231fbf8d8d0667cdbb4c1d87839e04b50b4c3d9367d8e2a6c13b6",
+      "png_sha256": "33c04b182a22518e719ddd8016699c747755276c7a4d1a4ec9f112ce2f68f256",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "invite_pic_banner",
+      "source_sha256": "2be0f57041b8b4c2ace205ff3540ff96a5b29e961a7d9743827c0375d7d5303d",
+      "png_sha256": "a22a7ae586db0a4a8c1ecc322b21b7ff3e15f9d10a571f1a0ba4fe95f6c7498d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "invite_pic_banner2",
+      "source_sha256": "c3de3cdf98e4693a248c77d8d0e7373ade3c576e6e1460c51f0fd9ef2e4d1bbf",
+      "png_sha256": "10f98d934239ab639ee071b390f1ebce98b16fe503d380e6ee7e5fc331179cfc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "invite_pic_null",
+      "source_sha256": "865cfc69aed1e3867ca962a31efc9fcdbc5d13ac87cce4c038e9e1d0da6ce18a",
+      "png_sha256": "21c92679221b8c9e2e8e4c75f881f43e8d0d45f085bad71a28034a7d2a89d9bb",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_bg2_no01",
+      "source_sha256": "d2e9a69f90416d07a2eb9651b6856e0ba23641020f093756013be8b679b29122",
+      "png_sha256": "4c49d71dd77893b94f24dad48ad43d97d84f2e513ff9a288584e7a354646f676",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_bg2_no02",
+      "source_sha256": "e407a3ac8f6599fdcf55cfc5caa07ac30d3cbc184345a2dd6efc9cc4255b5d64",
+      "png_sha256": "c57f83fadf6245ead45c7e31e3051f624fe6b5f4c6fdfbd69b470d44249ff029",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_bg2_no03",
+      "source_sha256": "bdbed37d89200a74fad6a440ad3a8b2ac97cb1e63a61723283fa3d4bd83d7cd3",
+      "png_sha256": "e11a29c0ca5a8093d392190bf5aaaa7fb5472cc73c78051c461b7f16defc25c8",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_ico_no01",
+      "source_sha256": "9a2d137bd5f931099fd9844cc6f496fc90a5afa8b7dbe7c7e1283f6835be7328",
+      "png_sha256": "96bb351b0008730abe5b8ce62f08f0be29f6f44187e4e356a9a0ef6c2497eb9e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_ico_no02",
+      "source_sha256": "bcff53a4ba68aba9346a56a19a83c622e8af4e3c5be5a1f572cff3ad53382715",
+      "png_sha256": "1adab8ebcfd7bbb0c7fa57d83026891dedd8095616185eec4db90f1dccdcda50",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_ico_no03",
+      "source_sha256": "83dc082a805344422f36fcfd50801cffeba2137844af7ccdd23e319ab65e7fc9",
+      "png_sha256": "fb8ea3dbf71dc26fd859355fd03f20678fc078ebf14a559b6bbfeeb1314f350e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_ico_search",
+      "source_sha256": "36899e217000bbd7342708887901fa477f7565045beec36d2960aa919e144c4b",
+      "png_sha256": "dce239887d5c3af74634d6d0b22bb09b61337581b024471db46c96fd2d03af28",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "list_ico_tittle",
+      "source_sha256": "21c6d75392ff844f025f0e703291b3d0ec98f536c2eb7e061323b66ba5745e4a",
+      "png_sha256": "141323717760528ad5dcf7dd7d5da7028ed95d340a7af8bf7a12b9fd638f364d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg00",
+      "source_sha256": "b5205841e36a2da2deeb3412149f296b714da3ba7ef6bdf8eff2401c70106123",
+      "png_sha256": "41d2cbe4ffd79dc01e5b48241038a46ce4a167802be464a9076d8f8ca6525140",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg01",
+      "source_sha256": "aba0d140d98477d68db99662e1246a009c4d40b766575312f3d131d0b9466463",
+      "png_sha256": "01f42f9335fbf73f7c37f8669da7afaaca93593cf70a9518269ffa7c2fa2e5e1",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg02",
+      "source_sha256": "e4f04c2b5035e87fae68e25b6d335ffb656d63469012daa26029bd36ee2c278d",
+      "png_sha256": "17ac28da7d992880223fb7e2679e66bf4a79b8efd82b9c46f69dc2eda2c648d1",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg03",
+      "source_sha256": "9f0901a13a3554d664bad80a140cd7f1a1b4d37db65f7caf316adf1201548ed4",
+      "png_sha256": "fb06b0a2ab7677d439dcb1e7535a60a3eee0b67e5d83152ecf5f2d52e089b117",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg04",
+      "source_sha256": "0ee40358392e6a8a271af1d6e764567e2f963eee80f4bdd8eb770b3bb1b4021f",
+      "png_sha256": "84926388cb4daee3643cb3c4f38919482c0d7aa7ebb25ec887300c452a40223b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg05",
+      "source_sha256": "253e3dd4b844ca12231e45b8a597e3b3c10045bbb1eac64a3310e3d2759817ef",
+      "png_sha256": "7613716bf52735743742f7c1d97c390610bf05eb01de66f2ff4eed45b9e005a8",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg06",
+      "source_sha256": "2e36114597e0b31c02d4b1c21ff7685014658c9888884e39fca16094d4a53d72",
+      "png_sha256": "68e3698240d23c3ab88f0a4a750432c3aaabe4a65228d9bbbdc22b3a2b82c093",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_bg07",
+      "source_sha256": "2e36114597e0b31c02d4b1c21ff7685014658c9888884e39fca16094d4a53d72",
+      "png_sha256": "68e3698240d23c3ab88f0a4a750432c3aaabe4a65228d9bbbdc22b3a2b82c093",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_gift",
+      "source_sha256": "28fffc08b34f33814b45704b50e13b73ded3c7be013347c0544b962550c10f98",
+      "png_sha256": "97d2bee77f7318ce8abcb8ce0d6bd91a2ca77113dd70066e230b1abecd2e4cd4",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart01",
+      "source_sha256": "ba7361c3e4f7500281445bef9463bcd063b67d5bb10eb499cd42c6b8b4b7737a",
+      "png_sha256": "d10a7aafd894b2084ab5e10729e6ceada5c021dc61a51ef904aae6962b25261c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart02",
+      "source_sha256": "f49937319f39a9254e51fde75688b5b8b3bc240979f114c9aa758fb5888acc16",
+      "png_sha256": "dfc90d4d2b050b2ead7488a752b259fca7b89c8a4cc8ae1fb5827bd966535bdc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart03",
+      "source_sha256": "6877ec6a8d07c291308c9278e83dae7530fcecf9b351a199c24f6eb6f5f37059",
+      "png_sha256": "28b576f8c41f5a1c67a55cd698dfb146e7aa759615b3153fc6fc3108aea2a1cb",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart04",
+      "source_sha256": "1d4f7e83c2169c4effa4cce13b83e4a9dd44e1e92ac1ed26140d5c571dc37668",
+      "png_sha256": "ea6fc7b8e305dbda27c676253223527a45bc03bbb9c10fcdd80a72c6e6c34877",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart05",
+      "source_sha256": "ed963c12dd8eaf6c7db3e494780d83649438ed66244ac91ea840d98f4826d250",
+      "png_sha256": "021f2c634d4444eed32add76b6fd9962b02904e42af3907b4d09ce7cb037d4ba",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart06",
+      "source_sha256": "78826064b0daeb9178607357de42ea27214dc13101bdcbe3ff3169a44096a58b",
+      "png_sha256": "ad657aafc743018021e8c8c190abfa4faa296ac056ba6ba7126a36a915b68365",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_heart07",
+      "source_sha256": "2b3815d62150aff8bf186f90a1037fd953b1b2823f6d7ab2b208d6c14dd2256c",
+      "png_sha256": "6c3a35143979d1782c1b891b7ee514ec9afb3212a9da59c27ead3ab35fdd9e8b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_lock",
+      "source_sha256": "7ef3d978b4ee5472189a679128be6b1165df10277ebb4a68e048142a0080a88e",
+      "png_sha256": "8ab7d6e0a8eeccc75d7deb091aa8197734d012af46c4b41777fc0e1070e7704b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_pass",
+      "source_sha256": "c65235a0b749429509342a1132adbee7356b0cd3bb7da2f8daf756d4f8937578",
+      "png_sha256": "1cc3e52a904c4daac61e0103bbe9c210e8247ff25c6bc3faa2b25f0e65d3dd8b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point01",
+      "source_sha256": "0571718b1223df61102d759f846e5fccb92b8ac0852c4ebbfb78e90dfa3e5235",
+      "png_sha256": "b496f16e14e3e4418c948e3a7bf72c6a897313a858496560da3d7b7573054f0c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point02",
+      "source_sha256": "46de6f5c7944dcac85d89503a7c027fd0f610e9fce536b4c610b533d0c5a5785",
+      "png_sha256": "cbe63e36b1b15d04f5cea3f31a9023b5aa8ffd762d2bd4a402d76ed06d02bbc5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point03",
+      "source_sha256": "94e0e1168639379678f8664607ba87878bddc805445a9bda29d4a27d65e250e1",
+      "png_sha256": "2f90011c8eaf518c2892e63c357a2b56729f8d461f2a0a7158c5c5f50775cbcc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point04",
+      "source_sha256": "8cb3bfe100e4cf4611cf6e1969aeeb81eee331abd066e1943738dcbb42538855",
+      "png_sha256": "83b62702fbc32a9193f136d8c5add6f9a2c13419d17de56bd2c9ca96d5bfd262",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point05",
+      "source_sha256": "d2636daa9b6eec89a8583fcbd235cf9f93e7d5a09628ada67f7266c74e338b8b",
+      "png_sha256": "7a2c1a5a5fa735071863a6dbf87b0076d5833644dc981e9571546b0736ef5c3d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point06",
+      "source_sha256": "c667af82367102f4c367ff74e3aef8085b974de9e1041b06038d4ad9c347c6e5",
+      "png_sha256": "39135d322a7dfd4cc9773ce4879cc4c53b84742bbcaf41094bd6b6f054fbc65d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_point07",
+      "source_sha256": "d733b4b8a3f2ea77f3265bef55042518294acb6f6abc33fd12b51173ebe9c283",
+      "png_sha256": "9a692d31865d08f58d3fca0d5d79e0025d641a7151af01fa60078eaf09050c3d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle00",
+      "source_sha256": "d8a72fc0ad16f4382e342693c141220fb829a9efd621a73cf5a018c57d4ccd3a",
+      "png_sha256": "8554a530ad659383c343928f59ef2a0bebe3206177db1a21ea41239a054fdbc0",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle01",
+      "source_sha256": "d616a3e566a844327c9c5935339f3446a57823ea3ea357aa881ba585c6381e0c",
+      "png_sha256": "ddb7da3fac9862ddce8906000e1b0a0929b1ed5cee41622bf3a5899f1445017f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle02",
+      "source_sha256": "f735d5b865705058918ba6a4444f431724238663b19d6f78da62bb56a6b456bf",
+      "png_sha256": "cc8ef5834bc792ef8d9b0d7285ad8a6df441f84ee1f54e86286b2fd8e7a9af7c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle03",
+      "source_sha256": "fbd1934c173c1f90c30bbcbe31bd11d35a9d4a5a5ffc0b73fd35052384e506b1",
+      "png_sha256": "2aff55a4caf891cd40a77e8cca8f9740471906cd627d063ac66bca14d6f06f94",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle04",
+      "source_sha256": "bac140398f28b3b24384df8212a965b786336f55c63e5837128b050ad96a06dd",
+      "png_sha256": "23f3d14d8fd50ffd91b966f762641e10776efde78a670e7dec5d2f7987afd0b3",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle05",
+      "source_sha256": "c06f2c59adfb5b7768bba7e6e3d7dedb8c79a6cde320df724df895cb1d03e277",
+      "png_sha256": "de305792de22690200e4204d9b250ac26a50e3fd14e049939f9308252c3ec6ba",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle06",
+      "source_sha256": "93df0fe210142f2c85798d3e68d21cf3fb2f2ed498e4e2a52a61df611d2c9a05",
+      "png_sha256": "ad05f1cbef1d74d9aa95b977cec3da4b14c8dac54806fc945d84a37339f1f84a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "lv_ico_tittle07",
+      "source_sha256": "d1d37c4458f5375bd80e470733dcc15820cb7c2f5e49fa8d75b0d37ffff601d8",
+      "png_sha256": "2abf7f6837741997525516c1dea1439ad2cd9839909eb50b8789bc9ef31568db",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "memory_ico_more",
+      "source_sha256": "4d1c0d444d731f9e5719a69df12dbc4474641657691b0453c1f8e1d5689229e8",
+      "png_sha256": "2f1b4233c012522666d06e3ca6b430c43ef070d5e6a0b908a3d1205e8f17ea6a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "memory_ico_note",
+      "source_sha256": "5351f5a10ac7866ff5dfa8163c2d5708edc4e1e2eb91d7dba79556a66503958d",
+      "png_sha256": "8d2018d04924afaa2870958a2e82f4f90416b95b3eadb5744201608cd33b4cf8",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "memory_ico_null",
+      "source_sha256": "bf9d8db8e7eb1f743d9f07047bc2d0ff1dd757b10d042bb287b4d889a369ab7d",
+      "png_sha256": "033f603863330673207e19fdfd481f6cf67842c3163f240d49865d235f0804ba",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "memory_pic_background",
+      "source_sha256": "c062c2df2767324eca187360730288559de2ceb5ecf8df92de4ceee9c67c0962",
+      "png_sha256": "2ce876aed139253669b9e5587b1d03b423a9074a9d3af4a9b4af964035987164",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "message_ico_notice",
+      "source_sha256": "b2310b38100de9dfa7e664b349f6e5e1828f28da657df085f6d4cf45fcdd9f4d",
+      "png_sha256": "a560c70f9b66ace01ff61f04f1a3a1d5566e55fd5e51ab4bd594b1c809b6c2da",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_add",
+      "source_sha256": "269995056e7dc6be54bb19adfdc48b0b90c5d8793880b73ff65bc971032984e8",
+      "png_sha256": "e3868bcfef4178b40ebafa82fffe53ad09bb6380723aa5bb8fc2a2d17f9720dd",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_attention",
+      "source_sha256": "0faf3cff090d83d8d18bae531de0b68a33aa6bd57a0442900c17b3639f1fffa4",
+      "png_sha256": "e4561d14b9955b0e590b501d60bf90f62eb33fd94410cc0c6e005809cf142add",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_chat",
+      "source_sha256": "967d53fd2894ea4fe85d8c792b9aaa4a6183b169999499a851ebcf877644df57",
+      "png_sha256": "12f81f499aebfd91296e23286018daba519180bcb57ad360298aec276a011e5f",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_copy",
+      "source_sha256": "cf848d5762c1ce7aa26db96c7fbfab625541d118f7ed7729ed11352186d00310",
+      "png_sha256": "f57bcbfac6ca49235eae8f5f103e3e81d488895867b1e246fc251705dfd8c68c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_edit",
+      "source_sha256": "90c8733997faf8cb523bc84c7837e47ab1fc8cd92f244d62814310b9b7142e24",
+      "png_sha256": "f218767f31ff17bf50edfb8611d617f4d8c49718ce6d33cd3783bfb04d30df88",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_next",
+      "source_sha256": "864162e93e1931534a2d9dd3121c3d48c0a8dbb9435944db6a26665d3da4f139",
+      "png_sha256": "4c3b3c651476f80e40af1ef39826cdeab0fc97baf96d7c0694b7e661899733cf",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_question",
+      "source_sha256": "31a5f0fb4b9b79d99408e5f11b8d64493ac594f844204307659bce0a795a8e05",
+      "png_sha256": "ba66bc54d2ca7b420a405a3dfc79db2eb79ba9b7f2da0c7c7fa080034a7ab786",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_register",
+      "source_sha256": "5de3098cbf5a551aa10dda4790e67632b2520de64afee8e1994d158aa7fc962c",
+      "png_sha256": "d4ab11bfad26293d7cca877f024b6305bd68e8e89a66939e39a37efee83c3103",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_ico_set",
+      "source_sha256": "b6986a1eae2d1667da215dbf0389cd12b9acd70b4bccc126471678a8169755ce",
+      "png_sha256": "a86f4eee0ff183a203881f23b5770811c78a9c7349106283613fe46b66a769d5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_pic_background",
+      "source_sha256": "558fbb9eca90de1655703bddff688753216aa493b7578fc73a417533f16e24f9",
+      "png_sha256": "c9b48fbeb6e8a96750897b2b87d1bca7c7b27d66c15c4d6c61fca834e4ba6b71",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_pic_background02",
+      "source_sha256": "420ae1034ba5aa2da77d3da72d33bf50ae8b849555c8c08d62ed29f83ce407f5",
+      "png_sha256": "203e5ec3ba622f77eb19e62ddba58ca4a0d71ac145d7ff631838ace645771591",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_pic_background03",
+      "source_sha256": "62c10342cfc8ec3240d8e84f07f5e0b59270a54ce79f4a8fe60121d01dca1cca",
+      "png_sha256": "0b9466fd6304ddb435f2af405bf17129aeb757881d48dd915e7d712462fcb7a7",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_pic_diamond",
+      "source_sha256": "015eec77e57babbb98ca28c5e0946aece576b793847fadb2aab28ad3a4eef277",
+      "png_sha256": "c2c40cf39bbbe85aac80e2d31f05da522458629c8b54974ec0a2bd3084cd814b",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "mine_pic_member_background",
+      "source_sha256": "a3ea319bdd311edf1e1defcc48bb56d69fb5fea8459acf50ab88ca5b6679efae",
+      "png_sha256": "5b71d720306a94e6fbaee9d7caa34d1f8e43f48c5317159bbf205fdfa76a6a67",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "pop_double_bg",
+      "source_sha256": "d155ed533f83c7e4fd8d559cb258593ae3e9f15d6fe28d961b4804dcaf07b5ea",
+      "png_sha256": "f5ed04776a85a81c1dc3847d93b012071795fd531a09b6f8cd2745cf5d1ce72c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "pop_ico_close",
+      "source_sha256": "872bd80eb6c8d3072e77f6c50feda697bbcd8c640ea894a7584f10d7717c81a2",
+      "png_sha256": "8eb4df6629c4bbbcded9c22291461bf3b987aa613b64655bbeee922543176d85",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "post_ico_download",
+      "source_sha256": "f76c1b96b7915d3e1c008a1a6eb33d9d8f55444266028c7c07c3f76c7c5564b1",
+      "png_sha256": "be6216bc4c3b15aa270de08f72322b8187795bff41b276ededa84b14a3e34e80",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "post_pic_role",
+      "source_sha256": "c802c467039239a11ba54bc2c6840bedf374dede4129999709e0d7a665cd2d53",
+      "png_sha256": "75ef426fcb2ad22718d131c9712d8eeb0c6e2a254f75477bc3e29a67393ce691",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "profile_ico_camear",
+      "source_sha256": "40bdc7253b2db866c9c9870d073fe4e221ce56ad5b378c483521e9192cefe314",
+      "png_sha256": "52c02ff475fd39ac2169c46ec3f21628fe5f863075dd5eb5a1e19a92017c7266",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "profile_pic_else",
+      "source_sha256": "41d5b0165213924af246496a0c5f43121e6e191ef408806491075e6bb8ec50a0",
+      "png_sha256": "4e41423a1e1b1ddd2751f6e369110a39b7b95751ec3159cff7148fb5909985e9",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "profile_pic_man",
+      "source_sha256": "3e9ea5dd2de0b285b0d491ad1375b5af4db545fc962d190cd02dfd7147e81841",
+      "png_sha256": "99c49b0524d557324f8ec9720e30089a23cbe985678965ada69fd84006f4b2f1",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "profile_pic_women",
+      "source_sha256": "0569f109b87f312a42d295d4801fc4709f66dca7070ccf50bcc40075e7104378",
+      "png_sha256": "e25355b16cd6c2e5ed53da92b163f49a11184650e5c78f699e0133619e7c76fd",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "purchase_ico_diamond",
+      "source_sha256": "f554cc4853ccd224cca986929ddce493db48be0bbdd8855811d5cc6388ca4eb8",
+      "png_sha256": "ce4f4f54a5e86399e60cad961bd4d461d41d79304c4f3a7e38206ea49201ad3c",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "register_ico_diamond",
+      "source_sha256": "794c898302738d693b2883e6e8a6b3405706d3d3512f6eb338b54e0e26c6d8d1",
+      "png_sha256": "6d478b95c5373e1d5d6b8a5ab2f823bfd19e1cb64814eac83135a8d5cf97800d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "register_pic_banner",
+      "source_sha256": "f1a72ed6f0d9a01bd7aa7fe8023913bc9d35321cb86a8c3c1429dbd26b2ad3b8",
+      "png_sha256": "26b9f2a6d149abc40027a2567847e3b114be8b9871c9e881abeb65e387c0c996",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "role_ico_comment",
+      "source_sha256": "fc6283837153f71312cd717c55698b211e97ab2301541869902b206156f5e1dd",
+      "png_sha256": "15118d744dc057ee210bd0cbcefb4f1a58a3b5e8ebaf2fe6d5b428405537e7bc",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "role_ico_hot",
+      "source_sha256": "4beb53fda386b5926bd94fd27998bd8b90c41b61ca799c9c9f2e83d940551bce",
+      "png_sha256": "a53d12ddac102b1a19ad10557216eb883a563faae27fe97d5f403806f82a2986",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "role_ico_people",
+      "source_sha256": "c0973a4e52878b9293468638026586ee9bf171dca0e13e82ebc07c4b672d9878",
+      "png_sha256": "2788bc921c611897f0c7e708f5155fc3a49810b33c52a0077efbc69110236dda",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_add",
+      "source_sha256": "aaf43f779d54f9df8da9e26febb863cc9941aee0706f7955c7e44550cc8bf255",
+      "png_sha256": "357b1c39495fdb183867f49aa79f869b00ae99c3e9691c38ecf621c5f168efd1",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_delete",
+      "source_sha256": "e6012c5dbb8fae0b51eac4a6aae03872db9652d1e0f56dfd5e5423c795d590dd",
+      "png_sha256": "cd7f1aa8a91fd04deee0f5996183d43bd76ebf03328b0ee5df4e0e6b061c7a4e",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction01",
+      "source_sha256": "19448165cc69d48916742b955fcd8a2772f5d774b0cf3b6a96bbd33dc5dabdb2",
+      "png_sha256": "10d60206eac3d6c883e27d9095dab0f9c94f392816572a5bffa13367b7c2f55d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction02",
+      "source_sha256": "98e103747617e3ee1c551c1e6394055f9db200f05daecf24f9fdd2e6881cfaf0",
+      "png_sha256": "e7d81194ab98b28ce45226a9af6a098fca267fbc25af781d3e385242300acb9d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction03",
+      "source_sha256": "e107d874ad456280a908cf3c062aa81d08e17cef903f523b8ec4fc71867790f6",
+      "png_sha256": "41f6db504605d5470d52904e75785ad417750cd746257cf47f22c4b5a5b5a241",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction04",
+      "source_sha256": "65fdd3d1518c8e51beedc8a5c85067f3aaa6f1816cb0ef5fd949678414b3b05e",
+      "png_sha256": "cd9f70dede07338696734053f58dc37b73b8575b5c2a92be5f364f6d55c0c4f4",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction05",
+      "source_sha256": "82783d263b8825d9d5655c14b5169302d1fe889c7577b9fdf1da37141263d231",
+      "png_sha256": "cda785cf4d82d44d57d48204f02deb09a104b82d1ef59fbd696dd47343ced273",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction06",
+      "source_sha256": "1745451089b5fb29a2be5c9a42f10b8107ada057339b0c0ca75ae97009165f13",
+      "png_sha256": "bb5276cbad058ef98e8cedeb7cefcdccb89e990dec9c34bb1a0e62dd8886fc22",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "set_ico_faction07",
+      "source_sha256": "d1373d652467571d73e905050b101b2e32e9afe39177556dcdf87ffb747a0f21",
+      "png_sha256": "ada5c74f057c8eb11d5276e8d1a26a66c059328244a5135d34f19d4c0a441230",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab001",
+      "source_sha256": "1ae10c1fe3e4fb6e8bacf4c29f872e9831097179639bdb84f3e33a7c3f7dba18",
+      "png_sha256": "0d8b5ffa8518e796cf0d38c2009bace8a7ea3baaef8c7c0882a2f611da77a2c2",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab002",
+      "source_sha256": "735ef03b4b3d523712620ee21599c9a802b60a628497985a7f6cbda54d307f0e",
+      "png_sha256": "dfac05f21dc3cfbe73a431ad388bc306c173212f4afa7372a145a59d48889005",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab004",
+      "source_sha256": "b262c93df4fd44285d264bce50ebd5fdc1e634738208accb966269b2ed6aca91",
+      "png_sha256": "72a906c7144f856253dbad4f94a0a8f44b43aea2de2375e33bf486d4b06d9c4a",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab005",
+      "source_sha256": "c4a289f3513b489e55d36bc455b6618c91ec38d4a304c13abf0444b96feb4ed6",
+      "png_sha256": "990d3e24768c1d2be8f5d73ee3bab646f235f4c39ffc677ea5af65c83960381d",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab01",
+      "source_sha256": "417ef961206e4dab2526bd916f6614dc849fc0ad01cbc10e1cdaf4443f39a4e4",
+      "png_sha256": "ae22f648955360afcda5c49bd01e432c8f6a15a7b6e3902e22bc9a90f5c14117",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab02",
+      "source_sha256": "c9f9eadfbde20641299bb4cfc0b6344506e9b43861ed5a47e0fefd9e467ca0ae",
+      "png_sha256": "bf71f16548802a03f6fe87d5818940f6f5be402ad7c4508665c212987fe9bb63",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab04",
+      "source_sha256": "03cf8db68f779c3e71d51e5da872c89e8a66017cd0c29b8af8defc59a10ba321",
+      "png_sha256": "2bc5c9298641c618fd06f23350fee846a13301933f682ab2f05fc8866f2edd05",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab05",
+      "source_sha256": "0b222cffd6ff661073acac6c26bc10d7d2e68a5485f5890173ba8b86b51c8abb",
+      "png_sha256": "ef788806f2658de10ef78ba6c4c6be58938b4ba3be2001fb90a81a0af332e4c5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "tab_ico00",
+      "source_sha256": "175d6b579bb8ffe614d0c0490f9d5417ecc666c4443344c34d51a3a725ab09ef",
+      "png_sha256": "041cdac58c40f885e18963e0863e04e9f8322cc2dfe36dee8814750e0017acf5",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "vip_ico_diamond",
+      "source_sha256": "c639c7c18bbeb743ba71d65883c534f41be937c5990f5f844de38b64a5f8facf",
+      "png_sha256": "d6e6a7c3f8ac11013769384aebe58030f4c557cfaac2cf1ba09b41e1c943c8d0",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "wd_tx",
+      "source_sha256": "39cbbac92bea63c5f50612bde1d3e5c70af53affd69e19da3fcae74f82bedd35",
+      "png_sha256": "7e3f9183d1afba195a8518ce5844b8ce0e83f5ca6b84ecfb8d42780746bc3756",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "wd_znt_pic_kong",
+      "source_sha256": "3aa1762d1221fa54aa61362134e73a61e43534178234a464176ddf77f51892c6",
+      "png_sha256": "3155a9701aaf6a9c01e49f73a60542a29189013e8d04c79e5badff366d060f04",
+      "conversion": "sips lossless PNG, 3x"
+    },
+    {
+      "name": "yq_fx_ico_copy",
+      "source_sha256": "2a160a36a3543ffb8e4953deafd829195dc7fbc0a506011d7c53dfbd70696d94",
+      "png_sha256": "8f97af0837a81aa0b00ce21fb99e82431e29460fbd497f59253be6bcd11f520f",
+      "conversion": "sips lossless PNG, 3x"
+    }
+  ]
+}
