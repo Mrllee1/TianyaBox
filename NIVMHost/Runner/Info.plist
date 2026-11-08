@@ -6,6 +6,8 @@
 	<string>zh-Hans</string>
 	<key>CFBundleDisplayName</key>
 	<string>爱锦</string>
+	<key>AijinPrivacyPolicyURL</key>
+	<string>https://aijin-support-20261108.well-boot-4687.chatgpt.site/privacy-policy</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>zh-Hans</string>

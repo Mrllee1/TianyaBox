@@ -1,0 +1,109 @@
+{
+  "status": "source_based_draft_not_published",
+  "scope": "Host AI client plus native application-space inventory; third-party retention and guest behavior remain unverified",
+  "observed_data_flows": [
+    {
+      "data": "Email address",
+      "evidence": "QingqingAccount.swift: sendMailCode and mail/login",
+      "purpose": "Email verification and account binding",
+      "retention": "Requires service-operator confirmation"
+    },
+    {
+      "data": "User ID and session association",
+      "evidence": "QingqingAPI.swift and QingqingStore.swift: device/login, member/info and Keychain session",
+      "purpose": "Account authentication and account features",
+      "identity_linked": true
+    },
+    {
+      "data": "Per-installation device ID",
+      "evidence": "QingqingAPI.swift: installation and Chhw-Agent device_id/os_sdid",
+      "purpose": "Device session and request identity",
+      "note": "Installation identifier; do not describe it as IDFA or an Android hardware ID"
+    },
+    {
+      "data": "User content and AI conversation messages",
+      "evidence": "QingqingConversation.swift and QingqingAccount.swift: chat messages, chat history and member/memberRoleSave",
+      "purpose": "AI conversations, role settings and user-created content",
+      "identity_linked": true
+    },
+    {
+      "data": "Nickname and user-selected profile information",
+      "evidence": "QingqingParityUI.swift: profile editing",
+      "purpose": "Account profile and content presentation",
+      "identity_linked": true
+    },
+    {
+      "data": "User-selected images",
+      "evidence": "QingqingAccount.swift and QingqingParityUI.swift: feedback/upload",
+      "purpose": "Profile/role image and feedback attachments",
+      "optional_user_action": true
+    },
+    {
+      "data": "Purchase and order records",
+      "evidence": "QingqingFeatures.swift: order/create, order/status and member/getCoinTotal",
+      "purpose": "Digital-content orders and account entitlements",
+      "note": "Payment-page provider collection must be reviewed separately; no real order was created for this audit"
+    },
+    {
+      "data": "Customer-support content",
+      "evidence": "QingqingParityUI.swift: feedback/create",
+      "purpose": "User feedback and account-deletion requests"
+    },
+    {
+      "data": "Server requests and search keywords",
+      "evidence": "QingqingAPI.swift and QingqingStore.swift: home/searchRole, home/searchRole2 and request headers",
+      "purpose": "Search and content retrieval",
+      "retention": "Unknown; transport alone does not prove retained collection"
+    },
+    {
+      "data": "Product interaction / role follows",
+      "evidence": "QingqingConversation.swift:44 and :50 role-follow state retrieval and member/roleFollow",
+      "purpose": "Account-associated role-follow feature",
+      "identity_linked": true,
+      "backend_draft_category_saved": true
+    }
+  ],
+  "local_storage": [
+    "Keychain installation and session",
+    "UserDefaults settings and selected surface",
+    "Cached application catalog and downloaded guest packages"
+  ],
+  "additional_review_required": [
+    "AI service retention, model-training use, subprocessors and deletion behavior",
+    "Native guest applications and their SDK/network behavior",
+    "Payment-page data practices and target-region purchase requirements",
+    "B-side content, moderation, age controls and application/content rights",
+    "Purpose strings do not prove that a corresponding permission is requested or that data is collected",
+    "The host privacy manifest's empty collection array must not be used as proof that the app and its partners collect no data"
+  ],
+  "app_store_privacy_answers_ready_to_publish": false,
+  "detailed_answer_draft": "app-privacy-answer-draft.json",
+  "profile_personalization_rechecked": {
+    "source": "QingqingParityUI.swift:202 member/setInfo",
+    "known_fields": [
+      "nick",
+      "sign",
+      "head_img",
+      "tj_boy",
+      "tj_girl",
+      "tj_other"
+    ],
+    "confirmed_use": "Account profile and selected role-recommendation preferences",
+    "additional_partner_purposes_verified": false
+  },
+  "app_store_draft": {
+    "saved_data_types": [
+      "EMAIL_ADDRESS",
+      "PHOTOS_OR_VIDEOS",
+      "CUSTOMER_SUPPORT",
+      "OTHER_USER_CONTENT",
+      "USER_ID",
+      "DEVICE_ID",
+      "PURCHASE_HISTORY",
+      "PRODUCT_INTERACTION"
+    ],
+    "complete": false,
+    "published": false,
+    "remaining": "Confirm all third-party purposes, identity linkage, tracking, retention and deletion before final policy and disclosure publication."
+  }
+}

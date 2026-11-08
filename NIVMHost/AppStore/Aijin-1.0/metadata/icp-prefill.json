@@ -1,0 +1,28 @@
+{
+  "status": "prefill_only_not_applied",
+  "app_name": "爱锦",
+  "bundle_id": "com.aijin.ai",
+  "platform": "iOS",
+  "version": "1.0.0",
+  "actual_feature_scope": "AI角色聊天、角色创作、互动故事，以及兼容原生应用包的下载、管理与运行。",
+  "icon_source": "../support-site/aijin-logo.png",
+  "organizer_legal_name": null,
+  "responsible_person": null,
+  "identity_documents": null,
+  "owned_real_name_verified_domains": null,
+  "eligible_access_provider_cloud_resources": null,
+  "third_party_service_domain_authorization": null,
+  "signature_fields": "Extract the relevant iOS certificate public key and fingerprint in the format required by the selected filing provider. Confirm the iOS SHA-1 versus MD5 field instructions. No guessed values supplied.",
+  "next_steps": [
+    "确定真实备案主体和负责人",
+    "准备实名主体一致的域名及符合接入商条件的云资源",
+    "在接入服务商控制台选择 App 备案，录入真实功能、应用名称、图标、Bundle ID 与签名信息",
+    "完成负责人真实性核验及工信部短信等核验",
+    "经服务商初审后交省通信管理局审核；获批后在应用及 App Store Connect 填入实际 App 备案号"
+  ],
+  "official_sources": [
+    "https://www.miit.gov.cn/jgsj/xgj/wjfb/art/2023/art_dd783a581c9644a4aee10afa582811db.html",
+    "https://cloud.tencent.com/document/faq/243/97691",
+    "https://cloud.tencent.com/document/product/243/18909"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "status": "published_client_facts_operational_verification_incomplete",
+  "policy_file": "privacy-policy.zh-Hans.txt",
+  "parties_file": "privacy-policy-parties.json",
+  "draft_prepared": true,
+  "formal_policy_published": true,
+  "app_store_privacy_policy_url_set": true,
+  "app_store_privacy_labels_published": false,
+  "publisher_name_verified_from_developer_account": true,
+  "client_facts_documented": [
+    "email verification and optional binding",
+    "automatic per-installation device session",
+    "account and session association",
+    "AI prompts, history, memory and character content",
+    "user-selected image uploads",
+    "orders and account entitlements",
+    "feedback and cancellation request",
+    "Keychain, preferences and local resource caches",
+    "third-party native app package downloads and execution"
+  ],
+  "missing_operational_evidence": [
+    {
+      "topic": "online service identity and applicability",
+      "required": "实际 AI、模型、支付、目录、图片资源及客体软件的运营主体和适用合同。当前接口文档标为 Saylo，未确认适用于爱锦。"
+    },
+    {
+      "topic": "complete purposes and recipients",
+      "required": "各接收方的数据用途、模型训练、人工审核、分析、广告、营销和再次转交安排。"
+    },
+    {
+      "topic": "retention and processing regions",
+      "required": "账号、聊天、创作、订单、反馈、访问日志、备份和第三方副本的期限或确定期限的标准及处理地区。"
+    },
+    {
+      "topic": "deletion and consent withdrawal",
+      "required": "注销的实际删除范围、处理期限、备份例外、撤回处理方式及数据请求责任方。不能以仅存在注销接口代替实际规则。"
+    },
+    {
+      "topic": "tracking and other runtime software",
+      "required": "所有随包或可加载的软件及 SDK 是否开展广告或跨应用关联，以及其数据类型、权限和同等保护安排。"
+    },
+    {
+      "topic": "age and content controls",
+      "required": "覆盖当前完整 A/B 功能的适龄机制、内容审核及真实内容频率。"
+    }
+  ],
+  "publication_gate": "Public page states verified client facts and explicitly identifies unresolved processing rules. Publication and a saved URL do not complete the operational verification, privacy labels, content rights, age rating, or review eligibility.",
+  "official_requirements": "https://developer.apple.com/app-store/review/guidelines/",
+  "internal_draft_file": "privacy-policy.zh-Hans.draft.txt",
+  "published_policy_verified_complete": false,
+  "privacy_policy_url": "https://aijin-support-20261108.well-boot-4687.chatgpt.site/privacy-policy",
+  "public_sections": 11,
+  "user_requested_edit": "Remove the standalone directory/download/third-party-software section and its introductory feature phrase; preserve other processing disclosures."
+}

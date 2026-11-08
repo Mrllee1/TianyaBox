@@ -164,6 +164,31 @@ icon sets, and exported app icon bundle. A successful run ends with
 `APPSTORE_IPA_OK` and prints the final
 IPA path, byte size, and SHA-256.
 
+The verified team is `WFJKWPCH2R`; the current App Store Connect record is
+`6832195363`. Manual distribution builds use `AIJIN_PROFILE_SPECIFIER`,
+`AIJIN_DISTRIBUTION_PROFILE`, and `AIJIN_SIGNING_IDENTITY`. The matching private
+certificate/profile files are kept outside Git in `../.private/apple-distribution`.
+Set `AIJIN_RUNTIME_FRAMEWORKS` to an already verified complete runtime directory
+and `AIJIN_STRIP_RUNTIME=0` to retain that runtime's code. The script stages the
+private AI service configuration before signing and scopes Keychain access to
+the host's own application identifier.
+
+Current full-function submission drafts are in `AppStore/Aijin-1.0`; old mailbox
+materials are archived in `../docs/archive/tempmail-appstore-1.0`. Successful
+technical export does not establish App Review eligibility. The complete AI and
+native application-space build 1.0.0 (2) has been uploaded, processed as VALID,
+and selected in the version draft. Download pricing is free. The version remains
+in Prepare for Submission. The latest user instruction authorizes the assistant
+to submit for review; the actual Add for Review attempt is blocked by missing
+content rights, age-rating answers, and published app privacy responses.
+See `../docs/audits/aijin-appstore-20261108/REPORT.md`.
+
+Build 2 updates only the A-side publisher privacy-policy link via
+`AijinPrivacyPolicyURL`; the service-agreement route stays unchanged. The public
+policy page is saved in App Store Connect. B-side source, service configuration,
+and runtime code/resources match build 1. Third-party privacy details, content
+rights, and the complete age rating still need verification before submission.
+
 The final bundle validation also rejects the non-public `-[NSBundle _cfBundle]`
 selector and requires non-empty Contacts, Speech Recognition, and Calendar
 purpose strings. Guest identity redirection creates its Core Foundation bundle

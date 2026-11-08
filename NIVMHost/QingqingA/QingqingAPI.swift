@@ -39,6 +39,12 @@ final class QingqingAPI {
   }
 
   func documentURL(privacy: Bool) -> URL? {
+    if privacy,
+      let address = Bundle.main.object(forInfoDictionaryKey: "AijinPrivacyPolicyURL") as? String,
+      let policyURL = URL(string: address), policyURL.scheme == "https", policyURL.host != nil {
+      // Publisher policy links are public and must not inherit service credentials.
+      return policyURL
+    }
     guard baseURL.scheme == "https" else { return nil }
     var components = URLComponents(url: baseURL.appendingPathComponent(privacy ? "page/private" : "page/agreement"), resolvingAgainstBaseURL: false)
     components?.queryItems = [URLQueryItem(name: "appid", value: serviceConfiguration["appID"] ?? "1")]

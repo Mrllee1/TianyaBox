@@ -1,0 +1,28 @@
+const {chromium}=require('/Users/king/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs=require('node:fs/promises');const path=require('node:path');
+(async()=>{
+ const root=__dirname,base=process.argv[2];if(!base)throw Error('Preview URL required');
+ const out=path.join(root,'qa');await fs.mkdir(out,{recursive:true});
+ const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+ const page=await browser.newPage({viewport:{width:1440,height:1500},deviceScaleFactor:1});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(base,{waitUntil:'networkidle'});
+ await page.locator('.qmdp-frame').waitFor();await page.evaluate(()=>document.fonts.ready);
+ await page.locator('.stage img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));
+ const before={cards:await page.locator('[data-design-option]').count(),chooseButtons:await page.locator('.direction .qmdp-pick-button').count(),desktopOverflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)};
+ await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
+ await page.locator('[data-expand="A"]').click();await page.locator('.viewer-strip img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));
+ await page.screenshot({path:path.join(out,'a-series.png')});
+ before.expandedFrames=await page.locator('.viewer-strip img').count();await page.keyboard.press('Escape');
+ await page.locator('.direction').nth(1).locator('.qmdp-pick-button').click();await page.locator('.qmdp-confirm.open').waitFor();
+ before.confirmDoesNotWrite=!(await fs.stat(path.join(root,'selection.json')).catch(()=>null));
+ await page.screenshot({path:path.join(out,'confirmation.png')});await page.keyboard.press('Escape');
+ await page.setViewportSize({width:390,height:844});await page.reload({waitUntil:'networkidle'});
+ before.mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+ before.mobileChooseButtons=await page.locator('.direction .qmdp-pick-button').count();
+ await page.screenshot({path:path.join(out,'mobile.png'),fullPage:true});
+ const dials=await page.locator('input[type=range]').count();before.dials=dials;
+ before.runtimeErrors=errors;
+ await fs.writeFile(path.join(out,'checks.json'),JSON.stringify(before,null,2));
+ if(before.cards!==4||before.chooseButtons!==4||before.mobileChooseButtons!==4||before.expandedFrames!==5||before.desktopOverflow||before.mobileOverflow||errors.length)throw Error('Preview QA failed: '+JSON.stringify(before));
+ console.log(JSON.stringify(before));await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

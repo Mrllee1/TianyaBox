@@ -1,0 +1,10 @@
+{
+  "app_name": "爱锦",
+  "app_bundle_id": "com.aijin.ai",
+  "app_publisher_name_from_developer_account": "Viet Hung Dinh",
+  "public_support_email": "linsen115599@gmail.com",
+  "public_contact_email_authorized_by_user": true,
+  "online_AI_operator_legal_entity_confirmed": false,
+  "third_party_data_processing_agreement_confirmed": false,
+  "privacy_policy_status": "draft_pending_operational_verification"
+}

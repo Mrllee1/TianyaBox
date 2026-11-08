@@ -1,0 +1,56 @@
+{
+  "capture_method": "Native iOS simulator rendering using unchanged QingqingA product Swift sources and live service data; fixture launch modes were not used. iPad capture wrapper display name matches product.",
+  "product_build_uploaded_this_turn": false,
+  "device_ui_automation_result": "Physical UI runner timed out enabling automation; screenshots use simulator frontend entry point, not the distribution IPA or a claim of guest runtime acceptance.",
+  "screenshot_editing": "None",
+  "screenshots": [
+    {
+      "file": "screenshots/iphone/01-group.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "a2c4098faa7123d1a950980f61008be38caa19377c75c9e4dfefe1e0697282f0"
+    },
+    {
+      "file": "screenshots/iphone/02-simulator.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "040e52c8fa5cb8d0f691e01ed1384ef367df5d2bfd9c6e2ea0433d7de03888ab"
+    },
+    {
+      "file": "screenshots/iphone/03-theater.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "3bb9fa7b28b52295dd127b3c44d5f7469c0b79ce82c81fa52c83a1e96db88ef9"
+    },
+    {
+      "file": "screenshots/iphone/04-creator.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "6fcc600118e2f18cd7424151685cd3550166727600313ec960ff7e40eb2c6bcb"
+    },
+    {
+      "file": "screenshots/ipad/01-group.png",
+      "width": 2064,
+      "height": 2752,
+      "sha256": "636959e19779421c88bf0e76a20ba3adbf842bc1ef09ea9b05c6c01e7b2fb7bd"
+    },
+    {
+      "file": "screenshots/ipad/02-simulator.png",
+      "width": 2064,
+      "height": 2752,
+      "sha256": "3dc3c112a1543a0f92bc7e9e3b42d612840dfc241ef8bf8d45cfee8f8a635ef7"
+    },
+    {
+      "file": "screenshots/ipad/03-theater.png",
+      "width": 2064,
+      "height": 2752,
+      "sha256": "0524a2d1f857baa76d709c6a3c8a0ba7aa6ea86bddd7b09a12206eb55b530e88"
+    },
+    {
+      "file": "screenshots/ipad/04-creator.png",
+      "width": 2064,
+      "height": 2752,
+      "sha256": "b5f4e6e1e4c3116d222364c8e050bc3d5a6f7fb34826abd187d03503209aa9c4"
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "framework_count": 63,
+  "privacy_manifest_count": 31,
+  "privacy_manifest_inventory": [
+    {
+      "path": "Alamofire.framework/Alamofire.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategorySystemBootTime"
+      ]
+    },
+    {
+      "path": "CryptoSwift.framework/CryptoSwift.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "DeviceKit.framework/DeviceKit.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryDiskSpace"
+      ]
+    },
+    {
+      "path": "Flutter.framework/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryFileTimestamp",
+        "NSPrivacyAccessedAPICategorySystemBootTime"
+      ]
+    },
+    {
+      "path": "JXPagingView.framework/JXPagingView.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "JXSegmentedView.framework/JXSegmentedView.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "Kingfisher.framework/Kingfisher.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryFileTimestamp"
+      ]
+    },
+    {
+      "path": "MJExtension.framework/MJExtension.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "MJRefresh.framework/MJRefresh.Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryUserDefaults"
+      ]
+    },
+    {
+      "path": "PINCache.framework/PINCache.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryFileTimestamp"
+      ]
+    },
+    {
+      "path": "PINOperation.framework/PINOperation.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "QRCode.framework/DSF_QRCode.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "Reachability.framework/ReachabilitySwift.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "RxCocoa.framework/RxCocoa_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "RxRelay.framework/RxRelay_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "RxSwift.framework/RxSwift_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "SDWebImage.framework/SDWebImage.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryFileTimestamp"
+      ]
+    },
+    {
+      "path": "Sentry.framework/Sentry.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [
+        "NSPrivacyCollectedDataTypeCrashData",
+        "NSPrivacyCollectedDataTypePerformanceData",
+        "NSPrivacyCollectedDataTypeOtherDiagnosticData"
+      ],
+      "tracking_declared": null,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryUserDefaults",
+        "NSPrivacyAccessedAPICategorySystemBootTime",
+        "NSPrivacyAccessedAPICategoryFileTimestamp"
+      ]
+    },
+    {
+      "path": "SnapKit.framework/SnapKit_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "SwiftImageReadWrite.framework/SwiftImageReadWrite.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "SwifterSwift.framework/SwifterSwift_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": null,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryUserDefaults"
+      ]
+    },
+    {
+      "path": "SwiftyBeaver.framework/SwiftyBeaver.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [
+        "NSPrivacyCollectedDataTypeOtherDiagnosticData"
+      ],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "SwiftyJSON.framework/SwiftyJSON.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "Toast_Swift.framework/Toast-Swift.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "ZIPFoundation.framework/ZIPFoundation_Privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryFileTimestamp"
+      ]
+    },
+    {
+      "path": "connectivity_plus.framework/connectivity_plus_privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "device_info_plus.framework/device_info_plus_privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "flutter_secure_storage.framework/flutter_secure_storage.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "package_info_plus.framework/package_info_plus_privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "path_provider_foundation.framework/path_provider_foundation_privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": []
+    },
+    {
+      "path": "shared_preferences_foundation.framework/shared_preferences_foundation_privacy.bundle/PrivacyInfo.xcprivacy",
+      "declared_data_types": [],
+      "tracking_declared": false,
+      "required_api_categories": [
+        "NSPrivacyAccessedAPICategoryUserDefaults"
+      ]
+    }
+  ],
+  "third_party_server_practices_verified": false,
+  "compliance_pass": false
+}

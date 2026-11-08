@@ -1,0 +1,73 @@
+{
+  "ready_for_submission": false,
+  "app_id": "6832195363",
+  "bundle_id": "com.aijin.ai",
+  "version": "1.0.0",
+  "build": "2",
+  "final_submission_by": "assistant_authorized_by_user",
+  "submitted": false,
+  "completed_this_turn": {
+    "china_mainland_excluded": true,
+    "hong_kong_macau_taiwan_preserved": true,
+    "available_territory_count": 147,
+    "unavailable_territory_count": 28,
+    "privacy_choices_url_saved": "https://aijin-support-20261108.well-boot-4687.chatgpt.site/privacy"
+  },
+  "outstanding": [
+    {
+      "field": "contentRightsDeclaration",
+      "status": "left_unanswered_at_user_request_still_mandatory",
+      "current_value": null,
+      "observed_ui": "Yes, it contains, shows, or accesses third-party content, and I have the necessary rights",
+      "required_information": "第三方 AI 服务、素材及目录应用的许可或其他合法使用依据。"
+    },
+    {
+      "field": "privacyPolicyUrl_and_app_privacy",
+      "status": "URL_saved_third_party_processing_and_labels_pending",
+      "current_policy_url": "https://aijin-support-20261108.well-boot-4687.chatgpt.site/privacy-policy",
+      "saved_known_data_type_count": 8,
+      "required_information": "政策页面与后台网址已更新；仍须核实各接收方主体、用途、训练、追踪、保存与删除安排，再完成真实隐私标签。",
+      "draft_file": "privacy-policy.zh-Hans.draft.txt",
+      "review_file": "privacy-policy-review.json",
+      "policy_file": "privacy-policy.zh-Hans.txt"
+    },
+    {
+      "field": "age_rating",
+      "status": "full_scope_content_review_required",
+      "saved_rating": null,
+      "required_information": "覆盖 AI 内容、用户生成内容、成人目录入口和客体应用的实际内容及频率，不能把未知项默认填为 None。"
+    },
+    {
+      "field": "full_build_review_eligibility",
+      "status": "unresolved",
+      "observed_behaviors": [
+        "下载并在内置原生环境运行兼容应用包",
+        "目录含成人应用入口",
+        "会员与钻石使用外部付款页面"
+      ],
+      "required_information": "核验完整功能与当前发行地区规则的适用性；排除国家和完善材料不等于这些功能问题已解决。"
+    }
+  ],
+  "no_longer_a_territory_blocker": {
+    "china_mainland_app_store_icp": "中国大陆按用户指示排除；未办理或编造 App ICP 备案号。",
+    "french_encryption_approval": "法国属于已排除的欧盟地区，问卷按不在法国发行保存。"
+  },
+  "official_reference": "https://developer.apple.com/app-store/review/guidelines/",
+  "copyright_completed": {
+    "owner_name_source": "user-authorized Apple developer account name",
+    "server_readback_verified": true,
+    "year": 2026
+  },
+  "privacy_policy_draft_prepared": true,
+  "privacy_policy_draft_file": "privacy-policy.zh-Hans.draft.txt",
+  "privacy_policy_review_file": "privacy-policy-review.json",
+  "privacy_policy_page_published": true,
+  "privacy_policy_url_saved": true,
+  "privacy_policy_url": "https://aijin-support-20261108.well-boot-4687.chatgpt.site/privacy-policy",
+  "privacy_policy_verified_complete": false,
+  "user_authorized_final_submission": true,
+  "latest_submission_attempt": "blocked_by_required_metadata",
+  "last_submission_attempt_at": "2026-11-08T14:50:24.338990+00:00",
+  "content_rights_skip_requested": true,
+  "app_privacy_draft_data_type_count": 8
+}

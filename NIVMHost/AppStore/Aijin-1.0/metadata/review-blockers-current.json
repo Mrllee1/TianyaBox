@@ -1,0 +1,52 @@
+{
+  "app_id": "6832195363",
+  "build": "2",
+  "version_state": "PREPARE_FOR_SUBMISSION",
+  "review_submitted": false,
+  "ready_for_submission": false,
+  "B_side_implementation_changed": false,
+  "user_boundary": "Keep the complete A/B build and do not change B-side. The latest user instruction authorizes the assistant to perform final App Review submission.",
+  "content_rights": {
+    "backend_declaration": null,
+    "actual_yes_option_attests_necessary_rights": true,
+    "A_side_also_accesses_third_party_content": true,
+    "A_side_authorization_verified": false,
+    "public_agreement_url": "https://tofai.yyapp123.com/page/agreement",
+    "public_agreement_title": "Saylo Terms of Service",
+    "observations": [
+      "Section 9 grants limited end-user use and restricts use outside the intended service scope.",
+      "Section 12.8 requires Saylo approval for commercial uses and restricts sublicensing.",
+      "Applicability to Aijin and a separate API/material redistribution authorization remain unverified. These public terms were not treated as an Aijin authorization."
+    ],
+    "user_requested_skip": true
+  },
+  "age_rating": {
+    "complete": false,
+    "known_A_side_positive_answers": {
+      "userGeneratedContent": true,
+      "socialMedia": true
+    },
+    "native_wizard_requires_more_answers_to_continue": true,
+    "partial_public_API_update_attempt": "403; no age answers changed",
+    "full_package_content_frequency_and_capabilities_verified": false,
+    "graphic_sexual_content_rule": "If present, Apple's current rating table assigns Unrated, which cannot be published on the App Store. This is conditional, not a saved app rating.",
+    "reference": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/"
+  },
+  "app_privacy": {
+    "saved_category_count": 8,
+    "detailed_A_side_answer_draft": "app-privacy-answer-draft.json",
+    "known_minimum_purposes_and_linkage_prepared": true,
+    "all_partner_purposes_verified": false,
+    "partner_tracking_verified": false,
+    "public_privacy_document_title": "Saylo Privacy Policy",
+    "public_privacy_document_applicability_to_Aijin_verified": false,
+    "published": false,
+    "backend_setup_dialog_cancelled_at_required_tracking_answer": true,
+    "reference": "https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy",
+    "product_interaction_category_saved": true
+  },
+  "no_unknowns_defaulted_to_none_or_no": true,
+  "policy_and_build2_preserved": true,
+  "user_authorized_final_submission": true,
+  "latest_submission_attempt": "blocked_by_required_metadata"
+}

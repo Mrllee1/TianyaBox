@@ -1,0 +1,153 @@
+{
+  "status": "eight_known_data_categories_saved_partner_answers_incomplete",
+  "app_id": "6832195363",
+  "build": "2",
+  "client_scope": "A-side Swift sources; submitted build also retains B-side",
+  "saved_backend_data_type_count": 8,
+  "setup_completed": false,
+  "published": false,
+  "rows": [
+    {
+      "data_type": "EMAIL_ADDRESS",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingAccount.swift:76 mail/login",
+        "QingqingA/QingqingStore.swift:118 member/info"
+      ]
+    },
+    {
+      "data_type": "PHOTOS_OR_VIDEOS",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingParityUI.swift:199 feedback/upload",
+        "QingqingA/QingqingParityUI.swift:202 member/setInfo",
+        "QingqingA/QingqingAccount.swift:381 member/memberRoleSave"
+      ]
+    },
+    {
+      "data_type": "CUSTOMER_SUPPORT",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingParityUI.swift:291 feedback/create",
+        "QingqingA/QingqingAPI.swift authenticated request identity"
+      ]
+    },
+    {
+      "data_type": "OTHER_USER_CONTENT",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY",
+        "PRODUCT_PERSONALIZATION"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingConversation.swift:99 ai/chatList",
+        "QingqingA/QingqingAccount.swift:381 member/memberRoleSave",
+        "QingqingA/QingqingParityUI.swift:202 profile text and selected role-recommendation preferences"
+      ],
+      "note": "The selected role preferences describe content preferences; they are not evidence of the user's sexual orientation. Other messages or game-content categories require a full-scope inventory."
+    },
+    {
+      "data_type": "USER_ID",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingAPI.swift:70 device/login",
+        "QingqingA/QingqingStore.swift:118 member/info"
+      ]
+    },
+    {
+      "data_type": "DEVICE_ID",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingAPI.swift:94 generated installation identifier",
+        "QingqingA/QingqingAPI.swift:95 device_id/os_sdid request headers"
+      ],
+      "note": "Per-installation identifier; not asserted to be IDFA or a hardware identifier."
+    },
+    {
+      "data_type": "PURCHASE_HISTORY",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingFeatures.swift:442 order/create",
+        "QingqingA/QingqingFeatures.swift:459 order/status"
+      ],
+      "note": "Existing order/entitlement processing; no real paid order was created for this check. Payment-provider collection still needs verification."
+    },
+    {
+      "data_type": "PRODUCT_INTERACTION",
+      "known_minimum_purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "identity_linked": true,
+      "tracking": null,
+      "additional_partner_purposes": null,
+      "evidence": [
+        "QingqingA/QingqingConversation.swift:44 authenticated role detail returns stored follow state",
+        "QingqingA/QingqingConversation.swift:50 member/roleFollow persists role_id/status"
+      ],
+      "backend_category_saved": true,
+      "note": "Role-follow state is retained and account-associated; no test follow or real user action was submitted for this metadata check."
+    }
+  ],
+  "actual_ui_gate": {
+    "email_functionality_and_linkage_examined": true,
+    "required_tracking_question": "Do you or your third-party partners use email addresses for tracking purposes?",
+    "available_answers": [
+      true,
+      false
+    ],
+    "unknown_option_available": false,
+    "save_enabled_without_tracking_answer": false,
+    "incomplete_dialog_cancelled": true,
+    "backend_answers_changed": false
+  },
+  "negative_findings_are_not_global_claims": [
+    "No ATT, IDFA, Declared Age Range or Family Controls integration was found by the targeted host/A-side source search.",
+    "Absence of those APIs does not verify partner-side tracking, retention, model training or the behavior of downloaded native applications."
+  ],
+  "full_build_practices_verified": false,
+  "source_root": "NIVMHost",
+  "official_reference": "https://developer.apple.com/app-store/app-privacy-details/",
+  "provider_public_policy_observations": {
+    "file": "PROVIDER-PRIVACY-CURRENT.txt",
+    "sections": [
+      "3.3.2",
+      "4.4",
+      "9.2"
+    ],
+    "described_practices": "Combines partner identifiers and email with retained personal data for targeted ads and ad measurement.",
+    "actual_scope_for_this_integration_fully_verified": false,
+    "not_used_as_proof_of_no_tracking": true
+  }
+}

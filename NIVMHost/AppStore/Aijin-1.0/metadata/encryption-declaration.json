@@ -1,0 +1,11 @@
+{
+  "questionnaire_saved": true,
+  "proprietary_encryption_declared": false,
+  "standard_encryption_beyond_OS_selected": true,
+  "available_in_france": false,
+  "build_usesNonExemptEncryption": false,
+  "build_id": "e94b36f6-f6c7-4efa-ac5b-20a156628fdf",
+  "note": "False is the saved build export-compliance flag after the standard-encryption and no-France questionnaire. It is not a statement that the bundle has no cryptographic code. No government approval document was invented or uploaded.",
+  "build": "2",
+  "usesNonExemptEncryption": false
+}

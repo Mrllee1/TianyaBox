@@ -1,0 +1,69 @@
+{
+  "scope": "full_AI_and_native_application_runtime",
+  "status": "evidence_prepared_questionnaire_not_submitted",
+  "app_store_questionnaire_complete": false,
+  "confirmed_observations": [
+    {
+      "feature": "user_generated_content",
+      "present": true,
+      "source": "QingqingAccount.swift QQCreatorView and member/memberRoleSave; QingqingStore.swift home/getRole",
+      "note": "The client can submit character content and choose whether it is public."
+    },
+    {
+      "feature": "AI_chat_and_interactive_story_content",
+      "present": true,
+      "source": "QingqingConversation.swift, QingqingScenes.swift and observed live screenshots",
+      "note": "AI chat must not automatically be equated with direct human-to-human messaging in the questionnaire."
+    },
+    {
+      "feature": "mature_or_suggestive_content",
+      "observed": true,
+      "source": "2026-11-08 live role and group screenshots, including mature content labels",
+      "formal_frequency_answer": null
+    },
+    {
+      "feature": "adult_app_directory_entries",
+      "present": true,
+      "source": "Existing verified five-entry catalog and complete-function review notes",
+      "note": "The B-side was retained. The rating must cover its actual contents and capabilities; this is not an AI-only app."
+    },
+    {
+      "feature": "download_and_execution_of_third_party_native_packages",
+      "present": true,
+      "source": "AijinLauncherViewController.swift and GuestRuntimeCoordinator.swift",
+      "note": "Unchanged runtime behavior remains a separate App Review eligibility issue, not a rating questionnaire fix."
+    }
+  ],
+  "still_to_verify": [
+    "Actual content frequencies across AI content and guest applications, including graphic sexual content, violence and chance-based activities",
+    "Controls and moderation applied by the real online services",
+    "Age assurance and parental controls across the complete functional scope",
+    "Whether guest applications provide human messaging, ads, open web browsing or other questionnaire capabilities"
+  ],
+  "unknown_answers_defaulted_to_none": false,
+  "live_questionnaire_rechecked": true,
+  "required_feature_question_count": 8,
+  "confirmed_A_side_answer_evidence": {
+    "userGeneratedContent": {
+      "value": true,
+      "source": "QingqingAccount.swift:290-291 and :381: users may publish roles publicly; QingqingStore.swift:101 reads discovery roles."
+    },
+    "socialMedia": {
+      "value": true,
+      "source": "Public user-created roles are distributed through discovery and author pages and can be followed. This matches the current questionnaire's broad social-discovery definition."
+    },
+    "messagingAndChat": {
+      "value": null,
+      "note": "The live questionnaire defines communication between users. AI/multiple-character chat is not by itself proof of human-to-human messaging; the full package also requires guest-app review."
+    }
+  },
+  "official_unrated_conditions": {
+    "graphicSexualContentAndNudity": "Infrequent or Frequent yields Unrated; Unrated cannot be published on the App Store. This is conditional guidance, not a saved rating or an assertion that all catalog entries have been inspected.",
+    "reference": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/"
+  },
+  "partial_setup_saved": false,
+  "incomplete_dialog_cancelled": true,
+  "age_rating_claimed": null,
+  "B_side_changed": false,
+  "final_submission_by": "assistant_authorized_by_user"
+}

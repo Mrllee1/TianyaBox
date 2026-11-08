@@ -1,0 +1,11 @@
+{
+  "cards": 4,
+  "chooseButtons": 4,
+  "desktopOverflow": false,
+  "expandedFrames": 5,
+  "confirmDoesNotWrite": true,
+  "mobileOverflow": false,
+  "mobileChooseButtons": 4,
+  "dials": 3,
+  "runtimeErrors": []
+}

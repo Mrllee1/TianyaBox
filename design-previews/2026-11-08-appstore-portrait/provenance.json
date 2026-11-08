@@ -1,0 +1,39 @@
+{
+  "purpose": "Portrait App Store marketing direction preview; not submitted.",
+  "layout": "HTML and CSS framing of unmodified native UI captures; no generated app UI or fixture screens.",
+  "limitation": "Historical scene and cast captures are preview references; final device-size exports require current matching-device captures.",
+  "product_changes": false,
+  "b_side_changes": false,
+  "assets": [
+    {
+      "asset": "assets/library.png",
+      "source": "NIVMHost/Build/QA/aijin-appstore-20261108/upload/store-screenshots/iphone/library.png",
+      "sha256": "0ae8c49b817a1dfcf1fc6a825d2494b14e9aa227cd14a0ea46ef36f45e09b3a0"
+    },
+    {
+      "asset": "assets/scene.png",
+      "source": "NIVMHost/Build/QA/qingqing-parity/ios-simulator-detail.png",
+      "sha256": "e9791ab122cabd87506511a1fd6624148c03ef00434dd57378478347dc101ff6"
+    },
+    {
+      "asset": "assets/theater.png",
+      "source": "NIVMHost/AppStore/Aijin-1.0/screenshots/iphone/03-theater.png",
+      "sha256": "3bb9fa7b28b52295dd127b3c44d5f7469c0b79ce82c81fa52c83a1e96db88ef9"
+    },
+    {
+      "asset": "assets/cast.png",
+      "source": "NIVMHost/Build/QA/qingqing-parity/ios-simulator-cast.png",
+      "sha256": "f678ec42c81f2cb8ab5fc29741e0bf5dde754a6cc3e50f36ad18d09b3f7d5e23"
+    },
+    {
+      "asset": "assets/creator.png",
+      "source": "NIVMHost/AppStore/Aijin-1.0/screenshots/iphone/04-creator.png",
+      "sha256": "6fcc600118e2f18cd7424151685cd3550166727600313ec960ff7e40eb2c6bcb"
+    },
+    {
+      "asset": "assets/icon.png",
+      "source": "NIVMHost/Runner/Assets.xcassets/AijinAppIcon.appiconset/Aijin-AppIcon-1024x1024@1x.png",
+      "sha256": "51db1c2c720191ba1abf48d0d1c9b56f5e45544c931cbd16a010c48b52e6a682"
+    }
+  ]
+}

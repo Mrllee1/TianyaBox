@@ -1,0 +1,152 @@
+{
+  "checked_at": "2026-11-08T17:57:51.501398+00:00",
+  "app_id": "6832195363",
+  "version": "1.0.0",
+  "build": "2",
+  "design": "A 石墨暖光",
+  "state": "WAITING_FOR_REVIEW",
+  "submission_id": "42037589-f53d-492b-b9fc-4a17bb995551",
+  "submitted_at": "2026-11-08T17:56:26.213Z",
+  "submitted_at_kuala_lumpur": "2026-11-09T01:56:26.213000+08:00",
+  "iphone_screenshots": 5,
+  "ipad_screenshots": 5,
+  "all_assets_complete_ordered_checksums_match": true,
+  "old_screenshot_placements_removed": 8,
+  "header_and_search_creative_overrides_empty": true,
+  "original_build_metadata_and_b_side_unchanged": true,
+  "native_preview_verified": [
+    "iPhone product page",
+    "iPhone search results; first three portrait images"
+  ],
+  "ipad_preview_verified": "Native matching-device UI captures, layout visual inspection, Media Manager gallery, dimensions and source checksum confirmed. App Store device-switch control did not expose a selectable iPad option during automation; no iPad product-page preview claim.",
+  "review_url": "https://appstoreconnect.apple.com/apps/6832195363/distribution/reviewsubmissions/details/42037589-f53d-492b-b9fc-4a17bb995551",
+  "final_preview": "http://127.0.0.1:51852/",
+  "pre_submit": {
+    "checked_at": "2026-11-08T17:54:13.378603+00:00",
+    "version_state": "DEVELOPER_REJECTED",
+    "selected_build_id": "e94b36f6-f6c7-4efa-ac5b-20a156628fdf",
+    "build_unchanged": true,
+    "localization_unchanged": true,
+    "review_information_unchanged": true,
+    "copyright_unchanged": true,
+    "release_type_unchanged": true,
+    "b_source_files_checked": 18,
+    "b_source_unchanged": true,
+    "screenshot_count": 10,
+    "screenshots_complete_ordered_and_checksums_match": true,
+    "design": "A 石墨暖光",
+    "user_authorized_resubmission": true
+  },
+  "screenshots": [
+    {
+      "device": "iphone",
+      "order": 1,
+      "id": "ae4d8ff0-7b18-4371-aafb-c5a489bf0672",
+      "file": "aijin-01-character-iphone-1206x2622.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "iphone",
+      "order": 2,
+      "id": "561ca601-a35d-4a6a-9580-c3f7eee1f8d5",
+      "file": "aijin-02-simulator-iphone-1206x2622.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "iphone",
+      "order": 3,
+      "id": "b1cbe1dc-3d48-4527-a60d-9108854cda14",
+      "file": "aijin-03-theater-iphone-1206x2622.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "iphone",
+      "order": 4,
+      "id": "2a7aea61-4864-44b2-b681-6dbdfd95792f",
+      "file": "aijin-04-identity-iphone-1206x2622.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "iphone",
+      "order": 5,
+      "id": "1f8bbb77-02b0-4224-b330-207a807fd984",
+      "file": "aijin-05-creator-iphone-1206x2622.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "ipad",
+      "order": 1,
+      "id": "f4dd936c-23a5-402d-a93a-6933c64bc5bf",
+      "file": "aijin-01-character-ipad-2064x2752.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "ipad",
+      "order": 2,
+      "id": "81c614d4-fa5e-4605-94be-aedabfb97e41",
+      "file": "aijin-02-simulator-ipad-2064x2752.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "ipad",
+      "order": 3,
+      "id": "e4b8be7c-6026-4dba-9208-fad88363461f",
+      "file": "aijin-03-theater-ipad-2064x2752.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "ipad",
+      "order": 4,
+      "id": "85724965-5c30-4a70-9914-ba3eaa67764b",
+      "file": "aijin-04-identity-ipad-2064x2752.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    },
+    {
+      "device": "ipad",
+      "order": 5,
+      "id": "c9c3efbc-e362-49eb-b4f3-e26886d4e0d2",
+      "file": "aijin-05-creator-ipad-2064x2752.png",
+      "delivery": "COMPLETE",
+      "correct_order": true,
+      "file_size_matches": true,
+      "dimensions_match": true,
+      "checksum_matches": true
+    }
+  ]
+}

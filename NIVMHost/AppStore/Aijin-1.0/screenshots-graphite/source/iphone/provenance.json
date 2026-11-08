@@ -1,0 +1,35 @@
+{
+  "device": "iphone",
+  "simulator_id": "880A279F-F0FE-486C-8BD3-CCD2CC9B1444",
+  "captured_at": "2026-11-08T17:48:48.589396+00:00",
+  "method": "Native product SwiftUI views, already installed simulator QA wrapper, live service data, no fixture modes or authored chat messages. Simulator status-bar override only.",
+  "distribution_binary_executed": false,
+  "product_changes": false,
+  "captures": [
+    {
+      "file": "source/iphone/01-character.png",
+      "mode": "library",
+      "sha256": "0ae8c49b817a1dfcf1fc6a825d2494b14e9aa227cd14a0ea46ef36f45e09b3a0"
+    },
+    {
+      "file": "source/iphone/02-simulator.png",
+      "mode": "simulator-detail",
+      "sha256": "a91ffd9da7d655768ea5dc0dc905d32fc34afcfde27bd898a62b75b8e1e0e3ec"
+    },
+    {
+      "file": "source/iphone/03-theater.png",
+      "mode": "theater",
+      "sha256": "3bb9fa7b28b52295dd127b3c44d5f7469c0b79ce82c81fa52c83a1e96db88ef9"
+    },
+    {
+      "file": "source/iphone/04-identity.png",
+      "mode": "simulator-cast",
+      "sha256": "1f1cee87dd702faacbbaff840ab20d86f109a15da58aad73600724cce3b1f617"
+    },
+    {
+      "file": "source/iphone/05-creator.png",
+      "mode": "creator",
+      "sha256": "6fcc600118e2f18cd7424151685cd3550166727600313ec960ff7e40eb2c6bcb"
+    }
+  ]
+}

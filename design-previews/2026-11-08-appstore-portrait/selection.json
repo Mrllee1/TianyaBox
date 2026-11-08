@@ -1,0 +1,14 @@
+{
+  "id": "A",
+  "name": "石墨暖光",
+  "label": "选 A：石墨暖光",
+  "source": "explicit user reply in chat",
+  "user_answer": "A 石墨暖光（推荐）",
+  "dials": {
+    "variance": 6,
+    "motion": 1,
+    "density": 4
+  },
+  "adjustments": "",
+  "receivedAt": "2026-11-08T17:46:36.259300+00:00"
+}

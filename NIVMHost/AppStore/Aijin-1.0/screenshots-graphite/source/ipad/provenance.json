@@ -1,0 +1,35 @@
+{
+  "device": "ipad",
+  "simulator_id": "F55BAB2F-7EC1-4BF6-893C-028C9ADDD6ED",
+  "captured_at": "2026-11-08T17:48:53.576920+00:00",
+  "method": "Native product SwiftUI views, already installed simulator QA wrapper, live service data, no fixture modes or authored chat messages. Simulator status-bar override only.",
+  "distribution_binary_executed": false,
+  "product_changes": false,
+  "captures": [
+    {
+      "file": "source/ipad/01-character.png",
+      "mode": "library",
+      "sha256": "48092078014662ca6276e0dd5b911f3de46c0bf2539b18f8e7ed4de042b4492a"
+    },
+    {
+      "file": "source/ipad/02-simulator.png",
+      "mode": "simulator-detail",
+      "sha256": "06d862136f301257ed3ebc9510cd9c8ba43baf040d1132d3080572d6a1fe517e"
+    },
+    {
+      "file": "source/ipad/03-theater.png",
+      "mode": "theater",
+      "sha256": "7483e368cc80b8e91a7256f21778c2110e74bddbaf6399d4cdcb87f2759ae04e"
+    },
+    {
+      "file": "source/ipad/04-identity.png",
+      "mode": "simulator-cast",
+      "sha256": "5283bb9b9e81747672f581b420007e0567200b0e8ce280afef0ffb6fd6b41eec"
+    },
+    {
+      "file": "source/ipad/05-creator.png",
+      "mode": "creator",
+      "sha256": "eef69fca38742aa3b79ded4eac3f4c21edb3639317956589c0690d9006067765"
+    }
+  ]
+}

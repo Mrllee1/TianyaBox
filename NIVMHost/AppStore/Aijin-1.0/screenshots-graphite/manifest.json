@@ -1,0 +1,202 @@
+{
+  "design": "A 石墨暖光",
+  "userSelection": "Explicit chat answer",
+  "exportedAt": "2026-11-08T17:49:21.464Z",
+  "appVersion": "1.0.0",
+  "build": "2",
+  "productChanged": false,
+  "bSideChanged": false,
+  "renderer": "HTML/CSS composition using native matching-device UI captures",
+  "screenshots": [
+    {
+      "order": 1,
+      "device": "iphone",
+      "file": "iphone/aijin-01-character-iphone-1206x2622.png",
+      "width": 1206,
+      "height": 2622,
+      "colorType": "opaque RGB",
+      "bytes": 1751368,
+      "sha256": "ac1f06b8c8250e77f11fc0500398ff4122e4acd2a918e0b63b749044b29a04f3",
+      "source": "source/iphone/01-character.png",
+      "sourceSha256": "0ae8c49b817a1dfcf1fc6a825d2494b14e9aa227cd14a0ea46ef36f45e09b3a0",
+      "title": "相遇角色，\n从一句话开始",
+      "copyBox": {
+        "x": 92,
+        "y": 235,
+        "width": 1034,
+        "height": 378.625
+      }
+    },
+    {
+      "order": 2,
+      "device": "iphone",
+      "file": "iphone/aijin-02-simulator-iphone-1206x2622.png",
+      "width": 1206,
+      "height": 2622,
+      "colorType": "opaque RGB",
+      "bytes": 2197051,
+      "sha256": "ac1459e67d245fb386a4e2953e9c6c9eab5a74581a1f5922c900d894076e8a78",
+      "source": "source/iphone/02-simulator.png",
+      "sourceSha256": "a91ffd9da7d655768ea5dc0dc905d32fc34afcfde27bd898a62b75b8e1e0e3ec",
+      "title": "换个身份，\n故事由你推进",
+      "copyBox": {
+        "x": 92,
+        "y": 235,
+        "width": 1034,
+        "height": 378.625
+      }
+    },
+    {
+      "order": 3,
+      "device": "iphone",
+      "file": "iphone/aijin-03-theater-iphone-1206x2622.png",
+      "width": 1206,
+      "height": 2622,
+      "colorType": "opaque RGB",
+      "bytes": 2177334,
+      "sha256": "d49b235f0bc315616f99ad0da1b02603fac07c40021e836363c405f10c26f918",
+      "source": "source/iphone/03-theater.png",
+      "sourceSha256": "3bb9fa7b28b52295dd127b3c44d5f7469c0b79ce82c81fa52c83a1e96db88ef9",
+      "title": "走进剧场，\n让剧情继续",
+      "copyBox": {
+        "x": 92,
+        "y": 235,
+        "width": 1034,
+        "height": 378.625
+      }
+    },
+    {
+      "order": 4,
+      "device": "iphone",
+      "file": "iphone/aijin-04-identity-iphone-1206x2622.png",
+      "width": 1206,
+      "height": 2622,
+      "colorType": "opaque RGB",
+      "bytes": 942805,
+      "sha256": "fd13cf8623aa2677044ea09b6b4cb672de1333b096e78da3c49b1581a35d25fc",
+      "source": "source/iphone/04-identity.png",
+      "sourceSha256": "1f1cee87dd702faacbbaff840ab20d86f109a15da58aad73600724cce3b1f617",
+      "title": "选择角色，\n进入你的世界",
+      "copyBox": {
+        "x": 92,
+        "y": 235,
+        "width": 1034,
+        "height": 378.625
+      }
+    },
+    {
+      "order": 5,
+      "device": "iphone",
+      "file": "iphone/aijin-05-creator-iphone-1206x2622.png",
+      "width": 1206,
+      "height": 2622,
+      "colorType": "opaque RGB",
+      "bytes": 450466,
+      "sha256": "97794cad8664dc143765ab82d4a8b118a6f25d8fe167bb2c6680c9c50e7e2613",
+      "source": "source/iphone/05-creator.png",
+      "sourceSha256": "6fcc600118e2f18cd7424151685cd3550166727600313ec960ff7e40eb2c6bcb",
+      "title": "写下设定，\n创造你的角色",
+      "copyBox": {
+        "x": 92,
+        "y": 235,
+        "width": 1034,
+        "height": 378.625
+      }
+    },
+    {
+      "order": 1,
+      "device": "ipad",
+      "file": "ipad/aijin-01-character-ipad-2064x2752.png",
+      "width": 2064,
+      "height": 2752,
+      "colorType": "opaque RGB",
+      "bytes": 3002641,
+      "sha256": "a0ad66f88a5d1c771084b82b6ae02f9ef5985a9faf7b5f7b637f06c91511f161",
+      "source": "source/ipad/01-character.png",
+      "sourceSha256": "48092078014662ca6276e0dd5b911f3de46c0bf2539b18f8e7ed4de042b4492a",
+      "title": "相遇角色，\n从一句话开始",
+      "copyBox": {
+        "x": 135,
+        "y": 235,
+        "width": 1809,
+        "height": 455.5
+      }
+    },
+    {
+      "order": 2,
+      "device": "ipad",
+      "file": "ipad/aijin-02-simulator-ipad-2064x2752.png",
+      "width": 2064,
+      "height": 2752,
+      "colorType": "opaque RGB",
+      "bytes": 2723432,
+      "sha256": "14fe2afb43183fe392046b87b5fdfbee68d82b6ab6472a0d541bff23ecf4693d",
+      "source": "source/ipad/02-simulator.png",
+      "sourceSha256": "06d862136f301257ed3ebc9510cd9c8ba43baf040d1132d3080572d6a1fe517e",
+      "title": "换个身份，\n故事由你推进",
+      "copyBox": {
+        "x": 135,
+        "y": 235,
+        "width": 1809,
+        "height": 455.5
+      }
+    },
+    {
+      "order": 3,
+      "device": "ipad",
+      "file": "ipad/aijin-03-theater-ipad-2064x2752.png",
+      "width": 2064,
+      "height": 2752,
+      "colorType": "opaque RGB",
+      "bytes": 3477967,
+      "sha256": "5069175087a4e9cb7bff6efbb178980b448f926ea598d30b3cf41a191e884927",
+      "source": "source/ipad/03-theater.png",
+      "sourceSha256": "7483e368cc80b8e91a7256f21778c2110e74bddbaf6399d4cdcb87f2759ae04e",
+      "title": "走进剧场，\n让剧情继续",
+      "copyBox": {
+        "x": 135,
+        "y": 235,
+        "width": 1809,
+        "height": 455.5
+      }
+    },
+    {
+      "order": 4,
+      "device": "ipad",
+      "file": "ipad/aijin-04-identity-ipad-2064x2752.png",
+      "width": 2064,
+      "height": 2752,
+      "colorType": "opaque RGB",
+      "bytes": 836082,
+      "sha256": "895470b93de9025e9084e68e0b3f16e958ec605787bcdd78583e5ba5b78a2261",
+      "source": "source/ipad/04-identity.png",
+      "sourceSha256": "5283bb9b9e81747672f581b420007e0567200b0e8ce280afef0ffb6fd6b41eec",
+      "title": "选择角色，\n进入你的世界",
+      "copyBox": {
+        "x": 135,
+        "y": 235,
+        "width": 1809,
+        "height": 455.5
+      }
+    },
+    {
+      "order": 5,
+      "device": "ipad",
+      "file": "ipad/aijin-05-creator-ipad-2064x2752.png",
+      "width": 2064,
+      "height": 2752,
+      "colorType": "opaque RGB",
+      "bytes": 582659,
+      "sha256": "01a474b8936b6b03b2519e107bd4e90412d00851657b55fc2bad83330ce28e6c",
+      "source": "source/ipad/05-creator.png",
+      "sourceSha256": "eef69fca38742aa3b79ded4eac3f4c21edb3639317956589c0690d9006067765",
+      "title": "写下设定，\n创造你的角色",
+      "copyBox": {
+        "x": 135,
+        "y": 235,
+        "width": 1809,
+        "height": 455.5
+      }
+    }
+  ]
+}
