@@ -32,8 +32,15 @@
     "scope": "Four-line overflow retains six lines; active offer expires and disables purchase with reload action"
   },
   "device_installation": {
-    "status": "pending_device_unlock",
+    "status": "installed",
     "device": "iPhone 100 pro max",
-    "last_attempt": "CoreDevice 10003 / RemotePairing 1016: device locked"
+    "launch": "pass",
+    "surface": "A",
+    "persistent_capture": false,
+    "existing_session_preserved": true,
+    "startup_requests": 4,
+    "startup_http_and_business_status": "all 200",
+    "verified_at_utc": "2026-11-08T04:46:30Z to 2026-11-08T04:46:31Z",
+    "status_evidence": "DEVICE-STATUS.json"
   }
 }

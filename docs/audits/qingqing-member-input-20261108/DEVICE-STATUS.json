@@ -1,0 +1,33 @@
+{
+  "scope": "R6 physical-device startup after covering installation; existing account session preserved. No OTP login, purchase, paid chat or B-side guest execution tested.",
+  "requests": [
+    {
+      "time": "2026-11-08T04:46:30Z",
+      "path": "home/indexCategory",
+      "http": 200,
+      "code": 200,
+      "session_present": true
+    },
+    {
+      "time": "2026-11-08T04:46:30Z",
+      "path": "home/getModelListV2",
+      "http": 200,
+      "code": 200,
+      "session_present": true
+    },
+    {
+      "time": "2026-11-08T04:46:30Z",
+      "path": "home/getRecommend",
+      "http": 200,
+      "code": 200,
+      "session_present": true
+    },
+    {
+      "time": "2026-11-08T04:46:31Z",
+      "path": "member/info",
+      "http": 200,
+      "code": 200,
+      "session_present": true
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "note": "Fingerprints only. Raw captures, private config, application payloads and account data are not committed. Device installation pending unlock.",
+  "note": "Fingerprints only. Raw captures, private config, application payloads and account data are not committed. R6 installed and launched on the physical test device; sanitized startup statuses are in DEVICE-STATUS.json.",
   "files": [
     {
       "path": "/Users/king/Downloads/qingqing-analysis/decompiled/resources/res/layout/activity_script_talk.xml",
@@ -390,6 +390,11 @@
       "path": "NIVMHost/Tests/QingqingPreviewUITests.swift",
       "bytes": 16422,
       "sha256": "22ffcfdc7f28a0da4178cca94a85b10ceacb20c16e85ae811d30c28086366249"
+    },
+    {
+      "path": "docs/audits/qingqing-member-input-20261108/DEVICE-STATUS.json",
+      "bytes": 810,
+      "sha256": "1b7166cafa7338763201f63b4a04febf2c7ee550e8eb88fad8925befb32edd58"
     }
   ]
 }

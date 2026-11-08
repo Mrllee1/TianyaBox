@@ -29,7 +29,7 @@
 - 本轮补充的测试夹具拦截全部 URLSession 请求，合成聊天返回 503，不访问真实聊天、订单、支付或发布接口。确认弹层只检查显示价格，未点击“确认支付”。夹具不链接到正式 Runner。
 - 初轮回归发现输入组件同步顺序导致旧文本回写，以及未绑定 FocusState 无法正确收起面板；已修正为显式焦点状态、文本与选区同步和程序更新防重入。后续针对性测试通过，不以初轮失败包作为交付证据。
 - 原版 32 项 UI 资源在统一 DeviceRGB / Premultiplied RGBA 下逐像素复核，**32/32 一致**。元数据与指纹见 [ARTWORK.json](ARTWORK.json) 和 [EVIDENCE.json](EVIDENCE.json)。
-- 正式 Release 构建、deep/strict 签名和 IPA ZIP 完整性均通过。覆盖安装时苹果设备工具返回 CoreDevice 10003 / RemotePairing 1016（设备锁定），只读 lockState 检查也返回锁定；已请求用户解锁测试手机。**本轮新版本尚未安装，因此没有本轮实机接口通过记录。** 安装包继续使用原 bundle ID 与 Keychain 配置，等待解锁后覆盖安装。
+- 正式 Release 构建、deep/strict 签名和 IPA ZIP 完整性均通过。用户解锁后，已将同一 R6 导出包覆盖安装到 **iPhone 100 pro max** 并启动 A 面，保留原 bundle ID、Keychain 和既有账号会话；持续截图已关闭。2026-11-08 04:46:30–31 UTC（吉隆坡时间 12:46:30–31），新启动的 `home/indexCategory`、`home/getModelListV2`、`home/getRecommend`、`member/info` 均为 HTTP 200 / 业务 200，四条记录均显示会话存在。脱敏记录见 [DEVICE-STATUS.json](DEVICE-STATUS.json)。这是覆盖安装、启动与会话检查，不是重新收码登录或真实消费验收。
 
 ## 验收边界
 
