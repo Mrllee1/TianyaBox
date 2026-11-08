@@ -26,7 +26,7 @@ enum QQImagePalette {
 struct QQArtwork: View {
   let name: String
   var body: some View {
-    Image("qq_" + name).renderingMode(.original).resizable().scaledToFit()
+    Image(AijinBrand.assetName(for: name)).renderingMode(.original).resizable().scaledToFit()
   }
 }
 

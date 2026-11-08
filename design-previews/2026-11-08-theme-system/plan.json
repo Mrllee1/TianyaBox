@@ -1,0 +1,54 @@
+{
+  "design_read": "移动端 AI 陪伴产品，温柔清爽、内容优先，默认推荐云朵伙伴",
+  "dials": {
+    "variance": 4,
+    "motion": 3,
+    "density": 5
+  },
+  "production_scope": "A-side theme remains a proposal; approved Aijin name and brand assets implemented; B-side logic unchanged",
+  "recommended": "B",
+  "architecture": {
+    "foundation": [
+      "palette",
+      "typography",
+      "spacing",
+      "radius",
+      "stroke",
+      "shadow",
+      "motion"
+    ],
+    "semantic": [
+      "background.page",
+      "surface.card",
+      "text.primary",
+      "text.secondary",
+      "text.onMedia",
+      "action.primary",
+      "state.error",
+      "border.selected"
+    ],
+    "appearance": [
+      "system",
+      "light",
+      "dark"
+    ],
+    "chat_scene": "Role media and chat dimming resolve independently from app appearance",
+    "assets": "Typed semantic roles; no filename string replacement; preserve full-color artwork",
+    "mascot": "Use reference-inspired flower-hat koi identity consistently; expand state poses later"
+  },
+  "inspiration_snapshots": [
+    "qiaomu-design/references/design-systems/airbnb/DESIGN.md",
+    "qiaomu-design/references/design-systems/elevenlabs/DESIGN.md"
+  ],
+  "source_baseline": [
+    "NIVMHost/QingqingA/QingqingComponents.swift:5",
+    "NIVMHost/QingqingA/QingqingRootView.swift:31",
+    "NIVMHost/QingqingA/QingqingConversation.swift:155"
+  ],
+  "brand": {
+    "display_name": "爱锦",
+    "mascot": "reference-inspired plump front-facing red-and-white koi, aqua eyes, orange fan fins, scale-pattern flower hat",
+    "app_icon": "same flower-hat koi on neutral black-to-dark-gray soft-light gradient; page theme unchanged",
+    "reference": "NIVMHost/Design/Branding/Aijin/References/Koi-User-Reference.jpg"
+  }
+}

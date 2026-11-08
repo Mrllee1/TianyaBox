@@ -1,85 +1,60 @@
-# Temp Mail A Surface Design System
+# 爱锦 A 面品牌与界面规范
 
-## Reference lock
+## 视觉主题与氛围
 
-- Structural source: Android Temp Mail `com.tempmail` version 4.09, verified from its installed APK resources and live view hierarchy on the connected Samsung device.
-- Platform adaptation: preserve Temp Mail's hierarchy and dimensions while using native SwiftUI navigation, sheets, menus, accessibility, Dynamic Type, and iOS Liquid Glass tab bars.
-- Product identity remains this app's own. Do not copy Temp Mail trademarks, store metadata, icon, or subscription UI.
-- Brand anchor: the app uses an original green envelope-and-clock mark named `TempMailAppIcon`; every exported size is an opaque PNG with no embedded rounded corners or third-party marks.
+爱锦是 AI 角色聊天与陪伴产品。2026-11-08 用户确认：品牌名称为「爱锦」，
+吉祥物及 App 图标统一为胖嘟嘟的可爱锦鲤。本轮落实品牌身份，保留已验收的
+页面结构和业务；四方向主题方案尚未选定，不据此擅自整体换色或更改导航。
+此前临时邮箱的视觉规范仅适用于已停用的 TempMailA，不再指导当前 A 面。
+B 面业务、宿主 Bundle ID、回调、账号和存储键保持兼容。
 
-## Visual theme and atmosphere
+## 色板与角色
 
-The A surface is a fast, content-first disposable inbox. The mailbox address and received messages are the focus; decoration retreats. One green accent communicates interaction and unread state. Empty, loading, error, offline, and populated states must all remain useful.
+- 锦鲤以用户提供的参考图为准：正面圆滚滚的红白鱼身、青绿色大眼睛、橙色扇形鱼鳍、鱼鳞纹珊瑚橙花帽及粉色小花；不再使用首版小眼睛、带鱼须的造型。
+- 吉祥物为完整彩色插画，始终保留原色，不做模板图标染色。
+- App 图标使用黑色至深灰的柔光渐变不透明底；所有导出尺寸无透明通道、无预制圆角。
+- 现有页面颜色仍由 QQStyle 及既有组件控制。品牌素材变更不等同于整体主题迁移。
 
-## Color palette and roles
+## 排版规则
 
-- Accent and positive state: `#18CA88`.
-- Light canvas: `#EAEEF2`; light surface: system white.
-- Dark canvas: `#303234`; dark surface: `#3C3E40`.
-- Primary text: semantic label; secondary text: `#96979F` in light mode and a semantic high-contrast equivalent in dark mode.
-- Sender initials: `#6C96F2` on a 14%-15% blue tint.
-- Destructive state: system red. Color never carries state alone.
+- 桌面、启动页、设置、关于、通知来源和反馈致谢统一显示「爱锦」。
+- 名称由 AijinBrand.displayName 集中提供；系统权限提示使用同一名称。
+- 中文 UI 延用原生字体和已有字号层级。保留长文换行和可访问性标签。
 
-## Typography
+## 组件样式
 
-- Chinese uses the native system font with weights 400, 500, or 600 only.
-- Reading body: 17pt with at least 1.5 line height inside rendered email HTML.
-- Inbox sender: 16pt/500-600; subject and preview: 14-15pt/400-500; time and metadata: native caption.
-- Email subject: title3/600, maximum two lines. Long sender, address, subject, and attachment names wrap or truncate predictably.
+- AijinBrand.assetName 统一解析品牌图标、默认头像、空状态、记忆空状态及邀请码插画。
+- 用户实际头像、角色图片、礼物和其他内容插画不作为品牌素材替换。
+- 相同锦鲤造型用于 AijinMascot、AijinLogo 和 AijinAppIcon，禁止混用旧水滴精灵或兔子。
+- 空状态保留原有提示及恢复动作；不改变数据、登录、聊天、套餐和购买语义。
+- 图标、素材和启动页通过资源目录引用，不依赖生成工具的本机路径。
 
-## Components
+## 布局原则
 
-- Address home: show one mailbox address with only two actions—copy the address and replace it. Do not duplicate inbox navigation or hide repeated copy actions in an overflow menu.
-- Address artwork: use an original-drawn 328:398 envelope silhouette with a continuous rounded top edge, a separate 26pt-inset shadow plate, a large folded flap, and a one-shot 110pt mail-flag mark. Preserve the reference hierarchy without embedding third-party artwork.
-- The copy action stays inside the envelope with 25pt horizontal and 27pt bottom insets. Replace-address is a quiet icon-and-label command 20pt below the artwork, not a second filled primary button.
-- Inbox selector: a single 50pt mailbox picker above content.
-- Normal empty inbox is illustration-led: one original pale-paper animation centered in the remaining viewport, without permanent explanatory copy or a permanent retry button. Retry remains available through pull-to-refresh and the toolbar; a dedicated retry control appears only for an actual error state.
-- Pull-to-refresh uses the reference's 125pt reveal zone beneath the mailbox picker. Content follows the finger, an original wordless mail-carrier indicator appears above it, and existing messages stay visible while the request runs.
-- Message row: 17pt radius surface, 18pt horizontal and 10-12pt vertical padding, unread point, sender, time, subject, real body preview, disclosure indicator, and attachment indicator when present.
-- Message detail: subject above one 17pt radius reading surface. The surface contains sender identity, time, a collapsible From/To/Date block, a divider, auto-height HTML or selectable plain text, then attachments.
-- Secondary mail actions live in one native sheet opened from the overflow button. Delete remains confirmed.
-- HTML mail uses a non-persistent `WKWebView`, disables scripts/forms/frames, adapts to theme, and reports its real content height to SwiftUI.
-- HTML mail reveals once after WebKit finishes its first stable layout. Height changes are debounced, sub-pixel changes are ignored, shrinking is accepted only after a viewport change, and neither email-authored animation nor layout-height animation may disturb reading.
+- 吉祥物按比例缩放，保证完整轮廓；默认头像使用留足边距的图标版本并延用圆形裁剪，避免花帽与尾巴被切掉。
+- 设置与关于页的品牌图标应圆角显示；App 图标母版保持完整方形。
+- 启动页以锦鲤和「爱锦」居中展示，兼容现有明亮启动背景。
+- 吉祥物不覆盖角色主体、输入框或主要操作。
 
-## Layout principles
+## 深度层级
 
-- Functional contract: within three seconds the user sees who sent the email, its subject, when it arrived, and the beginning of the body.
-- Base spacing is 4pt; primary sequence is 4/7/8/10/12/16/18/20/24.
-- Related metadata stays inside the same mail surface. Do not split the header and body into decorative cards.
-- Existing content remains visible during refresh. Empty and error states always provide one clear recovery action.
+锦鲤自身使用柔软的黏土质感和轻微体积光。页面不额外叠加霓虹、外发光或
+持续漂浮效果；角色、文本和操作维持当前层级。
 
-## Depth hierarchy
+## Do / Don't
 
-- Level 0: canvas.
-- Level 1: message surfaces with color separation and no heavy shadow; the address envelope alone may use a quiet multi-layer paper shadow plus its recessed shadow plate.
-- Level 2: native navigation, Liquid Glass tab bar, sheets, confirmation dialogs, and share/print controllers.
-- Use material only for actual floating layers. Do not stack glass surfaces.
+- 使用 Design/Branding/Aijin 中的母版；可复现导出脚本为 scripts/generate_aijin_brand_assets.swift。
+- 当前参考图版本的生成提示及素材来源记录在该目录的 REFERENCE-GENERATION.md；GENERATION.md 仅保留首版记录。
+- 仓库仍为 TianyaBox，继续维护 main；内部 TempMail 产品名和标识用于安装兼容。
+- 不因品牌更名改动第三方接口签名、User-Agent、密钥、登录会话或 B 面运行时。
+- 不把本地源码、预览构建或截图验收表述为手机已经安装。
 
-## Do and do not
+## 响应式
 
-- Do render real previews, long HTML, tables, HTTPS images, CID images supplied by the API, and attachment metadata.
-- Do support read state, pull-to-refresh, copy, external links, reply/forward handoff, print, EML export, original source, attachment export, and deletion when data exists.
-- Do not show placeholder preview copy when no preview exists; omit the line or say the message has no text.
-- Do not enable sender-provided JavaScript, frames, objects, forms, media autoplay, or arbitrary navigation inside the mail WebView.
-- Do not force a fixed email-body height or create nested vertical scrolling.
+延用现有 SwiftUI 安全区、容器尺寸和可访问性。品牌图片使用 aspect fit；
+小尺寸图标核对脸部、锦斑和尾巴可辨识性。空状态在窄屏下仍保留提示与恢复入口。
 
-## Responsive behavior
+## Motion 哲学
 
-- iPhone uses compact navigation and the native bottom tab bar. iPad keeps readable line lengths and uses platform-appropriate sheets/popovers.
-- Dynamic Type may increase row height; it must not hide the subject, preview, or selected mailbox.
-- Wide HTML tables scroll horizontally inside the document; the page itself must not overflow horizontally.
-- Light, dark, Reduce Motion, and Reduce Transparency follow system settings or the user's explicit appearance choice.
-
-## Motion philosophy
-
-- High-frequency inbox navigation has no decorative entrance animation.
-- Address and empty-inbox illustrations animate once on appearance or on a confirmed copy; they never bob forever.
-- Pull-to-refresh is continuous and interruptible: reveal progress follows the drag, the carrier loops only while loading, then the content returns in 260ms or less.
-- Native swipe actions, disclosure, navigation, and sheets remain interruptible. Reduce Motion replaces illustration transitions with an immediate final state and the loading carrier with a static progress indicator.
-- Haptics are limited to confirmed copy/export/state-change actions.
-
-## Reference DNA used
-
-- From Temp Mail 4.09: 17pt card radius, 7pt detail margin, 12pt mail-header padding, `#EAEEF2/#303234/#3C3E40/#18CA88`, and the subject → header → expandable metadata → body → attachments hierarchy.
-- From Apple: 44pt minimum touch targets, native SF optical sizing, semantic colors, a single soft 3×5×30-style product shadow adapted to mobile, and platform navigation/print/share behavior.
-- From Notion: content-first reading, 1pt whisper borders, restrained four-layer low-opacity surface depth, and a 16-17pt body rhythm.
+本轮不新增动效。后续欢迎、等待、成功和异常状态扩展须保持同一只锦鲤的身份，
+尊重 Reduce Motion，不能为高频输入和发送增加装饰动画。

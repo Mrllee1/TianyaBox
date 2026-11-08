@@ -76,7 +76,7 @@ struct QQAPIListView: View {
   }
   private func notificationRow(_ record: QQRecord) -> some View {
     VStack(alignment: .leading, spacing: 15) {
-      HStack(spacing: 12) { QQArtwork(name: "res_logo").frame(width: 54, height: 54).clipShape(RoundedRectangle(cornerRadius: 10)); VStack(alignment: .leading, spacing: 6) { HStack { Text("卿卿我我AI").font(.system(size: 15, weight: .bold)); Spacer(); Text(record["created_at"]).font(.system(size: 12)).foregroundStyle(.gray) }; Text(record["title"]).font(.system(size: 12)).foregroundStyle(.gray).lineLimit(1) } }
+      HStack(spacing: 12) { QQArtwork(name: "res_logo").frame(width: 54, height: 54).clipShape(RoundedRectangle(cornerRadius: 10)); VStack(alignment: .leading, spacing: 6) { HStack { Text(AijinBrand.displayName).font(.system(size: 15, weight: .bold)); Spacer(); Text(record["created_at"]).font(.system(size: 12)).foregroundStyle(.gray) }; Text(record["title"]).font(.system(size: 12)).foregroundStyle(.gray).lineLimit(1) } }
       if !record.image.isEmpty { QQRemoteImage(address: record.image, contentMode: .fit).aspectRatio(2, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 20)) }
       QQServiceRichText(value: record["content"]).font(.system(size: 12)).foregroundStyle(.gray)
       Divider().opacity(0.2)
@@ -522,7 +522,7 @@ struct QQInviteView: View {
         HStack(spacing: 5) { Text("输入邀请码奖励：").foregroundStyle(.gray); QQArtwork(name: "register_ico_diamond").frame(width: 15, height: 16); Text(info["bind_reward"].text.replacingOccurrences(of: "钻石", with: "") + "钻石").foregroundStyle(.pink) }.font(.system(size: 14))
         Rectangle().fill(.clear).frame(height: 2).overlay { Rectangle().stroke(.gray.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [3, 2])) }.padding(.vertical, 5)
         HStack(spacing: 8) {
-          QQArtwork(name: "res_logo").frame(width: 50, height: 50)
+          QQArtwork(name: "res_logo").frame(width: 50, height: 50).clipShape(RoundedRectangle(cornerRadius: 12))
           Text("扫描二维码\n即可开启与他的专属故事").font(.system(size: 12)).lineSpacing(3)
           Spacer(minLength: 0)
           if let qr = qrImage { Image(uiImage: qr).interpolation(.none).resizable().frame(width: 76, height: 76).padding(1).overlay { RoundedRectangle(cornerRadius: 6).stroke(QQStyle.gradient, lineWidth: 1) } }

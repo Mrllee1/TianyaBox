@@ -42,7 +42,7 @@ def main():
 </Scheme>
 ''')
     info = {
-        'CFBundleDevelopmentRegion': 'zh_CN', 'CFBundleDisplayName': '卿卿 UI 验收',
+        'CFBundleDevelopmentRegion': 'zh_CN', 'CFBundleDisplayName': '爱锦 UI 验收',
         'CFBundleExecutable': '$(EXECUTABLE_NAME)', 'CFBundleIdentifier': '$(PRODUCT_BUNDLE_IDENTIFIER)',
         'CFBundleInfoDictionaryVersion': '6.0', 'CFBundleName': 'Preview', 'CFBundlePackageType': 'APPL',
         'CFBundleShortVersionString': '1.0', 'CFBundleVersion': '1', 'LSRequiresIPhoneOS': True,

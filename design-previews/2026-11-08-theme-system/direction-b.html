@@ -1,0 +1,31 @@
+<!-- 独立 brief / B 云朵伙伴：近白暖灰、单一深青重音、品牌伙伴与内容留白；
+Helvetica Neue 西文 / 苹方中文，以轻量横向故事条替代双列彩卡；不使用大面积渐变或营销浮标。 -->
+<style>
+.dir-b{width:100%;max-width:360px;height:620px;display:flex;flex-direction:column;background:#f7faf9;color:#20383e;font-family:"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;text-align:left;font-size:14px;line-height:1.5;overflow:hidden}
+.dir-b *{box-sizing:border-box}.dir-b button{font:inherit;cursor:pointer;border:0}.dir-b button:focus-visible{outline:2px solid #096a74;outline-offset:3px}.dir-b button:active{opacity:.78}
+.dir-b .b-status{display:flex;justify-content:space-between;padding:12px 23px 0;font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.dir-b .b-brand{display:flex;justify-content:space-between;align-items:center;margin:14px 22px 0;font-size:17px;font-weight:600;letter-spacing:.1px}.dir-b .b-brand svg{width:22px;height:22px}.dir-b .b-search{display:grid;place-items:center;width:34px;height:34px;background:#e8f0ee;border-radius:50%;color:#20383e}
+.dir-b .b-welcome{position:relative;padding:12px 22px 0;min-height:143px}.dir-b .b-welcome h2{font-size:27px;font-weight:500;line-height:1.4;margin:0;letter-spacing:.1px;max-width:235px}.dir-b .b-welcome p{font-size:14px;line-height:1.6;color:#62767b;max-width:185px;margin:9px 0 0}.dir-b .b-welcome img{position:absolute;width:130px;height:106px;object-fit:contain;right:3px;top:44px}
+.dir-b .b-tabs{display:flex;gap:24px;padding:5px 22px 13px;border-bottom:1px solid #e0e8e6;flex:none}.dir-b .b-tab{padding:0 0 7px;background:transparent;color:#62767b;font-size:14px;position:relative}.dir-b .b-tab.is-active{color:#096a74;font-weight:600}.dir-b .b-tab.is-active:after{position:absolute;content:"";width:18px;height:3px;bottom:0;left:calc(50% - 9px);background:#096a74;border-radius:2px}
+.dir-b .b-feed{padding:17px 22px 0;flex:1;min-height:0}.dir-b .b-feature{display:grid;grid-template-columns:91px 1fr;gap:15px;background:#fff;border-radius:18px;padding:12px;box-shadow:0 0 0 1px rgba(32,56,62,.045),0 3px 8px rgba(32,56,62,.035)}
+.dir-b .b-art{min-height:142px;border-radius:11px;background-color:#dbe7e7;background-image:var(--preview-story);background-size:cover;background-position:center 23%}.dir-b .b-story h3{font-size:18px;font-weight:600;line-height:1.5;margin:4px 0 3px}.dir-b .b-story p{font-size:14px;color:#62767b;margin:0;line-height:1.5}.dir-b .b-start{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:13px;padding:9px 12px;min-height:42px;width:100%;background:#096a74;color:#fff;border-radius:11px;font-weight:500;white-space:nowrap}.dir-b .b-start svg{width:17px;height:17px;flex:none}
+.dir-b .b-recent{display:flex;justify-content:space-between;align-items:center;margin-top:19px}.dir-b .b-recent h3{font-size:15px;font-weight:600;margin:0}.dir-b .b-recent span{font-size:14px;color:#62767b}.dir-b .b-line{display:flex;align-items:center;gap:11px;border-bottom:1px solid #e0e8e6;padding:11px 0}.dir-b .b-dot{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:#e3f0ed;color:#1c6a67;font-size:15px}.dir-b .b-line p{margin:0;font-size:14px;color:#20383e}.dir-b .b-line small{display:block;font-size:14px;color:#62767b}.dir-b .b-arrow{margin-left:auto;font-size:19px;color:#62767b}
+.dir-b .b-bottom{margin-top:auto;padding:9px 18px 12px;display:flex;justify-content:space-between;border-top:1px solid #e0e8e6;background:#f7faf9;flex:none}.dir-b .b-bottom button{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;color:#62767b;font-size:14px;min-width:48px}.dir-b .b-bottom .is-active{color:#096a74;font-weight:600}.dir-b .b-bottom svg{height:20px;width:20px}
+</style>
+<div class="dir-b" aria-label="云朵伙伴，首页主题方向样机">
+ <div class="b-status"><span>9:41</span><span aria-label="网络及电量">● ▰</span></div>
+ <header class="b-brand"><span>爱锦</span><button class="b-search" type="button" aria-label="搜索角色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button></header>
+ <div class="b-welcome"><h2>有话，<br>慢慢说。</h2><p>从一声问候开始，<br>遇见合拍的故事。</p><img src="assets/mascot.png" alt="胖嘟嘟的爱锦锦鲤"></div>
+ <nav class="b-tabs" aria-label="内容类型"><button class="b-tab is-active" aria-current="page">为你推荐</button><button class="b-tab">最近聊天</button><button class="b-tab">我的收藏</button></nav>
+ <main class="b-feed">
+  <article class="b-feature"><div class="b-art" role="img" aria-label="角色故事画面"></div><div class="b-story"><h3>柠神的偏爱</h3><p>校园 · 慢热<br>让日常，多些回应。</p><button class="b-start" type="button"><span>开始对话</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button></div></article>
+  <div class="b-recent"><h3>留给你的片刻</h3><span>探索更多</span></div>
+  <div class="b-line"><span class="b-dot">☁</span><div><p>心情小站</p><small>今天，想从哪里说起？</small></div><span class="b-arrow">›</span></div>
+ </main>
+ <nav class="b-bottom" aria-label="底部导航">
+  <button class="is-active" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m4 10 8-6 8 6v10h-6v-6h-4v6H4Z"/></svg>首页</button>
+  <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="m15 9-2 4-4 2 2-4Z"/></svg>发现</button>
+  <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v12H9l-5 4Z"/><path d="M8 9h8M8 12h5"/></svg>消息</button>
+  <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="7" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>我的</button>
+ </nav>
+</div>

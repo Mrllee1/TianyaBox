@@ -31,8 +31,8 @@ RUNTIME_FRAMEWORKS="${RUNTIME_ROOT}/Frameworks"
 PLUGIN_ROOT="${OUTPUT_ROOT}/PornhubPlugins"
 EXPORT_OPTIONS="${OUTPUT_ROOT}/ExportOptions-AppStore.plist"
 ARCHIVE_ENTITLEMENTS="${OUTPUT_ROOT}/archive-entitlements.plist"
-LEGACY_IPAD_ICON_SOURCE="${PROJECT_ROOT}/Runner/Assets.xcassets/TempMailAppIcon.appiconset/TempMail-AppIcon-83.5x83.5@2x.png"
-LEGACY_IPAD_ICON_NAME="TempMailAppIcon83.5x83.5"
+LEGACY_IPAD_ICON_SOURCE="${PROJECT_ROOT}/Runner/Assets.xcassets/AijinAppIcon.appiconset/Aijin-AppIcon-83.5x83.5@2x.png"
+LEGACY_IPAD_ICON_NAME="AijinAppIcon83.5x83.5"
 LEGACY_IPAD_ICON_FILE="${LEGACY_IPAD_ICON_NAME}@2x~ipad.png"
 
 fail() {
@@ -68,7 +68,7 @@ validate_appstore_bundle() {
   done
 
   value="$(plutil -extract CFBundleDisplayName raw -o - "${info_plist}" 2>/dev/null || true)"
-  [[ "${value}" == "临时邮箱" ]] || fail "CFBundleDisplayName must be 临时邮箱"
+  [[ "${value}" == "爱锦" ]] || fail "CFBundleDisplayName must be 爱锦"
   value="$(plutil -extract CFBundleName raw -o - "${info_plist}" 2>/dev/null || true)"
   [[ "${value}" == "TempMail" ]] || fail "CFBundleName must be TempMail"
   value="$(plutil -extract CFBundleIdentifier raw -o - "${info_plist}" 2>/dev/null || true)"
@@ -258,13 +258,13 @@ ditto "${LEGACY_IPAD_ICON_SOURCE}" "${HOST_APP}/${LEGACY_IPAD_ICON_FILE}"
 INFO_PLIST="${HOST_APP}/Info.plist"
 /usr/libexec/PlistBuddy -c 'Delete :CFBundleIconFiles~ipad' "${INFO_PLIST}" >/dev/null 2>&1 || true
 /usr/libexec/PlistBuddy -c 'Add :CFBundleIconFiles~ipad array' "${INFO_PLIST}"
-/usr/libexec/PlistBuddy -c 'Add :CFBundleIconFiles~ipad:0 string TempMailAppIcon60x60' "${INFO_PLIST}"
-/usr/libexec/PlistBuddy -c 'Add :CFBundleIconFiles~ipad:1 string TempMailAppIcon76x76' "${INFO_PLIST}"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleIconFiles~ipad:0 string AijinAppIcon60x60' "${INFO_PLIST}"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleIconFiles~ipad:1 string AijinAppIcon76x76' "${INFO_PLIST}"
 /usr/libexec/PlistBuddy -c "Add :CFBundleIconFiles~ipad:2 string ${LEGACY_IPAD_ICON_NAME}" "${INFO_PLIST}"
 /usr/libexec/PlistBuddy -c 'Delete :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles' "${INFO_PLIST}" >/dev/null 2>&1 || true
 /usr/libexec/PlistBuddy -c 'Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles array' "${INFO_PLIST}"
-/usr/libexec/PlistBuddy -c 'Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:0 string TempMailAppIcon60x60' "${INFO_PLIST}"
-/usr/libexec/PlistBuddy -c 'Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:1 string TempMailAppIcon76x76' "${INFO_PLIST}"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:0 string AijinAppIcon60x60' "${INFO_PLIST}"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:1 string AijinAppIcon76x76' "${INFO_PLIST}"
 /usr/libexec/PlistBuddy -c "Add :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:2 string ${LEGACY_IPAD_ICON_NAME}" "${INFO_PLIST}"
 
 SIGNING_AUTHORITY="$(codesign -d --verbose=4 "${HOST_APP}" 2>&1 \

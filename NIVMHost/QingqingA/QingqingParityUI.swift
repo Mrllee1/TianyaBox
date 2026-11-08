@@ -23,7 +23,7 @@ struct QQPage<Content: View>: View {
         }
       }.frame(height: headerHeight).zIndex(1)
       content().frame(maxWidth: .infinity, maxHeight: .infinity).clipped().contentShape(Rectangle())
-    }.foregroundStyle(QQStyle.ink).background(alignment: .top) { if let backgroundArtwork { Image("qq_" + backgroundArtwork).resizable().frame(height: artworkHeight).ignoresSafeArea(edges: .top) } }.background(color.ignoresSafeArea())
+    }.foregroundStyle(QQStyle.ink).background(alignment: .top) { if let backgroundArtwork { Image(AijinBrand.assetName(for: backgroundArtwork)).resizable().frame(height: artworkHeight).ignoresSafeArea(edges: .top) } }.background(color.ignoresSafeArea())
       .toolbar(.hidden, for: .navigationBar).buttonStyle(.plain)
   }
 }
@@ -61,8 +61,8 @@ struct QQAboutView: View {
   var body: some View {
     QQPage(title: "关于我们") {
       VStack(spacing: 0) {
-        QQArtwork(name: "res_logo").frame(width: 70, height: 70).padding(.top, 43)
-        Text("卿卿我我AI").font(.system(size: 15, weight: .bold)).padding(.top, 13)
+        QQArtwork(name: "res_logo").frame(width: 70, height: 70).clipShape(RoundedRectangle(cornerRadius: 16)).padding(.top, 43)
+        Text(AijinBrand.displayName).font(.system(size: 15, weight: .bold)).padding(.top, 13)
         Text("v" + (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")).font(.system(size: 12)).foregroundStyle(.gray).padding(.top, 8)
         VStack(spacing: 0) {
           ForEach(["用户协议", "隐私政策"], id: \.self) { title in Button { document = title } label: { HStack { Text(title).font(.system(size: 14)); Spacer(); QQArtwork(name: "ico_setting_next").frame(width: 16, height: 16) }.padding(.horizontal, 15).frame(height: 63) } }
@@ -216,8 +216,8 @@ struct QQSettingsView: View {
       VStack(spacing: 0) {
         ScrollView {
           VStack(spacing: 0) {
-            QQArtwork(name: "res_logo").frame(width: 100, height: 100).padding(.top, 28)
-            Text("卿卿我我AI").font(.system(size: 18, weight: .bold)).tracking(1.26).padding(.top, 16)
+            QQArtwork(name: "res_logo").frame(width: 100, height: 100).clipShape(RoundedRectangle(cornerRadius: 22)).padding(.top, 28)
+            Text(AijinBrand.displayName).font(.system(size: 18, weight: .bold)).tracking(1.26).padding(.top, 16)
             Text("v" + (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")).font(.system(size: 12)).foregroundStyle(Color(white: 0.6)).padding(.top, 6)
             VStack(spacing: 0) {
               Button { store.loginPresented = true } label: { QQSettingRow(title: "邮箱号", icon: "set_ico_faction01", value: store.user?["email"] ?? "") }
@@ -226,7 +226,7 @@ struct QQSettingsView: View {
               NavigationLink { QQFeedbackView() } label: { QQSettingRow(title: "意见反馈", icon: "set_ico_faction04") }
               NavigationLink { QQAboutView() } label: { QQSettingRow(title: "关于我们", icon: "set_ico_faction05") }
               NavigationLink { QQCancellationView() } label: { QQSettingRow(title: "注销帐号", icon: "set_ico_faction06") }
-              Button { toast = "当前版本：TianyaBox " + (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0") } label: { QQSettingRow(title: "版本更新", icon: "set_ico_faction07") }
+              Button { toast = "当前版本：" + AijinBrand.displayName + " " + (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0") } label: { QQSettingRow(title: "版本更新", icon: "set_ico_faction07") }
             }.padding(.top, 25)
           }
         }
@@ -251,7 +251,7 @@ struct QQFeedbackView: View {
     QQPage(title: "意见反馈") {
       ScrollView {
         VStack(alignment: .leading, spacing: 16) {
-          Text("感谢您使用 卿卿我我AI").font(.system(size: 18, weight: .bold)).padding(.top, 15)
+          Text("感谢您使用" + AijinBrand.displayName).font(.system(size: 18, weight: .bold)).padding(.top, 15)
           Text("您的体验对我们至关重要，欢迎在此留下您的意见或问题。我们的团队会尽快通过电邮回复您。").font(.system(size: 13)).foregroundStyle(.gray).lineSpacing(5).padding(.top, 5)
           Text("联系方式*").font(.system(size: 16, weight: .bold)).padding(.top, 4)
           TextField("请输入您的手机号码", text: $contact).font(.system(size: 14)).textInputAutocapitalization(.never).padding(.horizontal, 13).frame(height: 50).background(.white, in: RoundedRectangle(cornerRadius: 15))

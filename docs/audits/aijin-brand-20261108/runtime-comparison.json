@@ -1,0 +1,27 @@
+{
+  "reference": "verified R8 IPA",
+  "candidate": "Aijin black-gradient R9 signed app",
+  "frameworks": 63,
+  "byte_identical_files": 319,
+  "changed_files": [],
+  "configuration_preserved": true,
+  "entitlements_preserved": true,
+  "bundle_and_callback_preserved": true,
+  "metadata_changed_keys": [
+    "CFBundleDisplayName",
+    "CFBundleIconFiles~ipad",
+    "CFBundleIcons",
+    "CFBundleIcons~ipad",
+    "CFBundleVersion",
+    "NSCalendarsFullAccessUsageDescription",
+    "NSCalendarsUsageDescription",
+    "NSCameraUsageDescription",
+    "NSContactsUsageDescription",
+    "NSLocationAlwaysAndWhenInUseUsageDescription",
+    "NSLocationWhenInUseUsageDescription",
+    "NSMicrophoneUsageDescription",
+    "NSPhotoLibraryAddUsageDescription",
+    "NSPhotoLibraryUsageDescription",
+    "NSSpeechRecognitionUsageDescription"
+  ]
+}

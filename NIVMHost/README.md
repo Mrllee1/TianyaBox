@@ -1,6 +1,10 @@
-# TianyaBox · AI A + application-space B
+# 爱锦 · TianyaBox AI A + application-space B
 
-The visible application name is `TianyaBox`. The host product and Bundle ID remain
+The visible application name is `爱锦`. The repository remains `TianyaBox`; its
+mascot and primary icon use the reference-inspired red-and-white koi with aqua eyes and a flower hat in
+`Design/Branding/Aijin`. Regenerate asset sizes with
+`xcrun swift scripts/generate_aijin_brand_assets.swift` and validate with
+`scripts/validate_app_icons.sh`. The host product and Bundle ID remain
 `TempMail` / `com.tianya.tempmail` to preserve installed B guest data and callbacks.
 
 ## A/B surfaces

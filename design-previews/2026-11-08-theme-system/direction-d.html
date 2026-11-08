@@ -1,0 +1,111 @@
+<!--
+Direction D independent brief — 来信手记
+Layout: a mobile correspondence journal: quiet brand line, companion greeting,
+ruled message excerpts and one anchored continuation action; no card grid.
+Typography: short Songti SC / Georgia display headings; system Chinese body;
+monospaced timestamps. Color: warm ivory, ink, one restrained brick-red accent.
+Hard constraint: light paper / correspondence language, never dark cinema,
+pastel card stacks or a generic social feed. Existing blue mascot stays intact.
+-->
+<style>
+.dir-d {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  height: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #302d29;
+  background-color: #f7f1e7;
+  background-image: repeating-linear-gradient(0deg, rgba(92,70,50,.015) 0, rgba(92,70,50,.015) 1px, transparent 1px, transparent 5px);
+  font: 400 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  text-align: left;
+  isolation: isolate;
+}
+.dir-d *, .dir-d *::before, .dir-d *::after { box-sizing: border-box; }
+.dir-d button { font: inherit; color: inherit; cursor: pointer; }
+.dir-d button:focus-visible { outline: 2px solid #9f503e; outline-offset: 4px; }
+.dir-d button:active { opacity: .75; }
+.dir-d .d-brandbar { min-height: 56px; margin: 0 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #dcd0c0; flex: 0 0 auto; }
+.dir-d .d-brand { font: 500 19px/1 Georgia, "Songti SC", serif; letter-spacing: -.5px; }
+.dir-d .d-brand b { font-weight: 400; color: #9f503e; }
+.dir-d .d-bookmark { border: 0; background: none; padding: 5px 0 5px 12px; display: flex; align-items: center; gap: 5px; color: #6c6055; }
+.dir-d .d-bookmark svg { width: 17px; height: 17px; }
+.dir-d .d-greeting { display: grid; grid-template-columns: minmax(0,1fr) 102px; align-items: center; gap: 5px; padding: 14px 18px 14px 22px; flex: 0 0 auto; }
+.dir-d .d-greeting h2 { font: 500 25px/1.42 "Songti SC", "STSong", Georgia, serif; margin: 0 0 7px; letter-spacing: .3px; }
+.dir-d .d-greeting p { margin: 0; color: #6b625a; font-size: 14px; }
+.dir-d .d-mascot { width: 102px; height: 96px; object-fit: contain; }
+.dir-d .d-correspondence { padding: 0 22px; flex: 1 1 auto; min-height: 0; }
+.dir-d .d-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+.dir-d .d-section-head h3 { font: 500 19px/1.5 "Songti SC", "STSong", Georgia, serif; margin: 0; }
+.dir-d .d-section-head button { background: none; border: 0; padding: 4px 0 4px 8px; color: #8c4d3d; font-size: 14px; }
+.dir-d .d-message { display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 12px; padding: 10px 0 11px; border-top: 1px solid #dcd0c0; }
+.dir-d .d-portrait { width: 42px; height: 54px; margin-top: 3px; border-radius: 2px; background-color: #c9b6a6; background-image: var(--preview-story); background-size: cover; background-position: center 23%; box-shadow: 2px 3px 0 #e4d9ca; }
+.dir-d .d-initial { width: 42px; height: 46px; margin-top: 3px; display: grid; place-items: center; border: 1px solid #c9b59f; font: 400 23px/1 "Songti SC", "STSong", Georgia, serif; color: #806951; }
+.dir-d .d-message-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+.dir-d .d-message-top strong { font-size: 16px; font-weight: 500; }
+.dir-d .d-message-top time { flex-shrink: 0; color: #76695c; font: 400 14px/1.5 "SFMono-Regular", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+.dir-d .d-message p { font-size: 14px; line-height: 1.6; margin: 0; color: #675e55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.dir-d .d-postscript { margin: 6px 0 0; color: #8c4d3d; display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.dir-d .d-postscript::before { content: ""; display: block; width: 18px; height: 1px; background: #b88875; }
+.dir-d .d-continue { flex: 0 0 auto; padding: 12px 22px 15px; }
+.dir-d .d-continue button { width: 100%; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; background: #9f503e; color: #fffaf2; border: 1px solid #9f503e; border-radius: 3px; font-size: 15px; font-weight: 500; }
+.dir-d .d-continue svg { width: 20px; height: 20px; }
+.dir-d .d-nav { min-height: 62px; flex: 0 0 auto; display: flex; align-items: center; justify-content: space-around; padding: 8px 11px 10px; border-top: 1px solid #dcd0c0; background: #f7f1e7; }
+.dir-d .d-nav button { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; min-width: 60px; color: #7e756a; font-size: 14px; line-height: 1.3; padding: 2px 0; }
+.dir-d .d-nav svg { width: 18px; height: 18px; stroke-width: 1.6; }
+.dir-d .d-nav button[aria-current="page"] { color: #9f503e; font-weight: 500; }
+@media (max-width: 370px) {
+  .dir-d .d-brandbar { margin-inline: 18px; }
+  .dir-d .d-greeting { padding-inline: 18px; grid-template-columns: minmax(0,1fr) 94px; }
+  .dir-d .d-greeting h2 { font-size: 23px; }
+  .dir-d .d-correspondence { padding-inline: 18px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .dir-d .d-bookmark:hover, .dir-d .d-section-head button:hover, .dir-d .d-nav button:hover { color: #9f503e; }
+  .dir-d .d-continue button:hover { background: #8e4636; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dir-d *, .dir-d *::before, .dir-d *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<div class="dir-d" aria-label="方向 D，来信手记，移动消息主页样机">
+  <header class="d-brandbar">
+    <span class="d-brand">爱<b>锦</b></span>
+    <button class="d-bookmark" type="button" aria-label="查看我的手记">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h13a1 1 0 0 1 1 1v17H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M4 17h15M9 3v8l3-2 3 2V3"/></svg>
+      手记
+    </button>
+  </header>
+  <div class="d-greeting">
+    <div><h2>今天的心事，<br>慢慢说。</h2><p>每一句，都有人认真听。</p></div>
+    <img class="d-mascot" src="assets/mascot.png" alt="胖嘟嘟的爱锦锦鲤">
+  </div>
+  <section class="d-correspondence" aria-label="最近来信">
+    <div class="d-section-head"><h3>来信</h3><button type="button">全部消息 ↗</button></div>
+    <article class="d-message">
+      <div class="d-portrait" role="img" aria-label="林屿的角色头像"></div>
+      <div>
+        <div class="d-message-top"><strong>林屿</strong><time>14:06</time></div>
+        <p>你说今天有点累。那就先坐一会儿，不用急着把所有事情都讲清楚。</p>
+        <div class="d-postscript">海边的电台</div>
+      </div>
+    </article>
+    <article class="d-message">
+      <div class="d-initial" aria-hidden="true">叶</div>
+      <div>
+        <div class="d-message-top"><strong>叶知夏</strong><time>昨天</time></div>
+        <p>上次没说完的故事，我替你记着。等你想聊的时候，我们再继续。</p>
+      </div>
+    </article>
+  </section>
+  <div class="d-continue"><button type="button" aria-label="继续与林屿对话">继续对话<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></div>
+  <nav class="d-nav" aria-label="底部导航">
+    <button type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></svg>首页</button>
+    <button type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/></svg>发现</button>
+    <button type="button" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M3 5h18v13H9l-6 3Z"/><path d="M7 9h10M7 13h7"/></svg>消息</button>
+    <button type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg>我的</button>
+  </nav>
+</div>

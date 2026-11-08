@@ -1,0 +1,22 @@
+{
+  "desktop": {
+    "cards": 4,
+    "picks": 4,
+    "overflow": false,
+    "columns": "544px 544px",
+    "brokenImages": 0
+  },
+  "mobile": {
+    "overflow": false,
+    "columns": "362px",
+    "phoneOverflows": [],
+    "picks": 4
+  },
+  "confirmation_opens_and_cancels": true,
+  "dial_updates": true,
+  "selection_after_cancel": {
+    "ok": true,
+    "selection": null
+  },
+  "errors": []
+}
