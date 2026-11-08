@@ -1,13 +1,13 @@
 import CryptoKit
 import Foundation
 
-struct TempMailRuntimeCatalogSection: Codable, Hashable {
+struct AijinRuntimeCatalogSection: Codable, Hashable {
   let id: String
   let title: String
   let apps: [PlayBoxGuestDescriptor]
 }
 
-final class TempMailCatalogService {
+final class AijinCatalogService {
   private let session: URLSession
   private let decoder = JSONDecoder()
 
@@ -15,7 +15,7 @@ final class TempMailCatalogService {
     self.session = session
   }
 
-  func fetch() async throws -> [TempMailRuntimeCatalogSection] {
+  func fetch() async throws -> [AijinRuntimeCatalogSection] {
     guard let baseURL = configuredBaseURL() else { throw CatalogError.invalidURL }
     do {
       let data = try await fetchCatalogData(baseURL: baseURL)
@@ -28,7 +28,7 @@ final class TempMailCatalogService {
     } catch {
       let details = error as NSError
       print(
-        "TEMPMAIL_CATALOG request_failed base=\(baseURL.absoluteString) " +
+        "AIJIN_CATALOG request_failed base=\(baseURL.absoluteString) " +
         "domain=\(details.domain) code=\(details.code) error=\(details.localizedDescription)"
       )
       throw error
@@ -36,7 +36,9 @@ final class TempMailCatalogService {
   }
 
   private func configuredBaseURL() -> URL? {
-    guard let configured = Bundle.main.object(forInfoDictionaryKey: "TempMailCatalogBaseURL") as? String else {
+    guard let configured = ["AijinCatalogBaseURL", "TempMailCatalogBaseURL"]
+      .compactMap({ Bundle.main.object(forInfoDictionaryKey: $0) as? String })
+      .first(where: { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
       return nil
     }
     let value = configured.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -52,7 +54,7 @@ final class TempMailCatalogService {
     var request = URLRequest(url: url)
     request.timeoutInterval = 8
     request.cachePolicy = .reloadIgnoringLocalCacheData
-    request.setValue("TempMail-NIVM/1.0", forHTTPHeaderField: "User-Agent")
+    request.setValue("Aijin-NIVM/1.0", forHTTPHeaderField: "User-Agent")
     let (data, response) = try await session.data(for: request)
     guard let response = response as? HTTPURLResponse,
           (200...299).contains(response.statusCode) else {
@@ -75,7 +77,7 @@ final class TempMailCatalogService {
     return try AES.GCM.open(sealedBox, using: SymmetricKey(data: key))
   }
 
-  private func map(_ catalog: RemoteCatalog) -> [TempMailRuntimeCatalogSection] {
+  private func map(_ catalog: RemoteCatalog) -> [AijinRuntimeCatalogSection] {
     catalog.c.flatMap { category in
       category.g.compactMap { group in
         let apps = group.a.compactMap { app -> PlayBoxGuestDescriptor? in
@@ -113,7 +115,7 @@ final class TempMailCatalogService {
           )
         }
         guard !apps.isEmpty else { return nil }
-        return TempMailRuntimeCatalogSection(
+        return AijinRuntimeCatalogSection(
           id: "\(category.id).\(group.id)",
           title: group.n,
           apps: apps
@@ -138,7 +140,9 @@ private enum ClientCrypto {
   private static let fallbackKeyBase64 = "6btlrID18OytwUZ0s41atap+4WxlXr1xpebjrE04hnY="
 
   static func key() -> Data? {
-    let configured = Bundle.main.object(forInfoDictionaryKey: "TempMailClientAESKey") as? String
+    let configured = ["AijinClientAESKey", "TempMailClientAESKey"]
+      .compactMap { Bundle.main.object(forInfoDictionaryKey: $0) as? String }
+      .first(where: { !$0.isEmpty })
     let value = configured.flatMap { $0.isEmpty ? nil : $0 } ?? fallbackKeyBase64
     guard let key = Data(base64Encoded: value), key.count == 32 else {
       return Data(base64Encoded: fallbackKeyBase64)

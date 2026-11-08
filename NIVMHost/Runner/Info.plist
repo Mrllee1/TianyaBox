@@ -18,7 +18,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>TempMail</string>
+	<string>AijinAI</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -47,14 +47,14 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>TempMailCatalogBaseURL</key>
-	<string>$(TEMPMAIL_CATALOG_BASE_URL)</string>
-	<key>TempMailClientAESKey</key>
-	<string>$(TEMPMAIL_CLIENT_AES_KEY)</string>
-	<key>TempMailAssetAESKey</key>
-	<string>$(TEMPMAIL_ASSET_AES_KEY)</string>
-	<key>TempMailAssetAESIV</key>
-	<string>$(TEMPMAIL_ASSET_AES_IV)</string>
+	<key>AijinCatalogBaseURL</key>
+	<string>$(AIJIN_CATALOG_BASE_URL)</string>
+	<key>AijinClientAESKey</key>
+	<string>$(AIJIN_CLIENT_AES_KEY)</string>
+	<key>AijinAssetAESKey</key>
+	<string>$(AIJIN_ASSET_AES_KEY)</string>
+	<key>AijinAssetAESIV</key>
+	<string>$(AIJIN_ASSET_AES_IV)</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UISupportedInterfaceOrientations</key>
@@ -73,9 +73,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>tempmail.sandbox.callback</string>
+			<string>aijin.sandbox.callback</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>aijin</string>
 				<string>tempmail</string>
 			</array>
 		</dict>
@@ -112,7 +113,7 @@
 					<key>UISceneConfigurationName</key>
 					<string>Default Configuration</string>
 					<key>UISceneDelegateClassName</key>
-					<string>TempMailSceneDelegate</string>
+					<string>AijinSceneDelegate</string>
 				</dict>
 			</array>
 		</dict>

@@ -62,6 +62,6 @@ App-Store-safe.
 
 ## Current A surface
 
-`NIVMHost/QingqingA` owns the AI interface, account flow, client protocol, character discovery, conversations, creator, memory, gifts, membership, simulators, and theater adapter. `TempMailA` is retained as historical source and is no longer the active A entry. The existing `tempmail://privacy` URL now opens AI A; B routes and guest return remain unchanged. Only `main` is maintained.
+`NIVMHost/QingqingA` owns the AI interface, account flow, client protocol, character discovery, conversations, creator, memory, gifts, membership, simulators, and theater adapter. The retired mailbox implementation and its unused artwork have been removed. `aijin://ai` opens AI A; legacy `tempmail://privacy` links remain compatible; B routes and guest return remain unchanged. Only `main` is maintained.
 
 Private protocol configuration is read from `.private/qingqing-service.json` and staged before signing by `NIVMHost/scripts/stage_qingqing_configuration.py`. It is intentionally absent from Git. See `docs/audits/qingqing-a-20261108/REPORT.md` for tested behavior and acceptance limits.

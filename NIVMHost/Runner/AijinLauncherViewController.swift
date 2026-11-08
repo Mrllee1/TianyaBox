@@ -1,12 +1,12 @@
 import Darwin
 import UIKit
 
-@_silgen_name("TempMailLaunchSelectedPlayBoxGuestInProcess")
-private func TempMailLaunchSelectedPlayBoxGuestInProcess() -> Int32
+@_silgen_name("AijinLaunchSelectedPlayBoxGuestInProcess")
+private func AijinLaunchSelectedPlayBoxGuestInProcess() -> Int32
 
-final class TempMailLauncherViewController: UIViewController {
+final class AijinLauncherViewController: UIViewController {
   private let pornhubCoordinator = GuestRuntimeCoordinator()
-  private let catalogService = TempMailCatalogService()
+  private let catalogService = AijinCatalogService()
   private let launchedVersionsURL: URL = {
     let directory = FileManager.default.urls(
       for: .applicationSupportDirectory,
@@ -15,7 +15,7 @@ final class TempMailLauncherViewController: UIViewController {
     return directory.appendingPathComponent("TempMailLaunchedVersions.plist")
   }()
   private lazy var launchedVersions: [String: String] = loadLaunchedVersions()
-  private var catalogSections: [TempMailRuntimeCatalogSection] = []
+  private var catalogSections: [AijinRuntimeCatalogSection] = []
   private var playBoxCoordinators: [String: PlayBoxGuestRuntimeCoordinator] = [:]
   private let pornhubButton = UIButton(type: .system)
   private var playBoxButtons: [String: UIButton] = [:]
@@ -86,9 +86,9 @@ final class TempMailLauncherViewController: UIViewController {
 
   private func handleLaunchArguments() {
     let arguments = ProcessInfo.processInfo.arguments
-    let installPrefix = "--tempmail-install-catalog-id="
-    let startPrefix = "--tempmail-start-catalog-id="
-    let installAndStartPrefix = "--tempmail-install-and-start-catalog-id="
+    let installPrefix = "--aijin-install-catalog-id="
+    let startPrefix = "--aijin-start-catalog-id="
+    let installAndStartPrefix = "--aijin-install-and-start-catalog-id="
     if let argument = arguments.first(where: { $0.hasPrefix(installAndStartPrefix) }) {
       let appID = String(argument.dropFirst(installAndStartPrefix.count))
       pendingCatalogInstallID = appID
@@ -100,14 +100,14 @@ final class TempMailLauncherViewController: UIViewController {
     }
 
     if let descriptor = playBoxCatalogApps.first(where: {
-      arguments.contains("--tempmail-start-\($0.id)")
+      arguments.contains("--aijin-start-\($0.id)")
     }) {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
         self?.startPlayBox(descriptor)
       }
     }
 
-    if arguments.contains("--tempmail-capture-launcher") {
+    if arguments.contains("--aijin-capture-launcher") {
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
         self?.captureLauncherScreenshot()
       }
@@ -187,7 +187,7 @@ final class TempMailLauncherViewController: UIViewController {
 
   private func makeHeader() -> UIView {
     let titleLabel = UILabel()
-    titleLabel.text = "TempMail"
+    titleLabel.text = "爱锦"
     titleLabel.textColor = .white
     titleLabel.font = .systemFont(ofSize: 25, weight: .bold)
 
@@ -453,10 +453,10 @@ final class TempMailLauncherViewController: UIViewController {
       )
       try data.write(to: launchedVersionsURL, options: .atomic)
       refreshInstalledCard()
-      print("TEMPMAIL_RUNTIME first_launch_recorded id=\(descriptor.id) version=\(versionToken)")
+      print("AIJIN_RUNTIME first_launch_recorded id=\(descriptor.id) version=\(versionToken)")
     } catch {
       launchedVersions.removeValue(forKey: descriptor.id)
-      print("TEMPMAIL_RUNTIME first_launch_record_failed id=\(descriptor.id) error=\(error.localizedDescription)")
+      print("AIJIN_RUNTIME first_launch_record_failed id=\(descriptor.id) error=\(error.localizedDescription)")
     }
   }
 
@@ -705,7 +705,7 @@ final class TempMailLauncherViewController: UIViewController {
     URLSession.shared.dataTask(with: url) { data, _, _ in
       guard let data else { return }
       let image = UIImage(data: data)
-        ?? TempMailAssetCrypto.decryptImageData(data).flatMap(UIImage.init(data:))
+        ?? AijinAssetCrypto.decryptImageData(data).flatMap(UIImage.init(data:))
       guard let image else { return }
       DispatchQueue.main.async { imageView.image = image }
     }.resume()
@@ -744,7 +744,7 @@ final class TempMailLauncherViewController: UIViewController {
           guard let self, self.activeCatalogID == nil else { return }
           self.refreshInstalledState()
         }
-        print("TEMPMAIL_CATALOG remote_ready sections=\(sections.count) apps=\(self.catalogApps.count)")
+        print("AIJIN_CATALOG remote_ready sections=\(sections.count) apps=\(self.catalogApps.count)")
         self.performPendingCatalogAction()
       }
     } catch {
@@ -755,7 +755,7 @@ final class TempMailLauncherViewController: UIViewController {
         if self.catalogSections.isEmpty {
           self.renderCatalog()
         }
-        print("TEMPMAIL_CATALOG unavailable error=\(error.localizedDescription)")
+        print("AIJIN_CATALOG unavailable error=\(error.localizedDescription)")
       }
     }
   }
@@ -820,7 +820,7 @@ final class TempMailLauncherViewController: UIViewController {
     case .status(let message):
       cancelButtonProgressRender()
       setButtonPresentation(pornhubButton, title: compactLoadingTitle(message), loading: true)
-      print("TEMPMAIL_FLUTTER_RUNTIME \(message)")
+      print("AIJIN_FLUTTER_RUNTIME \(message)")
     case .progress(let value, let artifact):
       let overallProgress = artifact.contains("NIVM")
         ? 0.82 + (Float(value) * 0.16)
@@ -834,7 +834,7 @@ final class TempMailLauncherViewController: UIViewController {
       setBusy(false, message: "天涯 \(payload.version) (\(payload.build)) 已下载")
       activeCatalogID = nil
       refreshInstalledCard()
-      print("TEMPMAIL_FLUTTER_RUNTIME guest_ready version=\(payload.version)+\(payload.build) sha256=\(payload.ipaSHA256)")
+      print("AIJIN_FLUTTER_RUNTIME guest_ready version=\(payload.version)+\(payload.build) sha256=\(payload.ipaSHA256)")
       if autoStartCatalogID == flutterCatalogApp?.id {
         autoStartCatalogID = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
@@ -862,7 +862,7 @@ final class TempMailLauncherViewController: UIViewController {
       if let button = playBoxButtons[descriptor.id] {
         setButtonPresentation(button, title: compactLoadingTitle(message), loading: true)
       }
-      print("TEMPMAIL_PLAYBOX_RUNTIME guest=\(descriptor.id) \(message)")
+      print("AIJIN_PLAYBOX_RUNTIME guest=\(descriptor.id) \(message)")
     case .progress(let value):
       if let button = playBoxButtons[descriptor.id] {
         renderButtonProgress(button, progress: Float(value))
@@ -880,7 +880,7 @@ final class TempMailLauncherViewController: UIViewController {
       setBusy(false, message: "\(descriptor.displayName) \(payload.version) (\(payload.build)) 已下载")
       activeCatalogID = nil
       refreshInstalledCard()
-      print("TEMPMAIL_PLAYBOX_RUNTIME guest_ready id=\(descriptor.id) version=\(payload.version)+\(payload.build) sha256=\(payload.ipaSHA256)")
+      print("AIJIN_PLAYBOX_RUNTIME guest_ready id=\(descriptor.id) version=\(payload.version)+\(payload.build) sha256=\(payload.ipaSHA256)")
       if autoStartCatalogID == descriptor.id {
         autoStartCatalogID = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
@@ -928,7 +928,7 @@ final class TempMailLauncherViewController: UIViewController {
       alert.addAction(UIAlertAction(title: "知道了", style: .default))
       present(alert, animated: true)
     }
-    print("TEMPMAIL_RUNTIME guest_failed error=\(message)")
+    print("AIJIN_RUNTIME guest_failed error=\(message)")
   }
 
   private func setLaunchControlsEnabled(_ enabled: Bool) {
@@ -1161,7 +1161,7 @@ final class TempMailLauncherViewController: UIViewController {
     scheduleLaunchStep(after: 0.42, progress: 0.58, detail: "正在载入应用资源")
     scheduleLaunchStep(after: 0.68, progress: 0.82, detail: "正在准备应用窗口")
 
-    let shouldCapture = ProcessInfo.processInfo.arguments.contains("--tempmail-capture-launch-progress")
+    let shouldCapture = ProcessInfo.processInfo.arguments.contains("--aijin-capture-launch-progress")
     if shouldCapture {
       let captureItem = DispatchWorkItem { [weak self] in
         self?.captureLauncherScreenshot(fileName: "launch-progress.png")
@@ -1193,8 +1193,8 @@ final class TempMailLauncherViewController: UIViewController {
   ) {
     let defaults = UserDefaults.standard
     if runtimeKind == "playbox" && descriptor?.requiresFullProcessBootstrap != true {
-      let launchResult = TempMailLaunchSelectedPlayBoxGuestInProcess()
-      print("TEMPMAIL_RUNTIME in_process_guest_result=\(launchResult)")
+      let launchResult = AijinLaunchSelectedPlayBoxGuestInProcess()
+      print("AIJIN_RUNTIME in_process_guest_result=\(launchResult)")
       defaults.removeObject(forKey: "TempMailGuestLaunchToken")
       defaults.removeObject(forKey: "TempMailPlayBoxGuestLaunchToken")
       defaults.synchronize()
@@ -1204,14 +1204,14 @@ final class TempMailLauncherViewController: UIViewController {
         return
       }
       finishLaunchFeedback()
-      showFailure("应用启动失败；请重新打开 TempMail 后重试")
+      showFailure("应用启动失败；请重新打开爱锦后重试")
       return
     }
 
     let relaunchURL = URL(string: "tempmail://sandbox.relaunch")!
     var completionCount = 0
     let completion: (Bool) -> Void = { [weak self] accepted in
-      print("TEMPMAIL_RUNTIME relaunch_requested runtime=\(runtimeKind) accepted=\(accepted)")
+      print("AIJIN_RUNTIME relaunch_requested runtime=\(runtimeKind) accepted=\(accepted)")
       guard let self else { return }
       completionCount += 1
       if accepted, !self.relaunchExitScheduled {
@@ -1242,7 +1242,7 @@ final class TempMailLauncherViewController: UIViewController {
       }
       return true
     } catch {
-      print("TEMPMAIL_RUNTIME continuation_marker_failed error=\(error.localizedDescription)")
+      print("AIJIN_RUNTIME continuation_marker_failed error=\(error.localizedDescription)")
       return false
     }
   }
@@ -1253,14 +1253,14 @@ final class TempMailLauncherViewController: UIViewController {
       let button = descriptor.usesFlutterSidecar ? pornhubButton : playBoxButtons[descriptor.id]
       return "\(descriptor.id):\(button?.title(for: .normal) ?? "nil"):\(button?.isEnabled == true)"
     }.joined(separator: ",")
-    print("TEMPMAIL_RUNTIME launcher_button_state \(buttonState)")
+    print("AIJIN_RUNTIME launcher_button_state \(buttonState)")
     let installedHitState = installedTileControls.map { control in
       let center = CGPoint(x: control.bounds.midX, y: control.bounds.midY)
       let point = control.convert(center, to: window)
       let hitView = window.hitTest(point, with: nil)
       return "\(control.accessibilityLabel ?? "unknown"):\(hitView === control)"
     }.joined(separator: ",")
-    print("TEMPMAIL_RUNTIME installed_tile_hit_state \(installedHitState)")
+    print("AIJIN_RUNTIME installed_tile_hit_state \(installedHitState)")
     let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
     guard let png = renderer.image(actions: { _ in
       window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
@@ -1270,9 +1270,9 @@ final class TempMailLauncherViewController: UIViewController {
     try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     do {
       try png.write(to: directory.appendingPathComponent(fileName), options: .atomic)
-      print("TEMPMAIL_RUNTIME launcher_screenshot file=\(fileName) bytes=\(png.count)")
+      print("AIJIN_RUNTIME launcher_screenshot file=\(fileName) bytes=\(png.count)")
     } catch {
-      print("TEMPMAIL_RUNTIME launcher_screenshot_failed error=\(error.localizedDescription)")
+      print("AIJIN_RUNTIME launcher_screenshot_failed error=\(error.localizedDescription)")
     }
   }
 }

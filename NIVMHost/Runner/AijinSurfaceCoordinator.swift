@@ -1,51 +1,9 @@
 import SwiftUI
 import UIKit
 
-enum TempMailSurface: Equatable {
-  case privacy
-  case box
-}
-
-enum TempMailSurfaceRoute {
-  static let activatedKey = "tempmail.appCenterActivatedFromExternalIntent"
-  private static let supportedSchemes: Set<String> = ["tempmail"]
-
-  static func supports(scheme: String) -> Bool {
-    supportedSchemes.contains(scheme.lowercased())
-  }
-
-  static func initialSurface(
-    defaults: UserDefaults = .standard
-  ) -> TempMailSurface {
-    return defaults.bool(forKey: activatedKey) ? .box : .privacy
-  }
-
-  static func surface(for url: URL) -> TempMailSurface? {
-    guard let scheme = url.scheme?.lowercased(), supports(scheme: scheme) else {
-      return nil
-    }
-    let host = (url.host ?? "").lowercased()
-    let path = url.path
-      .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-      .lowercased()
-    let command = host.isEmpty ? path : host
-
-    switch command {
-    case "box", "open", "install", "native":
-      return .box
-    case "privacy", "focus":
-      return .privacy
-    case "sandbox.relaunch", "playbox.guestapp.relaunch":
-      return nil
-    default:
-      return nil
-    }
-  }
-}
-
-final class TempMailSurfaceCoordinatorViewController: UIViewController {
+final class AijinSurfaceCoordinatorViewController: UIViewController {
   private let defaults: UserDefaults
-  private var currentSurface: TempMailSurface?
+  private var currentSurface: AijinSurface?
   private var currentController: UIViewController?
 
   init(defaults: UserDefaults = .standard) {
@@ -61,33 +19,33 @@ final class TempMailSurfaceCoordinatorViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
-    let initialSurface = TempMailSurfaceRoute.initialSurface(defaults: defaults)
+    let initialSurface = AijinSurfaceRoute.initialSurface(defaults: defaults)
     show(
       initialSurface,
       animated: false,
       persist: false
     )
-    print("TEMPMAIL_SURFACE initial=\(initialSurface == .privacy ? "privacy" : "box")")
+    print("AIJIN_SURFACE initial=\(initialSurface == .ai ? "ai" : "box")")
   }
 
   @discardableResult
   func handle(url: URL) -> Bool {
     guard let scheme = url.scheme?.lowercased(),
-          TempMailSurfaceRoute.supports(scheme: scheme) else {
+          AijinSurfaceRoute.supports(scheme: scheme) else {
       return false
     }
-    guard let surface = TempMailSurfaceRoute.surface(for: url) else {
+    guard let surface = AijinSurfaceRoute.surface(for: url) else {
       // The relaunch URL intentionally preserves the currently activated face.
       let host = url.host?.lowercased()
       return host == "sandbox.relaunch" || host == "playbox.guestapp.relaunch"
     }
     show(surface, animated: view.window != nil, persist: true)
-    print("TEMPMAIL_SURFACE url=\(url.absoluteString) selected=\(surface == .privacy ? "privacy" : "box")")
+    print("AIJIN_SURFACE url=\(url.absoluteString) selected=\(surface == .ai ? "ai" : "box")")
     return true
   }
 
   private func show(
-    _ surface: TempMailSurface,
+    _ surface: AijinSurface,
     animated: Bool,
     persist: Bool
   ) {
@@ -96,16 +54,16 @@ final class TempMailSurfaceCoordinatorViewController: UIViewController {
     }
 
     if persist {
-      defaults.set(surface == .box, forKey: TempMailSurfaceRoute.activatedKey)
+      defaults.set(surface == .box, forKey: AijinSurfaceRoute.activatedKey)
       defaults.synchronize()
     }
 
     let nextController: UIViewController
     switch surface {
-    case .privacy:
+    case .ai:
       nextController = UIHostingController(rootView: QingqingRootView())
     case .box:
-      nextController = TempMailLauncherViewController()
+      nextController = AijinLauncherViewController()
     }
 
     addChild(nextController)

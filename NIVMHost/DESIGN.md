@@ -5,7 +5,7 @@
 爱锦是 AI 角色聊天与陪伴产品。2026-11-08 用户确认：品牌名称为「爱锦」，
 吉祥物及 App 图标统一为胖嘟嘟的可爱锦鲤。本轮落实品牌身份，保留已验收的
 页面结构和业务；四方向主题方案尚未选定，不据此擅自整体换色或更改导航。
-此前临时邮箱的视觉规范仅适用于已停用的 TempMailA，不再指导当前 A 面。
+旧临时邮箱源码和未使用资源已移除，当前 A 面仅为 AI 角色聊天。
 B 面业务、宿主 Bundle ID、回调、账号和存储键保持兼容。
 
 ## 色板与角色
@@ -45,7 +45,7 @@ B 面业务、宿主 Bundle ID、回调、账号和存储键保持兼容。
 
 - 使用 Design/Branding/Aijin 中的母版；可复现导出脚本为 scripts/generate_aijin_brand_assets.swift。
 - 当前参考图版本的生成提示及素材来源记录在该目录的 REFERENCE-GENERATION.md；GENERATION.md 仅保留首版记录。
-- 仓库仍为 TianyaBox，继续维护 main；内部 TempMail 产品名和标识用于安装兼容。
+- 仓库仍为 TianyaBox，继续维护 main；内部产品名为 AijinAI；原 Bundle ID 和历史存储键保留安装兼容。
 - 不因品牌更名改动第三方接口签名、User-Agent、密钥、登录会话或 B 面运行时。
 - 不把本地源码、预览构建或截图验收表述为手机已经安装。
 

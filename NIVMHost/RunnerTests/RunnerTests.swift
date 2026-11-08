@@ -1,41 +1,41 @@
 import XCTest
-@testable import TempMail
+@testable import AijinAI
 
 final class RunnerTests: XCTestCase {
   func testFreshLaunchUsesAISurface() {
-    let suiteName = "TempMailSurfaceTests.fresh.\(UUID().uuidString)"
+    let suiteName = "AijinSurfaceTests.fresh.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }
 
-    XCTAssertEqual(TempMailSurfaceRoute.initialSurface(defaults: defaults), .privacy)
+    XCTAssertEqual(AijinSurfaceRoute.initialSurface(defaults: defaults), .ai)
   }
 
   func testLaunchRestoresSurfaceSelectedByAnEarlierDeepLink() {
-    let suiteName = "TempMailSurfaceTests.persisted.\(UUID().uuidString)"
+    let suiteName = "AijinSurfaceTests.persisted.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }
-    defaults.set(true, forKey: TempMailSurfaceRoute.activatedKey)
+    defaults.set(true, forKey: AijinSurfaceRoute.activatedKey)
 
-    XCTAssertEqual(TempMailSurfaceRoute.initialSurface(defaults: defaults), .box)
+    XCTAssertEqual(AijinSurfaceRoute.initialSurface(defaults: defaults), .box)
   }
 
   func testDeepLinksSelectSupportedSurfaces() {
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://box")!), .box)
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://open?id=tianya")!), .box)
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://install")!), .box)
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://native")!), .box)
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://privacy")!), .privacy)
-    XCTAssertEqual(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://focus")!), .privacy)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://box")!), .box)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://open?id=tianya")!), .box)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://install")!), .box)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://native")!), .box)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://ai")!), .ai)
+    XCTAssertEqual(AijinSurfaceRoute.surface(for: URL(string: "aijin://focus")!), .ai)
   }
 
   func testGuestRelaunchPreservesCurrentSurface() {
-    XCTAssertNil(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://sandbox.relaunch")!))
-    XCTAssertNil(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://playbox.guestapp.relaunch")!))
+    XCTAssertNil(AijinSurfaceRoute.surface(for: URL(string: "tempmail://sandbox.relaunch")!))
+    XCTAssertNil(AijinSurfaceRoute.surface(for: URL(string: "aijin://playbox.guestapp.relaunch")!))
   }
 
   func testUnsupportedURLsAreIgnored() {
-    XCTAssertFalse(TempMailSurfaceRoute.supports(scheme: "https"))
-    XCTAssertNil(TempMailSurfaceRoute.surface(for: URL(string: "https://3601.help")!))
-    XCTAssertNil(TempMailSurfaceRoute.surface(for: URL(string: "tempmail://unknown")!))
+    XCTAssertFalse(AijinSurfaceRoute.supports(scheme: "https"))
+    XCTAssertNil(AijinSurfaceRoute.surface(for: URL(string: "https://3601.help")!))
+    XCTAssertNil(AijinSurfaceRoute.surface(for: URL(string: "aijin://unknown")!))
   }
 }

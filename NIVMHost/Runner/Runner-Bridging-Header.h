@@ -1,1 +1,1 @@
-#import "TempMailAssetCrypto.h"
+#import "AijinAssetCrypto.h"

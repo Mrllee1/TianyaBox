@@ -1,13 +1,13 @@
 import UIKit
 import PBPlayerKit
 
-@_silgen_name("TempMailForwardInProcessGuestLifecycle")
-private func TempMailForwardInProcessGuestLifecycle(_ event: Int32)
+@_silgen_name("AijinForwardInProcessGuestLifecycle")
+private func AijinForwardInProcessGuestLifecycle(_ event: Int32)
 
-@objc(TempMailHostDelegate)
-final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompatible {
+@objc(AijinHostDelegate)
+final class AijinHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompatible {
   var window: UIWindow?
-  private var surfaceCoordinator: TempMailSurfaceCoordinatorViewController?
+  private var surfaceCoordinator: AijinSurfaceCoordinatorViewController?
 
   var keyWindow: UIWindow {
     if let window { return window }
@@ -17,12 +17,12 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
       .first(where: \.isKeyWindow) {
       return activeWindow
     }
-    fatalError("TempMail window has not been created")
+    fatalError("AI host window has not been created")
   }
 
   var rootVC: UIViewController {
     guard let root = keyWindow.rootViewController else {
-      fatalError("TempMail root controller has not been created")
+      fatalError("AI host root controller has not been created")
     }
     return root
   }
@@ -52,11 +52,11 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
 
   fileprivate func installRoot(in window: UIWindow, initialURL: URL? = nil) {
     self.window = window
-    if ProcessInfo.processInfo.arguments.contains("--tempmail-playbox-developer") {
+    if ProcessInfo.processInfo.arguments.contains("--aijin-playbox-developer") {
       PBPlayerKitBox.setupApp()
       guard let controllerClass = NSClassFromString("PBPlayerKit.DeveloperController") as? NSObject.Type,
             let controller = controllerClass.init() as? UIViewController else {
-        print("TEMPMAIL_PLAYBOX_DEVELOPER boot_failed reason=controller_missing")
+        print("AIJIN_PLAYBOX_DEVELOPER boot_failed reason=controller_missing")
         return
       }
       let navigation = UINavigationController(rootViewController: controller)
@@ -65,16 +65,16 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
         self.inspectDeveloperController(controller, navigation: navigation)
       }
     } else {
-      let coordinator = TempMailSurfaceCoordinatorViewController()
+      let coordinator = AijinSurfaceCoordinatorViewController()
       surfaceCoordinator = coordinator
       window.rootViewController = coordinator
     }
     window.makeKeyAndVisible()
     let qaArguments = ProcessInfo.processInfo.arguments
-    if qaArguments.contains("--tempmail-capture-surface") {
+    if qaArguments.contains("--aijin-capture-surface") {
       UserDefaults.standard.set(true, forKey: "TempMailQACaptureSurface")
     }
-    if qaArguments.contains("--tempmail-stop-capture") {
+    if qaArguments.contains("--aijin-stop-capture") {
       UserDefaults.standard.removeObject(forKey: "TempMailQACaptureSurface")
     }
     if UserDefaults.standard.bool(forKey: "TempMailQACaptureSurface") {
@@ -88,7 +88,7 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
         let directory = documents.appendingPathComponent("TempMailTest", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try? png?.write(to: directory.appendingPathComponent("surface.png"), options: .atomic)
-        print("TEMPMAIL_QA surface_capture delay=\(delay) bytes=\(png?.count ?? 0)")
+        print("AIJIN_QA surface_capture delay=\(delay) bytes=\(png?.count ?? 0)")
       }
       }
     }
@@ -96,7 +96,7 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
     if let url = initialURL {
       _ = surfaceCoordinator?.handle(url: url)
     }
-    print("TEMPMAIL_RUNTIME host_ready runtime=\(ProcessInfo.processInfo.arguments.contains("--tempmail-playbox-developer") ? "playbox_developer" : "launcher")")
+    print("AIJIN_RUNTIME host_ready runtime=\(ProcessInfo.processInfo.arguments.contains("--aijin-playbox-developer") ? "playbox_developer" : "launcher")")
   }
 
   func application(
@@ -114,17 +114,17 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
     controller.loadViewIfNeeded()
     guard let table = findTableView(in: controller.view),
           let dataSource = table.dataSource else {
-      print("TEMPMAIL_PLAYBOX_DEVELOPER table_missing")
+      print("AIJIN_PLAYBOX_DEVELOPER table_missing")
       return
     }
     let sectionCount = dataSource.numberOfSections?(in: table) ?? 1
-    print("TEMPMAIL_PLAYBOX_DEVELOPER table sections=\(sectionCount)")
+    print("AIJIN_PLAYBOX_DEVELOPER table sections=\(sectionCount)")
     for section in 0..<sectionCount {
       let rows = dataSource.tableView(table, numberOfRowsInSection: section)
       for row in 0..<rows {
         let indexPath = IndexPath(row: row, section: section)
         let cell = dataSource.tableView(table, cellForRowAt: indexPath)
-        print("TEMPMAIL_PLAYBOX_DEVELOPER row section=\(section) row=\(row) text=\(viewText(in: cell).joined(separator: " | "))")
+        print("AIJIN_PLAYBOX_DEVELOPER row section=\(section) row=\(row) text=\(viewText(in: cell).joined(separator: " | "))")
       }
     }
   }
@@ -150,14 +150,14 @@ final class TempMailHostDelegate: UIResponder, UIApplicationDelegate, UIKitCompa
 }
 
 
-@objc(TempMailSceneDelegate)
-final class TempMailSceneDelegate: UIResponder, UIWindowSceneDelegate {
+@objc(AijinSceneDelegate)
+final class AijinSceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
              options connectionOptions: UIScene.ConnectionOptions) {
     guard let windowScene = scene as? UIWindowScene else { return }
-    if let delegate = UIApplication.shared.delegate as? TempMailHostDelegate {
+    if let delegate = UIApplication.shared.delegate as? AijinHostDelegate {
       let window = UIWindow(windowScene: windowScene)
       self.window = window
       delegate.installRoot(in: window, initialURL: connectionOptions.urlContexts.first?.url)
@@ -170,14 +170,14 @@ final class TempMailSceneDelegate: UIResponder, UIWindowSceneDelegate {
   }
 
   func scene(_ scene: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
-    guard let delegate = UIApplication.shared.delegate as? TempMailHostDelegate else { return }
+    guard let delegate = UIApplication.shared.delegate as? AijinHostDelegate else { return }
     for context in contexts {
       _ = delegate.application(UIApplication.shared, open: context.url)
     }
   }
 
-  func sceneWillResignActive(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(1) }
-  func sceneDidEnterBackground(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(2) }
-  func sceneWillEnterForeground(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(3) }
-  func sceneDidBecomeActive(_ scene: UIScene) { TempMailForwardInProcessGuestLifecycle(4) }
+  func sceneWillResignActive(_ scene: UIScene) { AijinForwardInProcessGuestLifecycle(1) }
+  func sceneDidEnterBackground(_ scene: UIScene) { AijinForwardInProcessGuestLifecycle(2) }
+  func sceneWillEnterForeground(_ scene: UIScene) { AijinForwardInProcessGuestLifecycle(3) }
+  func sceneDidBecomeActive(_ scene: UIScene) { AijinForwardInProcessGuestLifecycle(4) }
 }

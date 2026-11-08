@@ -85,7 +85,7 @@ final class QingqingAPI {
     request.setValue("TianyaBox/1.0 (iOS)", forHTTPHeaderField: "User-Agent")
     // Use this installation's identity and user-issued session only. Do not copy
     // Android identifiers, captured sessions, device attestation or APK signing keys.
-    var agent = ["platform": "iOS", "device_id": installID, "app_version": "1.0", "bundle_id": Bundle.main.bundleIdentifier ?? "com.tianya.tempmail"]
+    var agent = ["platform": "iOS", "device_id": installID, "app_version": "1.0", "bundle_id": Bundle.main.bundleIdentifier ?? "com.aijin.ai"]
     agent.merge(["os": "2", "os_sdid": installID, "sn": "sn", "channel": "other", "device_brand": "Apple", "root": "false", "imei": "", "md5_imei": "d41d8cd98f00b204e9800998ecf8427e", "oaid": "", "android_id": "", "android_id_level": "0", "net": "UNKNOWN", "build": "20261108"], uniquingKeysWith: { _, new in new })
     // This catalog exposes the reference app's VIP/coin products only with os=1.
     // Scope compatibility to this read before signing; account and order requests

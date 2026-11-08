@@ -4,19 +4,21 @@ The visible application name is `爱锦`. The repository remains `TianyaBox`; it
 mascot and primary icon use the reference-inspired red-and-white koi with aqua eyes and a flower hat in
 `Design/Branding/Aijin`. Regenerate asset sizes with
 `xcrun swift scripts/generate_aijin_brand_assets.swift` and validate with
-`scripts/validate_app_icons.sh`. The host product and Bundle ID remain
-`TempMail` / `com.tianya.tempmail` to preserve installed B guest data and callbacks.
+`scripts/validate_app_icons.sh`. The host product is now AijinAI; the Bundle ID is
+`com.aijin.ai`, with signing team `WFJKWPCH2R`. This is a new iOS application
+identity: data and Keychain sessions from `com.tianya.tempmail` do not migrate
+automatically. The old test installation is not removed by building the new ID.
 
 ## A/B surfaces
 
 - A is the native SwiftUI AI character product in `QingqingA`: discovery, role
   details, email/device login, model selection, chat, creation, memories, gifts,
   membership, simulator scenes, and the verified H5 theater adapter.
-- The previous mailbox sources in `TempMailA` are inactive historical sources.
+- The retired mailbox implementation and its unused artwork have been removed.
 - B retains its encrypted application catalog, downloads, verified installation,
   NIVM/QEMU runtime and floating guest return.
-- Existing routing remains compatible: `tempmail://privacy` selects AI A;
-  `tempmail://box`, `open`, `install`, and `native` select B. The selected surface
+- Existing routing remains compatible: `aijin://ai` selects AI A;
+  `aijin://box`, `open`, `install`, and `native` select B. The selected surface
   persists across launch; guest relaunch callbacks preserve it.
 
 ## AI service configuration
@@ -47,17 +49,17 @@ Live test outcomes and remaining acceptance limits are recorded in
 
 1. The activated B face restores its last verified catalog from Application Support so a
    return/relaunch can render immediately, then refreshes the encrypted catalog
-   from `TempMailCatalogBaseURL` in the background.
+   from `AijinCatalogBaseURL` in the background.
 2. The launcher renders server categories as five-column cards with real app
    icons and per-app `安装` / `启动` state.
 3. `安装` downloads the converted IPA, verifies its SHA-256, bundle ID,
    version, build, `rocketship.nivm`/Flutter sidecar, and NIVM SHA-256.
-4. The validated application is kept under TempMail's Documents container.
-5. `启动` enters the selected NIVM/QEMU guest in the current TempMail process;
-   the user does not need to reopen TempMail manually.
+4. The validated application is kept under Aijin's Documents container.
+5. `启动` enters the selected NIVM/QEMU guest in the current Aijin process;
+   the user does not need to reopen Aijin manually.
 6. The guest window keeps a draggable PlayBox-style floating control. Tap it
    once to open PlayBox's full-screen pass-through menu and its separate
-   `返回沙盒` action, then tap that action to relaunch the TempMail launcher
+   `返回沙盒` action, then tap that action to relaunch the Aijin launcher
    automatically.
 
 Every visible tile, including the source-built `pornhub_client`/天涯 package,
@@ -95,7 +97,7 @@ entries in two groups:
   can be dragged vertically and snaps to the nearest screen edge.
 - The floating control loads the original icon, highlighted icon, return icon,
   and localized title from `PBPlayerKit.framework/Floating.bundle`; a built-in
-  TempMail symbol remains as the runtime fallback. Its expanded return action uses
+  Aijin symbol remains as the runtime fallback. Its expanded return action uses
   a compact black translucent card so it does not visually compete with guest
   content.
 
@@ -129,20 +131,20 @@ The runtime frameworks are intentionally not committed to this repository.
 ```bash
 cd /Users/king/Documents/GitHub/TianyaBox/NIVMHost
 pod install
-export TEMPMAIL_SIGNING_IDENTITY="<local-development-certificate-SHA1>"
-export TEMPMAIL_DEVICE_PROFILE="/absolute/path/to/development.mobileprovision"
+export AIJIN_SIGNING_IDENTITY="<local-development-certificate-SHA1>"
+export AIJIN_DEVICE_PROFILE="/absolute/path/to/development.mobileprovision"
 ./scripts/build_and_install.sh 003F06EE-CAF3-553A-8035-CDD0276F9ED1
 ```
 
 The device script uses the verified frameworks in `Build/Runtime/Frameworks`
-(or `TEMPMAIL_RUNTIME_FRAMEWORKS`), signs with the supplied development profile,
-and never changes the mailbox bundle ID or existing installed mailbox data.
-The script prepares the exact SHA-256 verified Flutter debug interpreter from the local SDK
+(or `AIJIN_RUNTIME_FRAMEWORKS`), signs with the supplied development profile,
+and preserves the installed app identity and existing AI account / B-side guest data.
+The runtime preparation path prepares the exact SHA-256 verified Flutter debug interpreter from the local SDK
 and stages the eight startup plugins from the verified Tianya 357 IPA.
-`TEMPMAIL_FLUTTER_FRAMEWORK_SOURCE` can select that exact SDK framework location.
+`AIJIN_FLUTTER_FRAMEWORK_SOURCE` can select that exact SDK framework location.
 
 Successful completion prints `TIANYABOX_HOST_OK`, installs
-`com.tianya.tempmail`, and launches it on the selected device.
+`com.aijin.ai`, and launches it on the selected device.
 
 ## App Store IPA
 
@@ -155,8 +157,7 @@ cd /Users/king/Documents/GitHub/TianyaBox/NIVMHost
 ```
 
 The script creates a `generic/platform=iOS` archive, embeds and validates the
-`TempMailActivityMonitor` extension, stages and signs the NIVM
-runtime, preserves the required standalone 167x167 iPad Pro icon and its
+host resources, stages and signs the NIVM runtime, preserves the required standalone 167x167 iPad Pro icon and its
 `Info.plist` references, exports with App Store Connect signing, and then
 verifies the ZIP, host/extension entitlements, nested code signatures, source
 icon sets, and exported app icon bundle. A successful run ends with
@@ -176,26 +177,26 @@ are stripped from the staged copy, leaving the original engine build untouched.
 The alternate surface is selected only through the registered URL scheme:
 
 ```bash
-# Select the mailbox surface.
+# Select the AI companion surface.
 xcrun devicectl device process launch --device <device-identifier> \
-  --terminate-existing --payload-url tempmail://privacy com.tianya.tempmail
+  --terminate-existing --payload-url aijin://ai com.aijin.ai
 
 # Select the app-center surface.
 xcrun devicectl device process launch --device <device-identifier> \
-  --terminate-existing --payload-url tempmail://box com.tianya.tempmail
+  --terminate-existing --payload-url aijin://box com.aijin.ai
 ```
 
 The selected surface is persisted so a guest relaunch can return to the same
-surface. Opening `tempmail://privacy` switches back to the mailbox surface.
+surface. Opening `aijin://ai` switches back to the AI companion surface.
 
 Production catalog and encrypted-image settings can be supplied without
 editing source:
 
 ```bash
-TEMPMAIL_CATALOG_BASE_URL=https://3601.help \
-TEMPMAIL_CLIENT_AES_KEY='<base64-32-byte-key>' \
-TEMPMAIL_ASSET_AES_KEY='<base64-or-hex-key>' \
-TEMPMAIL_ASSET_AES_IV='<base64-or-hex-iv>' \
+AIJIN_CATALOG_BASE_URL=https://3601.help \
+AIJIN_CLIENT_AES_KEY='<base64-32-byte-key>' \
+AIJIN_ASSET_AES_KEY='<base64-or-hex-key>' \
+AIJIN_ASSET_AES_IV='<base64-or-hex-iv>' \
 ./scripts/build_and_install.sh <device-identifier>
 ```
 
@@ -204,7 +205,7 @@ SHA-256 fallback material. Never commit production secrets.
 
 ## Adding another application
 
-Convert and validate the exact IPA first. Then create the entry in TempMail
+Convert and validate the exact IPA first. Then create the entry in Aijin
 Admin with all of the following fields:
 
 - display name, icon, category, and group
