@@ -1,0 +1,26 @@
+{
+  "scope": "Same physical phone and preserved account session, read-only recommendation requests under os=2 and os=1. Both responses empty; final app retains os=2 for this feed.",
+  "requests": [
+    {
+      "time": "2026-11-08T06:04:33Z",
+      "path": "home/getRecommend",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "os": "2",
+      "page": "1",
+      "records_count": 0
+    },
+    {
+      "time": "2026-11-08T06:07:44Z",
+      "path": "home/getRecommend",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "os": "1",
+      "page": "1",
+      "records_count": 0,
+      "payload_kind": "array"
+    }
+  ]
+}

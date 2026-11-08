@@ -1,0 +1,43 @@
+{
+  "artifact": "dist/TianyaBox-AI-20261108-auto-discovery-r8.ipa",
+  "bytes": 135424439,
+  "sha256": "b2b9a7474f46e996030259be921cb66382dac71e5092334470ef06f2378220e8",
+  "zip_integrity": "pass",
+  "signature_deep_strict": "pass",
+  "bundle_id": "com.tianya.tempmail",
+  "display_name": "TianyaBox",
+  "contract_checks": 22,
+  "store_checks": 9,
+  "fixture_markers_in_production": false,
+  "b_surface_changed": false,
+  "runtime_files_byte_identical": 319,
+  "discovery_ui_tests": {
+    "tests": 3,
+    "failures": 0,
+    "seconds": [
+      30.962,
+      25.594,
+      17.24
+    ],
+    "result": "NIVMHost/Build/QA/qingqing-discovery-20261108/native-preview/UI-20261108-140111.xcresult",
+    "note": "These three discovery cases passed. The same initial suite also contained the recommendation locator failure, recorded separately."
+  },
+  "recommendation_ui_retest": {
+    "tests": 1,
+    "failures": 0,
+    "seconds": 6.637,
+    "result": "NIVMHost/Build/QA/qingqing-discovery-20261108/native-preview/UI-20261108-140345.xcresult",
+    "note": "After correcting StaticText to Button in the test locator; view/store source unchanged."
+  },
+  "device_installation": {
+    "device": "iPhone 100 pro max",
+    "capture_enabled": false,
+    "status": "installed",
+    "launch": "pass",
+    "installed_at_utc": "2026-11-08T06:10:31Z",
+    "existing_session_preserved": true,
+    "startup_status": "HTTP/business 200",
+    "recommendation_records": 0,
+    "automatic_scroll_acceptance": "simulator UI tests; not automated on physical device"
+  }
+}

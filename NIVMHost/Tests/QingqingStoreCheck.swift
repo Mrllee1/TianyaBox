@@ -15,6 +15,15 @@ import Foundation
     precondition(QQInteractionProtocol.count("home/getRecommend") == 2)
     print("PASS startup/home deduplication, cached tab return and explicit refresh")
 
+    store = QQInteractionFixtures.store(mode: "empty-home-once")
+    await store.loadSection(0)
+    precondition(store.recommended.isEmpty && QQInteractionProtocol.count("home/getRecommend") == 1)
+    await store.loadSection(0)
+    precondition(store.recommended.count == 1 && QQInteractionProtocol.count("home/getRecommend") == 2)
+    await store.loadSection(0)
+    precondition(QQInteractionProtocol.count("home/getRecommend") == 2)
+    print("PASS empty recommendation is retried on return while nonempty content remains cached")
+
     store = QQInteractionFixtures.store(mode: "section-error")
     let sectionStore = store
     async let group: Void = sectionStore.loadSection(1)

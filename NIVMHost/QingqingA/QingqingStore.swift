@@ -72,7 +72,10 @@ final class QingqingStore: ObservableObject {
         default: records = try await api.request("home/getRecommend", parameters: ["page": "1", "pageSize": "20"]).records
         }
         switch index { case 1: groups = records; case 2: simulators = records; case 3: theaters = records; default: recommended = records }
-        loadedSections.insert(index)
+        // An empty successful response may be transient. Retry it when the user
+        // returns to the section instead of caching a blank home for this run.
+        if records.isEmpty { loadedSections.remove(index) }
+        else { loadedSections.insert(index) }
       } catch { if !Self.cancelled(error) { sectionErrors[index] = error.localizedDescription } }
     }
     sectionTasks[index] = task

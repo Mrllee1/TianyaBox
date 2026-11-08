@@ -95,7 +95,7 @@ private struct QQHomeView: View {
         } else if items.isEmpty && store.loadingSections.contains(store.homeSection) {
           ProgressView()
         } else if items.isEmpty {
-          QQEmptyState()
+          QQEmptyState { Task { await store.loadSection(store.homeSection, force: true) } }
         } else if store.homeSection < 2 {
           TabView(selection: $focused) {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, role in
@@ -209,16 +209,36 @@ struct QQLibraryView: View {
           else if ranked.isEmpty { QQEmptyState() }
         } else {
           LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) { ForEach(store.roles) { role in QQRoleChatLink(role: role) { QQRoleTile(role: role) }.buttonStyle(.plain).accessibilityIdentifier("qingqing.library.role." + role.id) } }.padding(.horizontal, 10)
-          if store.rolesLoading { ProgressView().padding() }
+          if store.rolesLoading && store.roles.isEmpty { ProgressView().padding() }
           else if let message = store.rolesError, store.roles.isEmpty { QQEmptyState(text: message) { Task { await refresh() } } }
           else if store.roles.isEmpty { QQEmptyState() }
-          else {
-            if let message = store.rolesError { Text(message).font(.system(size: 13)).foregroundStyle(.red).padding(12) }
-            if !exhausted { Button(store.rolesError == nil ? "加载更多" : "重试加载更多") { Task { await loadMore() } }.padding(20).font(.system(size: 13)).disabled(moreLoading).accessibilityIdentifier("qingqing.library.load-more") }
-          }
+          else { paginationFooter }
         }
       }.refreshable { await refresh() }
+        .onScrollGeometryChange(for: QQLibraryScrollPosition.self) { geometry in
+          QQLibraryScrollPosition(nearBottom: geometry.visibleRect.maxY >= geometry.contentSize.height - 200, contentHeight: geometry.contentSize.height)
+        } action: { _, position in
+          if position.nearBottom { Task { await loadMore(automatic: true) } }
+        }
+        .id(loadKey)
     }.background(.white).task(id: loadKey) { await refresh() }
+  }
+  private var paginationFooter: some View {
+    VStack(spacing: 10) {
+      if store.rolesLoading || moreLoading {
+        ProgressView().accessibilityLabel("正在加载更多")
+      } else if let message = store.rolesError {
+        Text(message).foregroundStyle(.red)
+        Button("重试加载更多") { Task { await loadMore() } }
+          .accessibilityIdentifier("qingqing.library.load-more")
+      } else if exhausted {
+        Text("已经到底了").foregroundStyle(.gray).accessibilityIdentifier("qingqing.library.exhausted")
+      } else { Color.clear.frame(height: 24) }
+    }.font(.system(size: 13)).frame(maxWidth: .infinity, minHeight: 48).padding(.vertical, 12)
+  }
+  private struct QQLibraryScrollPosition: Equatable {
+    let nearBottom: Bool
+    let contentHeight: CGFloat
   }
   private func segment(_ title: String, active: Bool, action: @escaping () -> Void) -> some View {
     Button(action: action) { Text(title).font(.system(size: 14, weight: .bold)).foregroundStyle(active ? Color(red: 0, green: 0.65, blue: 0.85) : Color(white: 0.55)).padding(.horizontal, 15).frame(height: 32).background(active ? Color(red: 0.88, green: 0.98, blue: 1) : Color(white: 0.97), in: Capsule()).frame(minHeight: 44).contentShape(Rectangle()) }.accessibilityAddTraits(active ? .isSelected : [])
@@ -248,14 +268,15 @@ struct QQLibraryView: View {
       exhausted = count < 20
     }
   }
-  private func loadMore() async {
-    guard !ranking, !moreLoading, !store.rolesLoading, !exhausted else { return }
+  private func loadMore(automatic: Bool = false) async {
+    guard !ranking, !moreLoading, !store.rolesLoading, !store.roles.isEmpty, !exhausted,
+      !automatic || store.rolesError == nil else { return }
     moreLoading = true
-    let ticket = requestID, requestedCategory = category, nextPage = store.lastLoadedRolePage + 1
+    let ticket = requestID, requestedCategory = category, nextPage = store.lastLoadedRolePage + 1, previousCount = store.roles.count
     defer { if ticket == requestID { moreLoading = false } }
     let count = await store.loadRoles(category: requestedCategory, page: nextPage)
     guard ticket == requestID, category == requestedCategory, !ranking, let count else { return }
-    exhausted = count < 20
+    exhausted = count < 20 || store.roles.count == previousCount
   }
 }
 

@@ -1,0 +1,44 @@
+{
+  "scope": "Final R8 installation on the preserved physical-device account. API/startup status only; no physical-device automated scroll acceptance claimed.",
+  "requests": [
+    {
+      "time": "2026-11-08T06:10:31Z",
+      "path": "home/getRecommend",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2",
+      "page": "1",
+      "records_count": 0,
+      "payload_kind": "array"
+    },
+    {
+      "time": "2026-11-08T06:10:31Z",
+      "path": "home/indexCategory",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    },
+    {
+      "time": "2026-11-08T06:10:31Z",
+      "path": "home/getModelListV2",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    },
+    {
+      "time": "2026-11-08T06:10:31Z",
+      "path": "member/info",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    }
+  ]
+}

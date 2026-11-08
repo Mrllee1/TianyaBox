@@ -57,7 +57,7 @@ final class QQInteractionProtocol: URLProtocol {
       case "member/info": payload = ["id": "qa-account", "nick": "验收账号", "coin": "0"]
       case "home/indexCategory": payload = [["code": "all", "name": "全部"], ["code": "slow", "name": "慢分类"], ["code": "fast", "name": "快分类"]]
       case "home/getModelListV2": payload = [["code": "qa", "name": "验收模式"]]
-      case "home/getRecommend": payload = [record("recommend", "推荐验收角色")]
+      case "home/getRecommend": payload = mode == "empty-home-once" && calls[key] == 1 ? [] : [record("recommend", "推荐验收角色")]
       case "home/getGroupRole":
         payload = [record("group", "群聊验收角色")]
         if mode == "section-error" { code = 500; delay = 0.35 }
@@ -67,6 +67,7 @@ final class QQInteractionProtocol: URLProtocol {
         payload = page <= 2 ? (1...20).map { record("\(category)-\((page - 1) * 20 + $0)", "\(category)角色\((page - 1) * 20 + $0)") } : []
         if category == "slow" { delay = 0.4 }
         if mode == "paging", page == 2, calls[key] == 1 { code = 500 }
+        if mode == "paging-duplicate", page == 2 { payload = (1...20).map { record("\(category)-\($0)", "\(category)角色\($0)") } }
         if mode == "refresh-failure", page == 1, calls[key, default: 0] > 1 { code = 500 }
       case "home/roleRankLabel": payload = [["type": "hot", "name": "热门"], ["type": "new", "name": "最新"]]
       case "home/roleRank": payload = [record("rank", "排行验收角色")]; delay = 0.25

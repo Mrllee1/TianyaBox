@@ -16,7 +16,7 @@ struct PreviewScreen: View {
       else { switch mode {
       case "local-diagnostics": QQPreviewLocalDiagnostics()
       case "home-tabs-fixture": QQHomeTabsPreview()
-      case "navigation-fixture", "discovery-fixture", "section-error-fixture": QQNavigationInteractionPreview(mode: mode)
+      case "navigation-fixture", "discovery-fixture", "discovery-auto-fixture", "discovery-duplicate-fixture", "empty-home-fixture", "section-error-fixture": QQNavigationInteractionPreview(mode: mode)
       case "compact-navigation-fixture": QQNavigationInteractionPreview(mode: mode).frame(width: 320, height: 568)
       case "cast-guards-fixture": QQCastGuardsPreview()
       case "chat-draft-fixture": QQChatDraftInteractionPreview()
@@ -209,8 +209,9 @@ private struct QQRolePreview: View {
 private struct QQNavigationInteractionPreview: View {
   @StateObject private var store: QingqingStore
   init(mode: String) {
-    let store = QQInteractionFixtures.store(mode: mode == "discovery-fixture" ? "paging" : mode == "section-error-fixture" ? "section-error" : "navigation")
-    if mode == "discovery-fixture" { store.selectedTab = 1 }
+    let fixtureModes = ["discovery-fixture": "paging", "discovery-duplicate-fixture": "paging-duplicate", "empty-home-fixture": "empty-home-once", "section-error-fixture": "section-error"]
+    let store = QQInteractionFixtures.store(mode: fixtureModes[mode] ?? "navigation")
+    if mode.hasPrefix("discovery-") { store.selectedTab = 1 }
     _store = StateObject(wrappedValue: store)
   }
   var body: some View { QingqingRootView(store: store) }

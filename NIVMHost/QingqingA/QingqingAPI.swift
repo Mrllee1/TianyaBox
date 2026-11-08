@@ -165,6 +165,15 @@ final class QingqingAPI {
       diagnosticContext["vip_displayable_count"] = result["package"].records.filter { !$0["id"].isEmpty }.count
       diagnosticContext["coin_displayable_count"] = result["coin"].records.filter { !$0["id"].isEmpty }.count
     }
+    if usesKeychain, method == "GET", ["home/getRecommend", "home/getRole"].contains(path) {
+      diagnosticContext["records_count"] = result.records.count
+      diagnosticContext["page"] = parameters["page"] ?? "1"
+      switch result {
+      case .array: diagnosticContext["payload_kind"] = "array"
+      case .object(let fields): diagnosticContext["payload_kind"] = "object"; diagnosticContext["payload_fields"] = fields.keys.sorted()
+      default: diagnosticContext["payload_kind"] = "other"
+      }
+    }
     return result
   }
 }

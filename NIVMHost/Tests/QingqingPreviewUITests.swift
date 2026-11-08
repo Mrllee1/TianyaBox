@@ -65,8 +65,8 @@ final class QingqingPreviewUITests: XCTestCase {
     XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
     let more = app.buttons["qingqing.library.load-more"]
     for _ in 0..<14 { if more.exists && more.isHittable { break }; app.swipeUp() }
-    XCTAssertTrue(more.isHittable)
-    more.tap()
+    // Reaching the end automatically attempted page 2. Only the failed-page
+    // retry requires a tap; no normal "load more" action is exposed.
     XCTAssertTrue(app.buttons["重试加载更多"].waitForExistence(timeout: 10))
     capture(app, "discovery-page-failure-preserves-results")
     more.tap()
@@ -76,6 +76,46 @@ final class QingqingPreviewUITests: XCTestCase {
     app.buttons["热门标签"].tap()
     app.swipeDown()
     XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+  }
+
+  func testDiscoveryLoadsAutomaticallyAndStopsAtEnd() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=discovery-auto-fixture"]; app.launch()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+    XCTAssertFalse(app.buttons["qingqing.library.load-more"].exists)
+    let next = app.buttons["qingqing.library.role.all-21"]
+    for _ in 0..<16 { if next.exists { break }; app.swipeUp() }
+    XCTAssertTrue(next.waitForExistence(timeout: 10))
+    let end = app.staticTexts["qingqing.library.exhausted"]
+    for _ in 0..<16 { if end.exists && end.isHittable { break }; app.swipeUp() }
+    XCTAssertTrue(end.waitForExistence(timeout: 10))
+    app.swipeUp(); XCTAssertTrue(end.exists)
+    XCTAssertFalse(app.buttons["qingqing.library.load-more"].exists)
+    capture(app, "discovery-automatic-pagination-end")
+  }
+
+  func testDiscoveryStopsWhenTheServerRepeatsTheSamePage() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=discovery-duplicate-fixture"]; app.launch()
+    XCTAssertTrue(app.buttons["qingqing.library.role.all-1"].waitForExistence(timeout: 10))
+    let end = app.staticTexts["qingqing.library.exhausted"]
+    for _ in 0..<16 { if end.exists && end.isHittable { break }; app.swipeUp() }
+    XCTAssertTrue(end.waitForExistence(timeout: 10))
+    XCTAssertFalse(app.buttons["qingqing.library.role.all-21"].exists)
+    XCTAssertFalse(app.buttons["qingqing.library.load-more"].exists)
+    capture(app, "discovery-repeated-page-stops")
+  }
+
+  func testEmptyRecommendationCanReload() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=empty-home-fixture"]; app.launch()
+    let reload = app.buttons["重新加载"]
+    XCTAssertTrue(reload.waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["暂时没有内容～"].exists)
+    reload.tap()
+    XCTAssertTrue(app.buttons["推荐验收角色"].waitForExistence(timeout: 10))
+    XCTAssertFalse(reload.exists)
+    capture(app, "recommendation-reloaded-after-empty")
   }
 
   func testFailedHomeSectionStillAllowsSwitching() {

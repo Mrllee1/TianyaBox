@@ -44,7 +44,7 @@ struct QingqingContractCheck {
     let list = try await api.request("home/getRole", parameters: ["page": "1"])
     precondition(list.records.first?.id == "42")
     print("PASS fresh installation identity and mixed identifier decoding")
-    let catalogContexts = [("order/packageV2", "GET", "1"), ("order/payWay", "GET", "2"),
+    let catalogContexts = [("order/packageV2", "GET", "1"), ("home/getRecommend", "GET", "2"), ("order/payWay", "GET", "2"),
       ("member/info", "GET", "2"), ("device/login", "POST", "2"), ("order/create", "POST", "2"),
       ("order/packageV2", "POST", "2")]
     for (path, method, expectedOS) in catalogContexts {
@@ -61,7 +61,7 @@ struct QingqingContractCheck {
       }
       _ = try await api.request(path, method: method)
     }
-    print("PASS only GET member catalog uses os=1 with a matching signature; account/payment/write requests retain os=2")
+    print("PASS only GET member catalog uses os=1 with matching signatures; recommendation/account/payment/write requests retain os=2")
     FixtureProtocol.handler = { request in
       precondition(request.url?.path == "/home/searchRole2" && request.httpMethod == "POST")
       var body = request.httpBody ?? Data()

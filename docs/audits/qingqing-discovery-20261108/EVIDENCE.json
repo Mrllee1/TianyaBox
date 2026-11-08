@@ -1,0 +1,120 @@
+{
+  "note": "Fingerprints and sanitized status only. No account credentials, role payloads, private configuration, provisioning or raw device data committed. Recommendation remains empty for the physical-device account.",
+  "files": [
+    {
+      "path": "NIVMHost/QingqingA/QingqingAPI.swift",
+      "bytes": 14160,
+      "sha256": "b1c899c16e7d32a92f948f0138e2ef06c1b8e86eec67ab20d30dbbc51ad9799f"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingRootView.swift",
+      "bytes": 20141,
+      "sha256": "5ea692fe2291514c10ce76c985643aedbb80d3f5885c4ce7cb6cad01cbbf1b84"
+    },
+    {
+      "path": "NIVMHost/QingqingA/QingqingStore.swift",
+      "bytes": 5893,
+      "sha256": "efc6d5fc4ebc98ef0b984e950b46e29a6883f90bea84e8137c6856998f41d8f1"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingContractCheck.swift",
+      "bytes": 16536,
+      "sha256": "7c3a10c9ca0ca73dbabbca57cf7c1faa2a3d00d587f92b1da34cf042aab6ee17"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingStoreCheck.swift",
+      "bytes": 4735,
+      "sha256": "5430a61bc7a0c73ec612b64afde98a34b3cfa9179fd3879555c3f29e7efe43bc"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingInteractionFixtures.swift",
+      "bytes": 8037,
+      "sha256": "4a110c8ebad9749276d004feea6c3fb682f11da34a27024372242ed7b767fc1d"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewMain.swift",
+      "bytes": 16233,
+      "sha256": "c7e6b0d7d669658993d16c180b2602f6439c7d5e0bc10332c2beec52d91478da"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewUITests.swift",
+      "bytes": 20157,
+      "sha256": "a32e2722b0c723fdaa574f32657a3a380d5af1eb0979fdb99304d131a5a5b76e"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/contract-check-final.log",
+      "bytes": 1552,
+      "sha256": "f884cc7af5689b37b486300d4f092408a0d84a2044d24c7f191a7351ae8dc7dd"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/store-check-final.log",
+      "bytes": 686,
+      "sha256": "918bb1b1c539522e15d43df40eed6cb19e3ebd8ab5f0e7676525008288b05610"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/recommend-probe.log",
+      "bytes": 253,
+      "sha256": "e8c8b39527973ebae9054abe25812516a01f4adcd50d5b7393a793a474193df5"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/RecommendReadOnlyProbe.swift",
+      "bytes": 1602,
+      "sha256": "98f40107c17cd0acc1a10ef1b267a86603d34b6d03e923b63f0120777072219f"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/discovery-automatic-pagination-end.png",
+      "bytes": 538178,
+      "sha256": "ae11ec3313b90c28c3efc3219ecaf8e0125938244a343e4e2d5228da1ba6d6ca"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/discovery-repeated-page-stops.png",
+      "bytes": 533887,
+      "sha256": "ed257bcdd1fd765ad94f22125bdc71598341556f5f148c3ffee4f000cab91258"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/discovery-page-failure-preserves-results.png",
+      "bytes": 547137,
+      "sha256": "4a7e7356c346db5a43833cc2df6a59971a3d90d1c67e7612d39f335b0b428873"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/recommendation-reloaded-after-empty.png",
+      "bytes": 589737,
+      "sha256": "a49e6b6972017fba79393ca9cf5f434d53ec0de47fa35b53ca56fe1788a09e55"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/device-install-final.log",
+      "bytes": 311,
+      "sha256": "554ce81ef75c5163ad11e72fce8f42140e0202ac7ea54dbee1f00aae9467c8a5"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/device-launch-final.log",
+      "bytes": 65,
+      "sha256": "06580280d2dcc22d9c0e38fa8bd8bbea578abe4d368c353904bfd3ae152c8570"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-discovery-20261108/native-preview/build.log",
+      "bytes": 85466,
+      "sha256": "19d4ddd45ab80aef349899effc8d58e8f96ddd4f3f5f4a1abc44f36ed7266c68"
+    },
+    {
+      "path": "docs/audits/qingqing-discovery-20261108/DEVICE-STATUS.json",
+      "bytes": 1039,
+      "sha256": "e0effb924b8e2b32c2ee932bf89723e83abe9e7e1aa5857f348ac5d6e4f48627"
+    },
+    {
+      "path": "docs/audits/qingqing-discovery-20261108/RECOMMEND-COMPARISON.json",
+      "bytes": 666,
+      "sha256": "376f4a3d42e1d0e0cf1eeea5c05232d7c01dc7d5faaabc7468e8391e158544af"
+    },
+    {
+      "path": "docs/audits/qingqing-discovery-20261108/runtime-comparison.json",
+      "bytes": 189,
+      "sha256": "58045d4f6f4fb00fc0a9deefe0122dc7b9bdb9833b427af8580ce94c5b089f71"
+    },
+    {
+      "path": "docs/audits/qingqing-discovery-20261108/LIVE-READONLY.json",
+      "bytes": 847,
+      "sha256": "5b1e16bb734d609a7ea3095dffe20a7b7e872477f2395783387813fd1c7ae4e8"
+    }
+  ]
+}
