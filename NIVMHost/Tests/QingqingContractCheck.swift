@@ -44,6 +44,24 @@ struct QingqingContractCheck {
     let list = try await api.request("home/getRole", parameters: ["page": "1"])
     precondition(list.records.first?.id == "42")
     print("PASS fresh installation identity and mixed identifier decoding")
+    let catalogContexts = [("order/packageV2", "GET", "1"), ("order/payWay", "GET", "2"),
+      ("member/info", "GET", "2"), ("device/login", "POST", "2"), ("order/create", "POST", "2"),
+      ("order/packageV2", "POST", "2")]
+    for (path, method, expectedOS) in catalogContexts {
+      FixtureProtocol.handler = { request in
+        precondition(request.url?.path == "/" + path && request.httpMethod == method)
+        let header = request.value(forHTTPHeaderField: "Chhw-Agent") ?? ""
+        let fields = Dictionary(uniqueKeysWithValues: header.components(separatedBy: "&").map { item in
+          let parts = item.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+          return (String(parts[0]), parts.count > 1 ? String(parts[1]) : "")
+        })
+        precondition(fields["os"] == expectedOS && fields["platform"] == "iOS" && fields["android_id"] == "")
+        precondition(request.value(forHTTPHeaderField: "sign") == QQServiceSignature.sign(header: header, path: path, salt: "test-only"))
+        return Data(#"{"code":200,"data":{}}"#.utf8)
+      }
+      _ = try await api.request(path, method: method)
+    }
+    print("PASS only GET member catalog uses os=1 with a matching signature; account/payment/write requests retain os=2")
     FixtureProtocol.handler = { request in
       precondition(request.url?.path == "/home/searchRole2" && request.httpMethod == "POST")
       var body = request.httpBody ?? Data()

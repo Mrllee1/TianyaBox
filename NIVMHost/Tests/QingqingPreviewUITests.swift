@@ -212,6 +212,31 @@ final class QingqingPreviewUITests: XCTestCase {
     }
   }
 
+  func testLiveMemberCatalogShowsVIPAndDiamondPackages() {
+    let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
+    app.launchArguments = ["--qq=member"]; app.launch()
+    let packages = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "qingqing.member.package."))
+    XCTAssertTrue(packages.firstMatch.waitForExistence(timeout: 60))
+    XCTAssertFalse(app.staticTexts["当前暂无可购买的套餐"].exists)
+    let firstVIP = packages.firstMatch.identifier
+    XCTAssertTrue(app.buttons[firstVIP].isSelected)
+    let purchase = app.buttons["qingqing.member.purchase"]
+    let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: purchase)
+    XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 15), .completed)
+    capture(app, "live-catalog-vip")
+    app.buttons["qingqing.member.tab.1"].tap()
+    XCTAssertTrue(packages.firstMatch.waitForExistence(timeout: 10))
+    XCTAssertFalse(app.staticTexts["当前暂无可购买的套餐"].exists)
+    XCTAssertTrue(purchase.isEnabled)
+    capture(app, "live-catalog-diamond")
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = "live-catalog-diamond-controls"; tree.lifetime = .keepAlways; add(tree)
+    app.buttons["qingqing.member.tab.0"].tap()
+    XCTAssertTrue(app.buttons[firstVIP].isSelected)
+    // Read-only catalog/selection acceptance. Never tap the purchase button.
+    app.terminate()
+  }
+
   func testEmptyMemberCatalogCannotStartPurchase() {
     let app = XCUIApplication(bundleIdentifier: "com.tianyabox.qingqing.preview")
     app.launchArguments = ["--qq=member-empty-fixture"]; app.launch()

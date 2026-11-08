@@ -1,0 +1,93 @@
+{
+  "results" : [
+    {
+      "case" : "current-ios",
+      "changed_fields" : {
+
+      },
+      "coin_count" : 0,
+      "keys" : [
+        "tips"
+      ],
+      "package_count" : 0,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    },
+    {
+      "case" : "reference-version-only",
+      "changed_fields" : {
+        "app_version" : "1.5.5",
+        "build" : "202610170706"
+      },
+      "coin_count" : 0,
+      "keys" : [
+        "tips"
+      ],
+      "package_count" : 0,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    },
+    {
+      "case" : "os-code-only",
+      "changed_fields" : {
+        "os" : "1"
+      },
+      "coin_count" : 3,
+      "keys" : [
+        "coin",
+        "middle_banner",
+        "package",
+        "tips"
+      ],
+      "package_count" : 4,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    },
+    {
+      "case" : "platform-label-only",
+      "changed_fields" : {
+        "platform" : "Android"
+      },
+      "coin_count" : 0,
+      "keys" : [
+        "tips"
+      ],
+      "package_count" : 0,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    },
+    {
+      "case" : "reference-bundle-only",
+      "changed_fields" : {
+        "bundle_id" : "com.cgs.utils"
+      },
+      "coin_count" : 0,
+      "keys" : [
+        "tips"
+      ],
+      "package_count" : 0,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    },
+    {
+      "case" : "reference-channel-only",
+      "changed_fields" : {
+        "channel" : "web08"
+      },
+      "coin_count" : 0,
+      "keys" : [
+        "tips"
+      ],
+      "package_count" : 0,
+      "success" : true,
+      "time" : "2026-11-08T05:03:50Z",
+      "tips_count" : 9
+    }
+  ],
+  "scope" : "Read-only header comparison with one independent own ephemeral iOS guest session. Only order\/packageV2 called after bootstrap. No captured Android token or device ID used. No production source or purchasing behavior changed."
+}

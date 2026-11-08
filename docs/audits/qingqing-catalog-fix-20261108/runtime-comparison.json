@@ -1,0 +1,8 @@
+{
+  "reference": "R6 signed export Frameworks",
+  "candidate": "R7 signed export Frameworks",
+  "compared_frameworks": 63,
+  "framework_files_byte_identical": 319,
+  "changed_files": [],
+  "note": "Preserved signed R6 runtime verbatim, then signed the R7 app root. Final app deep/strict verification passed."
+}

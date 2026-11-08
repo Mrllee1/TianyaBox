@@ -87,6 +87,10 @@ final class QingqingAPI {
     // Android identifiers, captured sessions, device attestation or APK signing keys.
     var agent = ["platform": "iOS", "device_id": installID, "app_version": "1.0", "bundle_id": Bundle.main.bundleIdentifier ?? "com.tianya.tempmail"]
     agent.merge(["os": "2", "os_sdid": installID, "sn": "sn", "channel": "other", "device_brand": "Apple", "root": "false", "imei": "", "md5_imei": "d41d8cd98f00b204e9800998ecf8427e", "oaid": "", "android_id": "", "android_id_level": "0", "net": "UNKNOWN", "build": "20261108"], uniquingKeysWith: { _, new in new })
+    // This catalog exposes the reference app's VIP/coin products only with os=1.
+    // Scope compatibility to this read before signing; account and order requests
+    // retain their iOS context and this installation's own session/identity.
+    if method == "GET", path == "order/packageV2" { agent["os"] = "1" }
     #if canImport(UIKit)
     // The service rejects Apple's short numeric version in device/login. Keep
     // the real Foundation version/build description, as verified end-to-end.
@@ -136,20 +140,32 @@ final class QingqingAPI {
     guard (200..<300).contains(response.statusCode) else { throw QQAPIError.httpStatus(response.statusCode) }
     guard let payload = try? JSONDecoder().decode(QQValue.self, from: data) else { throw QQAPIError.invalidResponse }
     let code = Int(payload["code"].text) ?? -1
+    var diagnosticContext: [String: Any] = [:]
     if usesKeychain {
-      let context: [String: Any] = ["installation_length": installID.count, "installation_is_hex": installID.allSatisfy { $0.isHexDigit }, "session_present": !token.isEmpty,
+      diagnosticContext = ["installation_length": installID.count, "installation_is_hex": installID.allSatisfy { $0.isHexDigit }, "session_present": !token.isEmpty,
         "bundle_id": agent["bundle_id"] ?? "", "platform": agent["platform"] ?? "", "os": agent["os"] ?? "", "os_version": agent["os_version"] ?? "", "device_model": agent["device_model"] ?? "", "app_version": agent["app_version"] ?? ""]
-      QQNetworkDiagnostics.record(path: path, http: response.statusCode, code: code, encrypted: !payload["iv"].text.isEmpty, context: context)
+    }
+    defer {
+      if usesKeychain { QQNetworkDiagnostics.record(path: path, http: response.statusCode, code: code, encrypted: !payload["iv"].text.isEmpty, context: diagnosticContext) }
     }
     guard code == 200 || (code == 0 && (path.hasPrefix("timetravel/") || path.hasPrefix("v1/"))) else {
       if [401, 3003, 3004].contains(code) { throw QQAPIError.authentication }
       throw QQAPIError.service(code, payload["msg"].text)
     }
+    let result: QQValue
     if !payload["iv"].text.isEmpty, !payload["data"].text.isEmpty {
       guard let secret = serviceConfiguration["responseSecret"] else { throw QQAPIError.invalidResponse }
-      return try QQResponseCipher.decode(payload, installation: installID, secret: secret)
+      result = try QQResponseCipher.decode(payload, installation: installID, secret: secret)
+    } else { result = payload["data"] }
+    if usesKeychain, method == "GET", path == "order/packageV2" {
+      // Counts only, to verify live catalog delivery without storing account data,
+      // product payloads, session credentials or payment links in device diagnostics.
+      diagnosticContext["vip_package_count"] = result["package"].records.count
+      diagnosticContext["coin_package_count"] = result["coin"].records.count
+      diagnosticContext["vip_displayable_count"] = result["package"].records.filter { !$0["id"].isEmpty }.count
+      diagnosticContext["coin_displayable_count"] = result["coin"].records.filter { !$0["id"].isEmpty }.count
     }
-    return payload["data"]
+    return result
   }
 }
 

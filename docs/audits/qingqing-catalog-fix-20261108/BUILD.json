@@ -1,0 +1,39 @@
+{
+  "artifact": "dist/TianyaBox-AI-20261108-real-catalog-r7.ipa",
+  "bytes": 135413919,
+  "sha256": "0a0352cf269cf01895d849551a6bdcad4d909b3b4a93f7af66131e06066073bb",
+  "zip_integrity": "pass",
+  "signature_deep_strict": "pass",
+  "bundle_id": "com.tianya.tempmail",
+  "display_name": "TianyaBox",
+  "contract_checks": 22,
+  "simulator_ui_suite": {
+    "tests": 3,
+    "failures": 0,
+    "seconds": 38.325,
+    "result": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/native-preview/UI-20261108-131450.xcresult",
+    "live_catalog_test": "testLiveMemberCatalogShowsVIPAndDiamondPackages"
+  },
+  "device_installation": {
+    "status": "installed",
+    "launch": "pass",
+    "device": "iPhone 100 pro max",
+    "ui_acceptance": "awaiting_device_ui_automation_authentication",
+    "existing_session_preserved": true,
+    "startup_apis": "4 requests: HTTP/business 200"
+  },
+  "b_surface_source_changed": false,
+  "runtime_frameworks_preserved_from": "R6",
+  "runtime_files_byte_identical": 319,
+  "device_ui_suite": {
+    "status": "awaiting_device_ui_automation_authentication",
+    "initialized": false,
+    "tests_executed": 0,
+    "attempts": 2,
+    "error": "Timed out while enabling automation mode",
+    "results": [
+      "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui.xcresult",
+      "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui-retry.xcresult"
+    ]
+  }
+}

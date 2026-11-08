@@ -1,0 +1,95 @@
+{
+  "note": "Fingerprints only. Raw device captures, live product payloads, provisioning files and private service configuration are not committed. Physical UI automation is awaiting device confirmation.",
+  "files": [
+    {
+      "path": "NIVMHost/QingqingA/QingqingAPI.swift",
+      "bytes": 13648,
+      "sha256": "07283e2d72b2c7d088810b182b3f979d2584326c6d62eff7eeb3cf6f2622c32c"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingContractCheck.swift",
+      "bytes": 16487,
+      "sha256": "51af210dc431dacc44f14af0f67000721d9e47d5d6ee879baefe2948ff1f7200"
+    },
+    {
+      "path": "NIVMHost/Tests/QingqingPreviewUITests.swift",
+      "bytes": 17886,
+      "sha256": "4d617abfc87dec74793b0e53dd6aaf543850e98d4ab4c54727064bf46177a167"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/contract-check.log",
+      "bytes": 1538,
+      "sha256": "31c5d620280e8317f5ca3bdf632f38fae3e2cb5a15c6594071714613b1a545b9"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/live-catalog-probe.log",
+      "bytes": 117,
+      "sha256": "8e87c3d409aa4467f0ab8cce6a9d2457723a7390a08ed44850553fa75834576d"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/native-preview/build.log",
+      "bytes": 349459,
+      "sha256": "1cf6d841d2dea53c7ffd6e3ac8a957ce67ba2888c22407a20b73fa0cd4d42077"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/live-catalog-vip.png",
+      "bytes": 2002312,
+      "sha256": "b31be8072330ff3e6ba60114330b42d25e0e045cb847a807c26703d3afc90a5d"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/live-catalog-diamond.png",
+      "bytes": 635410,
+      "sha256": "f90c8b497390fea54d3e077c251a8a8c08339b0bcb795cb12b58972731af6d78"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/LiveCatalogProbe.swift",
+      "bytes": 1720,
+      "sha256": "9cc203c1f994d5eb411267b531e9269f8f672446a952137efed4e84b572f137b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-qa/DeviceCatalogUITests.swift",
+      "bytes": 1750,
+      "sha256": "fe4993114edc863ce65a6360e53ba8f8c0d1cc80ee1b92b03bb9853f42ccd1a5"
+    },
+    {
+      "path": "docs/audits/qingqing-catalog-fix-20261108/DEVICE-STATUS.json",
+      "bytes": 940,
+      "sha256": "732ffbb1f6669c9424fe4ef561af82e4956bc7b19021956116f63a4a14e6b5a0"
+    },
+    {
+      "path": "docs/audits/qingqing-catalog-fix-20261108/LIVE-STATUS.json",
+      "bytes": 388,
+      "sha256": "4e401769a9c20c49873b969733c6dfbe1158ed874281a419d13c9ae15a0b039b"
+    },
+    {
+      "path": "docs/audits/qingqing-catalog-fix-20261108/runtime-comparison.json",
+      "bytes": 311,
+      "sha256": "cb1e2f0f4bfd43dc606e62267583c7521966f6e5a87e4bde14807d2e912f0ceb"
+    },
+    {
+      "path": "docs/audits/qingqing-catalog-fix-20261108/CATALOG-COMPARISON.json",
+      "bytes": 2089,
+      "sha256": "dda3b57e39e0785a2c38392ffd6d9d7b365022bd9cc5a9a3ab7cf67b36487c62"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui.log",
+      "bytes": 3815,
+      "sha256": "449e4a02c062b679ad1c52bef6ce656f6ce5ed32f1c7974a29065d033da2acd2"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui-retry.log",
+      "bytes": 3851,
+      "sha256": "ebc71777b1e054387528c96636308e6f35c5bbc822a27e08a81a7388ac403604"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-install.log",
+      "bytes": 311,
+      "sha256": "7905b748360d19c3a96a09b9299ac8e734efd22f6b5783540371ae85d08bac8b"
+    },
+    {
+      "path": "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-launch.log",
+      "bytes": 65,
+      "sha256": "06580280d2dcc22d9c0e38fa8bd8bbea578abe4d368c353904bfd3ae152c8570"
+    }
+  ]
+}

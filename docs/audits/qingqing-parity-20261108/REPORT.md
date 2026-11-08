@@ -1,6 +1,6 @@
 # 卿卿 A 面逐页验收与修复记录（2026-11-08）
 
-最新 VIP、充值和聊天输入对齐见 [R6](../qingqing-member-input-20261108/REPORT.md)，顶部分类见 [R5](../qingqing-home-tabs-20261108/REPORT.md)，交互回归见 [R4](../qingqing-interaction-20261108/REPORT.md)，此前 R3 见 [R3.md](R3.md)，R2 见 [CONTINUATION.md](CONTINUATION.md)。下文为首轮记录，安装包与测试数量保留当时的历史值。
+最新真实套餐恢复见 [R7](../qingqing-catalog-fix-20261108/REPORT.md)，VIP、充值和聊天输入对齐见 [R6](../qingqing-member-input-20261108/REPORT.md)，顶部分类见 [R5](../qingqing-home-tabs-20261108/REPORT.md)，交互回归见 [R4](../qingqing-interaction-20261108/REPORT.md)，此前 R3 见 [R3.md](R3.md)，R2 见 [CONTINUATION.md](CONTINUATION.md)。下文为首轮记录，安装包与测试数量保留当时的历史值。
 
 首轮完成 APK 布局清点、ADB 原版取证、主要页面修正、协议回归、实机覆盖安装和 A/B 入口回归。**尚未达到“全部页面 1:1 通过”**。构建成功、接口成功、截图存在都不代表逐像素或全部业务状态已通过。
 

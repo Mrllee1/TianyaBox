@@ -1,0 +1,10 @@
+{
+  "all_packages_have_valid_id_price_and_payment_method" : true,
+  "coin_count" : 3,
+  "member_info_succeeded" : true,
+  "orders_created" : 0,
+  "payment_method_count" : 2,
+  "source" : "Current production QingqingAPI.swift; own independent ephemeral guest session; read-only catalog, payment-method list and account status",
+  "verified_at" : "2026-11-08T05:14:24Z",
+  "vip_count" : 4
+}

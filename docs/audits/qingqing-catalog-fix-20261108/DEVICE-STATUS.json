@@ -1,0 +1,41 @@
+{
+  "scope": "Fresh R7 startup on the existing physical-device account. Catalog UI acceptance is awaiting XCTest device authentication.",
+  "requests": [
+    {
+      "time": "2026-11-08T05:18:30Z",
+      "path": "home/getRecommend",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    },
+    {
+      "time": "2026-11-08T05:18:30Z",
+      "path": "home/indexCategory",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    },
+    {
+      "time": "2026-11-08T05:18:30Z",
+      "path": "home/getModelListV2",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    },
+    {
+      "time": "2026-11-08T05:18:30Z",
+      "path": "member/info",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "2"
+    }
+  ]
+}
