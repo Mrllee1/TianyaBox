@@ -18,15 +18,25 @@
     "status": "installed",
     "launch": "pass",
     "device": "iPhone 100 pro max",
-    "ui_acceptance": "awaiting_device_ui_automation_authentication",
+    "ui_acceptance": "passed_user_confirmed",
     "existing_session_preserved": true,
-    "startup_apis": "4 requests: HTTP/business 200"
+    "startup_apis": "4 requests: HTTP/business 200",
+    "live_catalog": {
+      "http": 200,
+      "code": 200,
+      "os": "1",
+      "vip_count": 4,
+      "coin_count": 3,
+      "vip_displayable_count": 4,
+      "coin_displayable_count": 3,
+      "time": "2026-11-08T05:30:13Z"
+    }
   },
   "b_surface_source_changed": false,
   "runtime_frameworks_preserved_from": "R6",
   "runtime_files_byte_identical": 319,
   "device_ui_suite": {
-    "status": "awaiting_device_ui_automation_authentication",
+    "status": "not_completed_automation_initialization_timed_out",
     "initialized": false,
     "tests_executed": 0,
     "attempts": 2,
@@ -35,5 +45,17 @@
       "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui.xcresult",
       "NIVMHost/Build/QA/qingqing-catalog-fix-20261108/device-ui-retry.xcresult"
     ]
+  },
+  "manual_device_acceptance": {
+    "status": "passed_user_confirmed",
+    "device": "iPhone 100 pro max",
+    "recorded_at_utc": "2026-11-08T05:30:40Z",
+    "source": "User reply to R7 physical-device acceptance question",
+    "user_reply": "两页都已显示套餐",
+    "scope": [
+      "VIP package display",
+      "Diamond package display"
+    ],
+    "actual_payment_tested": false
   }
 }

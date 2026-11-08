@@ -1,9 +1,22 @@
 {
-  "scope": "Fresh R7 startup on the existing physical-device account. Catalog UI acceptance is awaiting XCTest device authentication.",
+  "scope": "R7 existing physical-device session: startup and live catalog delivery. Display on both pages separately confirmed by the user; this is not an automated XCTest pass.",
   "requests": [
     {
-      "time": "2026-11-08T05:18:30Z",
-      "path": "home/getRecommend",
+      "time": "2026-11-08T05:30:13Z",
+      "path": "order/packageV2",
+      "http": 200,
+      "code": 200,
+      "session_present": true,
+      "platform": "iOS",
+      "os": "1",
+      "vip_package_count": 4,
+      "coin_package_count": 3,
+      "vip_displayable_count": 4,
+      "coin_displayable_count": 3
+    },
+    {
+      "time": "2026-11-08T05:30:13Z",
+      "path": "member/getCoinTotal",
       "http": 200,
       "code": 200,
       "session_present": true,
@@ -11,8 +24,8 @@
       "os": "2"
     },
     {
-      "time": "2026-11-08T05:18:30Z",
-      "path": "home/indexCategory",
+      "time": "2026-11-08T05:30:14Z",
+      "path": "order/payWay",
       "http": 200,
       "code": 200,
       "session_present": true,
@@ -20,8 +33,8 @@
       "os": "2"
     },
     {
-      "time": "2026-11-08T05:18:30Z",
-      "path": "home/getModelListV2",
+      "time": "2026-11-08T05:30:14Z",
+      "path": "member/info",
       "http": 200,
       "code": 200,
       "session_present": true,
@@ -29,7 +42,7 @@
       "os": "2"
     },
     {
-      "time": "2026-11-08T05:18:30Z",
+      "time": "2026-11-08T05:30:39Z",
       "path": "member/info",
       "http": 200,
       "code": 200,
@@ -37,5 +50,17 @@
       "platform": "iOS",
       "os": "2"
     }
-  ]
+  ],
+  "manual_acceptance": {
+    "status": "passed_user_confirmed",
+    "device": "iPhone 100 pro max",
+    "recorded_at_utc": "2026-11-08T05:30:40Z",
+    "source": "User reply to R7 physical-device acceptance question",
+    "user_reply": "两页都已显示套餐",
+    "scope": [
+      "VIP package display",
+      "Diamond package display"
+    ],
+    "actual_payment_tested": false
+  }
 }

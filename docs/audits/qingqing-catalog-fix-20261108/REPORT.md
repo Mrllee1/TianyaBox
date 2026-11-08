@@ -11,9 +11,9 @@
 ## 验证
 
 - 22 项协议 / 逻辑检查通过，覆盖套餐 GET 的 `os=1` 和重算签名，以及账号、支付、POST 请求的 `os=2` 范围保护。
-- 使用当前生产 API 源码和独立游客会话，真实接口返回 **4 个 VIP 套餐、3 个钻石档位、2 种支付方式**；全部商品的 ID、价格和可用支付方式校验通过，账号资料读取成功。见 [LIVE-STATUS.json](LIVE-STATUS.json)。这是独立测试会话，实机账号另行验收。
+- 使用当前生产 API 源码和独立游客会话，真实接口返回 **4 个 VIP 套餐、3 个钻石档位、2 种支付方式**；全部商品的 ID、价格和可用支付方式校验通过，账号资料读取成功。见 [LIVE-STATUS.json](LIVE-STATUS.json)。该结果来自独立测试会话，实机账号结果见下项。
 - 3 项模拟器原生 UI 检查通过，38.325 秒：真实网络 VIP / 钻石展示、两页切换；合成夹具的套餐与支付选择保留、空目录禁止购买。真实页面截图已人工检查；夹具与真实网络检查分别记录。
-- Release 构建、深度严格签名校验、IPA ZIP 完整性通过；R7 已覆盖安装并启动到 iPhone 100 pro max。四个实机启动接口均 HTTP 200 / 业务 200、会话存在，见 [DEVICE-STATUS.json](DEVICE-STATUS.json)。实机 UI 自动点按因 `Timed out while enabling automation mode` 未能初始化，已请求用户在手机确认 XCTest / UI 自动化；该步骤不计为实机页面验收通过。
+- Release 构建、深度严格签名校验、IPA ZIP 完整性通过；R7 已覆盖安装并启动到 iPhone 100 pro max。四个实机启动接口均 HTTP 200 / 业务 200、会话存在，见 [DEVICE-STATUS.json](DEVICE-STATUS.json)。实机 UI 自动点按因 `Timed out while enabling automation mode` 未能初始化，自动化测试仍记为未完成。随后用户在手机查看并明确回复 **“两页都已显示套餐”**，VIP / 钻石套餐展示按用户实机确认通过。另于 05:30:13 UTC（吉隆坡时间 13:30:13）读取到手机 `order/packageV2` 的 HTTP 200 / 业务 200、`os=1`、会话存在；VIP / 钻石目录及可展示数量分别为 **4 / 3**。见 [DEVICE-STATUS.json](DEVICE-STATUS.json)，手动确认与自动化结果分别保留。
 - B 面源代码未改。最终导出包沿用 R6 的 63 个已签名运行库，319 个运行库文件逐字节一致；重签宿主根包后深度严格校验通过。见 [runtime-comparison.json](runtime-comparison.json)。未据此宣称重新验收全部 B 面客体。
 
 本轮目标为真实套餐展示与选择，不包含实际下单、付款或付费聊天验收。测试没有点击真实购买确认，也没有修改 B 面数据。

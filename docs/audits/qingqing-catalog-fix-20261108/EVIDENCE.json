@@ -1,5 +1,5 @@
 {
-  "note": "Fingerprints only. Raw device captures, live product payloads, provisioning files and private service configuration are not committed. Physical UI automation is awaiting device confirmation.",
+  "note": "Fingerprints only. Raw captures, live product payloads, provisioning files and private service configuration are not committed. Physical VIP/diamond display was confirmed by the user; device API counts independently verified 4/3. XCTest initialization timed out and is not counted as a pass.",
   "files": [
     {
       "path": "NIVMHost/QingqingA/QingqingAPI.swift",
@@ -53,8 +53,8 @@
     },
     {
       "path": "docs/audits/qingqing-catalog-fix-20261108/DEVICE-STATUS.json",
-      "bytes": 940,
-      "sha256": "732ffbb1f6669c9424fe4ef561af82e4956bc7b19021956116f63a4a14e6b5a0"
+      "bytes": 1682,
+      "sha256": "3cd922048543aa17e174631015c4f2379ba86657ba95cdc4bab4e0bae50cec3a"
     },
     {
       "path": "docs/audits/qingqing-catalog-fix-20261108/LIVE-STATUS.json",
